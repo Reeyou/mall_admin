@@ -7,7 +7,6 @@
     <!-- 添加按钮 -->
     <div class="addBtn" v-if='addBtn'>
       <el-button
-        :disabled="role !== 'admin'"
         type='primary'
         icon='el-icon-plus'
         @click='addBtn.onAdd'

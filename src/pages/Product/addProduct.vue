@@ -1,29 +1,28 @@
 <template>
   <div class="addContent">
     <div class="title">
-      <h2>文章新增</h2>
-      <p>add blog article</p>
+      <h2>商品新增</h2>
     </div>
+    <label class='label'>商品属性</label>
     <el-form
-      ref="articleForm"
-      :model="articleForm"
-      :rules="articleRule"
+      ref="productForm"
+      :model="productForm"
+      :rules="productRule"
       label-width="100px"
       class="addForm"
-      label-position="left" 
-    >
-      <el-form-item label="标题" prop="title">
-        <el-input v-model="articleForm.title" placeholder="请输入文章标题"/>
+      label-position="left">
+      <el-form-item label="标题" prop="name">
+        <el-input v-model="productForm.name" placeholder="请输入商品名称"/>
       </el-form-item>
-      <el-form-item label="文章描述" prop="desc">
+      <el-form-item label="商品描述" prop="desc">
         <el-input
-          v-model="articleForm.desc"
+          v-model="productForm.desc"
           type="textarea"
           :autosize="{minRows: 2,maxRows: 5}"
-          placeholder="请输入文章描述"
+          placeholder="请输入商品描述"
         />
       </el-form-item>
-      <el-form-item label="标签" prop="tag">
+      <el-form-item label="分类" prop="category">
         <el-select style="width:200px" v-model='value' class='tagList'>
           <el-option
             v-for="(item,index) in tagList"
@@ -34,71 +33,141 @@
           >{{ item.tagname }}</el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="封面图" prop="poster_src">
+      <el-form-item label="商品主图" prop="pic">
         <UploadImg
           action="/api/upload"
           @getImgURL="getImgURL"
         />
       </el-form-item>
-      <el-form-item class='editor' label="文章正文" prop="content">
+      <el-form-item label="商品详情图" prop="detailPic">
+        <UploadImg
+          action="/api/upload"
+          @getImgURL="getImgURL"
+        />
       </el-form-item>
     </el-form>
-    <el-button class="btn" @click=" handleSubmit" icon="ios-add" type="primary">提交</el-button>
+    <!-- sku -->
+    <Sku/>
+    <el-button class="btn submit" @click=" handleSubmit" icon="ios-add" type="primary">提交</el-button>
   </div>
 </template>
 
 <script>
-// import { addArticle } from "@/service/article";
-// import { getTagList } from "@/service/tag";
 import UploadImg from "@/components/UploadImg";
+import Sku from './sku'
 export default {
   components: {
-    UploadImg
+    UploadImg,
+    Sku
   },
   data() {
     return {
       value: '',
       tagList: [],
-      poster_src: "",
-      content: "", // 输入的markdown
-      html: "", // 及时转的html
       visible: false,
-      articleForm: {
-        title: "",
+      skuTableVisible: false,
+      skuColumns: [
+        {
+          label: "skuId",
+          key: "skuId",
+          width: 120
+        },
+        {
+          label: "颜色",
+          key: "color",
+          width: 120
+        },
+        {
+          label: "版本号",
+          key: "version",
+          width: 120
+        },
+        {
+          label: "价格",
+          key: "price",
+          width: 120
+        },
+        {
+          label: "库存",
+          key: "num",
+          width: 120
+        },
+        {
+          label: "商品副图",
+          key: "subPics",
+          width: 480
+        }
+      ],
+      productForm: {
+        name: "",
         desc: "",
-        poster_src: "",
-        tag: "",
+        pic: "",
+        detailPic: [],
+        category: "",
       },
-      articleRule: {
-        title: [
+      skuForm: {
+        color: "", //颜色
+        version: "", // 版本
+        price: "", // 价格
+        pics: [] // 图片
+      },
+      productRule: {
+        name: [
           {
             required: true,
-            message: "文章标题不能为空",
+            message: "商品名称不能为空",
             trigger: "blur"
           }
         ],
         desc: [
           {
             required: true,
-            message: "文章描述不能为空",
+            message: "商品描述不能为空",
             trigger: "blur"
           }
         ],
-        poster_src: [
+        category: [{ required: true, message: "商品分类不能为空", trigger: "blur" }],
+        pic: [
           {
             required: true,
-            message: "封面图不能为空",
+            message: "商品主图不能为空",
             trigger: "change"
           }
         ],
-        tag: [{ required: true, message: "文章标签不能为空", trigger: "blur" }],
-        content: [
+        detailPic: [
           {
             required: true,
-            message: "内容不能为空",
+            message: "商品详情图不能为空",
             trigger: "change"
           }
-        ]
+        ],
+      },
+      skuRule: {
+        color: [
+          {
+            required: true,
+            message: "商品颜色不能为空",
+            trigger: "blur"
+          }
+        ],
+        version: [
+          {
+            required: true,
+            message: "商品描述不能为空",
+            trigger: "blur"
+          }
+        ],
+        price: [
+          { required: true, message: "商品价格不能为空", trigger: "blur" }
+        ],
+        // subPics: [
+        //   {
+        //     required: true,
+        //     message: "商品副图不能为空",
+        //     trigger: "change"
+        //   }
+        // ],
+        num: [{ required: true, message: "商品库存不能为空", trigger: "blur" }]
       }
     };
   },
@@ -115,7 +184,7 @@ export default {
     },
     getImgURL(url) {
       this.poster_src = url;
-      this.articleForm.poster_src = url
+      this.productForm.poster_src = url
     },
     // 所有操作都会被解析重新渲染
     mavonChange(value, render) {
@@ -123,14 +192,14 @@ export default {
       this.html = render;
     },
     changeTag(val) {
-      this.articleForm.tag = val
+      this.productForm.tag = val
     },
     // 提交
     handleSubmit() {
-      this.$refs["articleForm"].validate(valid => {
+      this.$refs["productForm"].validate(valid => {
         console.log(this.content)
         if (valid) {
-          const data = this.articleForm
+          const data = this.productForm
           const params = {
             title: data.title,
             desc: data.desc,
@@ -153,55 +222,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// @import "../../assets/css/markdown.css";
-.addContent {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 10px 30px 0 20px;
-  .title {
-    padding-left: 10px;
-    h2 {
-      // border-bottom: none;
-      font-size: 20px;
-      font-weight: bold;
-    }
-    p {
-      font-size: 12px;
-      color: #aaa;
-      margin: 10px 0 20px 0;
-    }
-  }
-  .addForm {
-    .el-input,.el-textarea {
-      width: 400px;
-    }
-  }
-  .btn {
-    margin-left: 80px;
-  }
-}
-.v-note-wrapper {
-  z-index: 0;
-}
-@media screen and(max-width: 900px) {
-  .addContent {
-    padding: 0;
-    .addForm {
-      .el-input,.el-textarea {
-        width: 100%;
-      }
-      .editor {
-        // background: #000;
-        .el-form-item__label{
-          color: red;
-        }
-      }
-    }
-  }
-  .v-note-wrapper {
-    float: left;
-    min-width: 0; 
-    z-index: 0;
-  }
-}
+@import './index.scss';
 </style>

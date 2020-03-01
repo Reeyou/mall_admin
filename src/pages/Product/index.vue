@@ -5,7 +5,7 @@
       :tbData='tbData'
       :columns='columns'
       :filters='filters'
-      :addBtn="{label: '添加商品',onAdd: addArticle}"
+      :addBtn="{label: '添加商品',onAdd: addProduct}"
       :onFilter="handleFilter"
       :onReset="handleReset"
       @handleEdit='handleEdit'
@@ -112,8 +112,8 @@ export default {
     handleReset() {
       console.log(22);
     },
-    addArticle() {
-      this.$router.push("/addArticle");
+    addProduct() {
+      this.$router.push("/addProduct");
     },
     getData(pageSize = 1, limit = 10) {
       // getArticleList({pageSize,limit}).then(res => {
