@@ -11,6 +11,9 @@
       label-width="100px"
       class="addForm"
       label-position="left">
+      <el-form-item label="商品id" prop="spuId">
+        <el-input v-model="productForm.spuId" placeholder="请输入商品id"/>
+      </el-form-item>
       <el-form-item label="标题" prop="name">
         <el-input v-model="productForm.name" placeholder="请输入商品名称"/>
       </el-form-item>
@@ -25,34 +28,71 @@
       <el-form-item label="分类" prop="category">
         <el-select style="width:200px" v-model='value' class='tagList'>
           <el-option
-            v-for="(item,index) in tagList"
-            :value="item.tagname"
+            v-for="(item,index) in categoryList"
+            :value="item.categoryname"
             :key="index"
-            :label="item.tagname"
-            @click.native='changeTag(item.tagname)'
-          >{{ item.tagname }}</el-option>
+            :label="item.categoryname"
+            @click.native='changeCategoryName(item.categoryname)'
+          >{{ item.categoryname }}</el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="商品主图" prop="pic">
         <UploadImg
           action="/api/upload"
-          @getImgURL="getImgURL"
+          @getImgURL="getPicUrl"
         />
       </el-form-item>
       <el-form-item label="商品详情图" prop="detailPic">
         <UploadImg
           action="/api/upload"
-          @getImgURL="getImgURL"
+          @getImgURL="getDetailPicUrl"
         />
       </el-form-item>
     </el-form>
     <!-- sku -->
-    <Sku/>
+    <label class="label">商品sku</label>
+    <el-form
+      ref="skuForm"
+      :model="skuForm"
+      :rules="skuRule"
+      label-width="100px"
+      class="addForm"
+      label-position="left"
+    >
+      <el-form-item label="颜色" prop="color">
+        <el-input v-model="skuForm.color" placeholder="请输入商品颜色" />
+      </el-form-item>
+      <el-form-item label="版本号" prop="version">
+        <el-input v-model="skuForm.version" placeholder="请输入版本号" />
+      </el-form-item>
+      <el-form-item label="价格" prop="price">
+        <el-input v-model="skuForm.price" placeholder="请输入商品价格" />
+      </el-form-item>
+      <el-form-item label="库存" prop="num">
+        <el-input v-model="skuForm.num" placeholder="请输入商品库存" />
+      </el-form-item>
+      <el-form-item label="商品副图" prop="subPics">
+        <UploadImg action="/api/upload" @getImgURL="getSkuImgUrl" />
+      </el-form-item>
+    </el-form>
+    <el-button class="btn" @click="handleInitSku" icon="ios-add" type="primary">生成商品sku</el-button>
+    <el-table v-show='visible' class="sku_table" :data="skuData" border :style="{width: width}">
+      <el-table-column
+        v-for="(column, index) in skuColumns"
+        :key="index"
+        :prop="column.key"
+        :label="column.label"
+        :width="column.width"
+        align="center"
+        fit
+      ></el-table-column>
+    </el-table>
     <el-button class="btn submit" @click=" handleSubmit" icon="ios-add" type="primary">提交</el-button>
   </div>
 </template>
 
 <script>
+import {getCategoryList,createSku} from '../../api/product'
 import UploadImg from "@/components/UploadImg";
 import Sku from './sku'
 export default {
@@ -65,82 +105,94 @@ export default {
       value: '',
       tagList: [],
       visible: false,
-      skuTableVisible: false,
-      skuColumns: [
-        {
-          label: "skuId",
-          key: "skuId",
-          width: 120
-        },
-        {
-          label: "颜色",
-          key: "color",
-          width: 120
-        },
-        {
-          label: "版本号",
-          key: "version",
-          width: 120
-        },
-        {
-          label: "价格",
-          key: "price",
-          width: 120
-        },
-        {
-          label: "库存",
-          key: "num",
-          width: 120
-        },
-        {
-          label: "商品副图",
-          key: "subPics",
-          width: 480
-        }
-      ],
+       width: 1080,
+      skuData: JSON.parse(localStorage.getItem('allSkuData')).skuList || [],
+      categoryList: [],
+      spuId: "",
       productForm: {
+        spuId: "",
         name: "",
         desc: "",
         pic: "",
         detailPic: [],
         category: "",
       },
+      productRule: {
+        spuId: [
+          {
+            required: true,
+            message: "商品id不能为空",
+            trigger: "blur"
+          }
+        ],
+        // name: [
+        //   {
+        //     required: true,
+        //     message: "商品名称不能为空",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // desc: [
+        //   {
+        //     required: true,
+        //     message: "商品描述不能为空",
+        //     trigger: "blur"
+        //   }
+        // ],
+        // category: [{ required: true, message: "商品分类不能为空", trigger: "blur" }],
+        // pic: [
+        //   {
+        //     required: true,
+        //     message: "商品主图不能为空",
+        //     trigger: "change"
+        //   }
+        // ],
+        // detailPic: [
+        //   {
+        //     required: true,
+        //     message: "商品详情图不能为空",
+        //     trigger: "change"
+        //   }
+        // ],
+      },
+      skuColumns: [
+        {
+          label: "skuId",
+          key: "skuId",
+          width: 400
+        },
+        {
+          label: "颜色",
+          key: "color",
+          width: 400
+        },
+        {
+          label: "版本号",
+          key: "version",
+          width: 400
+        },
+        {
+          label: "价格",
+          key: "price",
+          width: 400
+        },
+        {
+          label: "库存",
+          key: "num",
+          width: 400
+        },
+        {
+          label: "商品副图",
+          key: "subPics",
+          width: 400
+        }
+      ],
       skuForm: {
         color: "", //颜色
         version: "", // 版本
         price: "", // 价格
-        pics: [] // 图片
-      },
-      productRule: {
-        name: [
-          {
-            required: true,
-            message: "商品名称不能为空",
-            trigger: "blur"
-          }
-        ],
-        desc: [
-          {
-            required: true,
-            message: "商品描述不能为空",
-            trigger: "blur"
-          }
-        ],
-        category: [{ required: true, message: "商品分类不能为空", trigger: "blur" }],
-        pic: [
-          {
-            required: true,
-            message: "商品主图不能为空",
-            trigger: "change"
-          }
-        ],
-        detailPic: [
-          {
-            required: true,
-            message: "商品详情图不能为空",
-            trigger: "change"
-          }
-        ],
+        subPics: [], // 图片
+        num: ""
       },
       skuRule: {
         color: [
@@ -172,41 +224,85 @@ export default {
     };
   },
   created() {
-    this.getTagData()
+   this.getCategoryList()
+   this.skuTableVisible()
   },
   methods: {
-    getTagData() {
-      // getTagList().then(res => {
-      //   if(res.code == 200) {
-      //     this.tagList = res.data.list
-      //   }
-      // })
+    skuTableVisible() {
+      if(this.skuData.length == 0) return
+      this.visible = true
     },
-    getImgURL(url) {
-      this.poster_src = url;
-      this.productForm.poster_src = url
+    handleInitSku() {
+       this.$refs["productForm"].validate(valid => {
+         if(valid) {
+           this.spuId = this.productForm.spuId
+           console.log(this.spuId)
+         }
+       })
+      this.$refs["skuForm"].validate(valid => {
+        if (valid) {
+          this.visible = true
+          const {color,version,price,num,subPics} = this.skuForm
+          const params = {
+            color,
+            version,
+            price,
+            num,
+            subPics
+          }
+          this.$refs["skuForm"].resetFields();
+          let allSkuData = JSON.parse(localStorage.getItem('allSkuData')) || {spuId: this.spuId,skuList: []}
+          allSkuData.spuId = this.spuId
+          allSkuData.skuList.push(params)
+          console.log(allSkuData)
+          createSku(allSkuData).then(res => {
+            if(res.code == 200) {
+              allSkuData.skuId = res.data
+             localStorage.setItem('allSkuData',JSON.stringify(allSkuData))
+            }
+          })
+          
+          this.skuData = JSON.parse(localStorage.getItem('allSkuData'))
+          console.log(this.skuData)
+        }
+      })
     },
-    // 所有操作都会被解析重新渲染
-    mavonChange(value, render) {
-      this.content = value
-      this.html = render;
+    getCategoryList() {
+      getCategoryList().then(res => {
+        if(res.code == 200) {
+          this.categoryList = res.data.list
+        }
+      })
     },
-    changeTag(val) {
-      this.productForm.tag = val
+    getPicUrl(url) {
+      // this.pic = url;
+      this.productForm.pic = url
+    },
+    getDetailPicUrl(url) {
+      this.productForm.detailPic = url
+    },
+    getSkuImgUrl(url) {
+      this.skuForm.subPics.push(url);
+    },
+    changeCategoryName(val) {
+      this.productForm.category = val
     },
     // 提交
     handleSubmit() {
       this.$refs["productForm"].validate(valid => {
-        console.log(this.content)
         if (valid) {
-          const data = this.productForm
+          const {spuId,name,desc,pic,detailPic,category} = this.productForm
           const params = {
-            title: data.title,
-            desc: data.desc,
-            poster: data.poster_src,
-            tag: data.tag,
-            content: this.html
+            spuId,
+            name,
+            desc,
+            pic,
+            detailPic,
+            category
           }
+          const skuList = JSON.parse(localStorage.getItem('allSkuData'))
+          params.skuList = skuList
+          console.log(params)
           // addArticle(params).then(res => {
           //   if(res.code == 200) {
           //     // this.$Message.success("添加成功!")

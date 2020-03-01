@@ -44,11 +44,13 @@ export default {
       let reader = new FileReader()
       reader.readAsDataURL(self.files); // 转换为base64
       reader.onloadend = function() {
+        console.log(this.result)
         self.poster_src = this.result
         self.uploadStatus = true
 
-        let formdata = new FormData()
+        let formdata = new window.FormData()
         let blob = dataURLtoBlob(this.result)
+        
         formdata.append("file", blob)
 
         instance.post(self.action,formdata).then(res => {
@@ -109,6 +111,7 @@ export default {
   .poster-preview {
     width: 100%;
     height: 100%;
+    z-index: -999;
     .poster {
       width: 100%;
       height: 100%;

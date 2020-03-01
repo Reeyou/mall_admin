@@ -7,44 +7,44 @@ const instance = axios.create({
   // },
   timeout: 10000
 })
-instance.interceptors.request.use(
-  config => {
-    if(sessionStorage.token) {
-      config.headers.authorization = sessionStorage.token;
-    }
-    return config
-  },
-  err => {
-    return Promise.reject(err)
-  }
-)
-instance.interceptors.response.use(
-  res => {
-    const { authorization } = res.headers;
-    //如果token存在则存在localStorage
-    if(authorization) {
-      sessionStorage.setItem('token', authorization);
-    } 
-    return res;
-  },
-  err => {
-    if (err) {
-      switch (err.response.data.code) {
-        // 状态码为200  token失效
-        case 201:
-          const { authorization } = err.response.headers;
-          authorization && sessionStorage.setItem('token', authorization);
-        case 401:
-        sessionStorage.removeItem('token')
-        router.replace({
-          path: 'login',
-        })
-        break;
-      }
-  }
-  return Promise.reject(err.response.data)   // 返回接口返回的错误信息
-  }
-)
+// instance.interceptors.request.use(
+//   config => {
+//     if(sessionStorage.token) {
+//       config.headers.authorization = sessionStorage.token;
+//     }
+//     return config
+//   },
+//   err => {
+//     return Promise.reject(err)
+//   }
+// )
+// instance.interceptors.response.use(
+//   res => {
+//     const { authorization } = res.headers;
+//     //如果token存在则存在localStorage
+//     if(authorization) {
+//       sessionStorage.setItem('token', authorization);
+//     } 
+//     return res;
+//   },
+//   err => {
+//     if (err) {
+//       switch (err.response.data.code) {
+//         // 状态码为200  token失效
+//         case 201:
+//           const { authorization } = err.response.headers;
+//           authorization && sessionStorage.setItem('token', authorization);
+//         case 401:
+//         sessionStorage.removeItem('token')
+//         router.replace({
+//           path: 'login',
+//         })
+//         break;
+//       }
+//   }
+//   return Promise.reject(err.response.data)   // 返回接口返回的错误信息
+//   }
+// )
 function request(url, options) {
   // 请求状态码
   const responseCode = {
@@ -85,7 +85,7 @@ function request(url, options) {
   //qs.parse()将Url解析成对象的形式
   function POST(url,params) {
     return new Promise((resolve, reject) => {
-      instance.post(url, qs.stringify(params))
+      instance.post(url, qs.stringify(params,{ indices: false }))
       .then(res => {
         return resolve(res.data);
       })

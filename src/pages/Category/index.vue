@@ -1,11 +1,11 @@
 <template>
   <div>
     <PageTable
-      title="标签列表"
+      title="分类列表"
       :tbData='tbData'
       :columns='columns'
       :filters='filters'
-      :addBtn="{label: '添加标签',onAdd: addTag}"
+      :addBtn="{label: '添加分类',onAdd: addCategory}"
       :onFilter="handleFilter"
       :onReset="handleReset"
       @handleEdit='handleEdit'
@@ -13,10 +13,10 @@
       @handelChangeSize='handelChangeSize'
       @handelChangePage='handelChangePage'
     />
-    <el-dialog title="添加标签" width='500px' :visible.sync="tagAddVisble">
-    <el-form :model="tagForm" ref='tagForm'>
-      <el-form-item label="标签名称" :label-width="formLabelWidth">
-        <el-input v-model="tagForm.name" :style="{width: '300px'}" autocomplete="off"></el-input>
+    <el-dialog title="添加分类名称" width='500px' :visible.sync="addVisible">
+    <el-form :model="categoryForm" ref='categoryForm'>
+      <el-form-item label="分类名称" :label-width="formLabelWidth">
+        <el-input v-model="categoryForm.name" :style="{width: '300px'}" autocomplete="off"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -29,25 +29,25 @@
 
 <script>
 import PageTable from "@/components/PageTable";
-// import { addTagName, getTagList, deleteTagName, updateTagName } from '@/service/tag'
+import { addCategory, getCategoryList } from '@/api/product'
 export default {
   data() {
     return {
-      tagForm: {
+      categoryForm: {
           name: '',
         },
       formLabelWidth: '100px',
-      tagAddVisble: false,
-      tagEditVisble: false,
+      addVisible: false,
+      editVisible: false,
       tbData: [],
       columns: [
         {
-          label: "标签id",
-          key: "tag_id"
+          label: "分类id",
+          key: "_id"
         },
         {
-          label: "标签名称",
-          key: "tagname"
+          label: "分类名称",
+          key: "categoryname"
         }
       ],
       filters: [
@@ -96,40 +96,39 @@ export default {
     handleReset() {
       console.log(22);
     },
-    getData(pageSize = 1, limit = 7) {
-      // getTagList({pageSize,limit}).then(res => {
-      //   if(res.code == 200) {
-      //     this.tbData = res.data
-      //   }
-      // })
+    getData() {
+      getCategoryList({}).then(res => {
+        if(res.code == 200) {
+          this.tbData = res.data
+        }
+      })
     },
-    addTag() {
-      this.tagAddVisble = true;
+    addCategory() {
+      this.addVisible = true;
     },
     handleAddOk() {
-      this.$refs['tagForm'].validate(valid => {
+      this.$refs['categoryForm'].validate(valid => {
         if(valid) {
-          console.log(this.tagForm.name)
           const param = {
-            tagname: this.tagForm.name
+            categoryname: this.categoryForm.name
           }
-          // addTagName(param).then(res => {
-          //   if(res.code == 200) {
-          //     this.tagAddVisble = false
-          //     this.getData()
-          //   }
-          // })
+          addCategory(param).then(res => {
+            if(res.code == 200) {
+              this.addVisible = false
+              this.getData()
+            }
+          })
         } else {
           console.log('err')
         }
       })
     },
      handleAddCancel() {
-      this.tagAddVisble = false
-      this.$refs['tagForm'].resetFields()
+      this.addVisible = false
+      this.$refs['categoryForm'].resetFields()
     },
     editTag() {
-      this.tagEditVisble = true
+      this.editVisible = true
     },
     handleEdit() {
       // updateTagName(params).then(res => {

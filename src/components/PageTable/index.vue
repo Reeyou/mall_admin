@@ -101,13 +101,11 @@
               @click.native="tableEdit(scope.row._id)"
               type="primary"
               size="small"
-              :disabled="role !== 'admin'"
             >编辑</el-button>
             <el-button
               @click.native="tableDelete(scope.row._id)"
               type="danger"
               size="small"
-              :disabled="role !== 'admin'"
             >删除</el-button>
           </template>
         </el-table-column>
@@ -172,7 +170,7 @@ export default {
     }
   },
   created() {
-    this.role = JSON.parse(localStorage.getItem('userinfo')).role
+    // this.role = JSON.parse(localStorage.getItem('userinfo')).role
   },
   mounted() {
     // console.log(this.dataFilters)

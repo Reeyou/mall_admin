@@ -42,11 +42,15 @@
 </template>
 
 <script>
+import {createSku} from '../../api/product'
 import UploadImg from "@/components/UploadImg";
 export default {
   name: 'sku',
   components: {
     UploadImg
+  },
+  props: {
+    spuId: String
   },
   data() {
     return {
@@ -54,6 +58,11 @@ export default {
       skuData: JSON.parse(localStorage.getItem('allSkuData')) || [],
       width: 1080,
       skuColumns: [
+        {
+          label: "skuId",
+          key: "skuId",
+          width: 400
+        },
         {
           label: "颜色",
           key: "color",
@@ -125,28 +134,38 @@ export default {
       this.visible = true
     },
     handleInitSku() {
+      this.$emit('handleSku')
       this.$refs["skuForm"].validate(valid => {
         if (valid) {
           this.visible = true
           const {color,version,price,num,subPics} = this.skuForm
           const params = {
+            spuId: this.spuId,
             color,
             version,
             price,
             num,
             subPics
           }
+          console.log(params)
           this.$refs["skuForm"].resetFields();
-          let allSkuData = JSON.parse(localStorage.getItem('allSkuData')) || []
-          allSkuData.push(params)
-          localStorage.setItem('allSkuData',JSON.stringify(allSkuData))
+          let allSkuData = JSON.parse(localStorage.getItem('allSkuData')) || {skuId: '',skuList: []}
+          allSkuData.skuList.push(params)
+          console.log(allSkuData)
+          createSku(allSkuData).then(res => {
+            if(res.code == 200) {
+            allSkuData.skuId = res.data
+             localStorage.setItem('allSkuData',JSON.stringify(allSkuData))
+            }
+          })
+          
           this.skuData = JSON.parse(localStorage.getItem('allSkuData'))
+          console.log(this.skuData)
         }
       })
     },
     getImgURL(url) {
-      this.poster_src = url;
-      this.productForm.poster_src = url;
+      this.skuForm.subPics.push(url);
     }
   }
 };
