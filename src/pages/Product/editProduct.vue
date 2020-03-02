@@ -45,12 +45,18 @@
         />
       </el-form-item>
       <el-form-item label="商品详情图" prop="detailPic">
-        <UploadImg
+        <el-upload
           action="/api/upload"
-          @getImgURL="getDetailPicUrl"
-          :pic='detailPic_src'
-          v-if="detailPic_src.length > 0"
-        />
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :file-list="detailPicList"
+          :on-remove="handleRemove"
+          :on-change="getDetailPicUrl">
+          <i class="el-icon-plus"></i>
+        </el-upload>
+        <el-dialog :visible.sync="dialogVisible">
+          <img width="100%" :src="dialogImageUrl" alt="">
+        </el-dialog>
       </el-form-item>
     </el-form>
     <!-- sku -->
@@ -76,7 +82,15 @@
         <el-input v-model="skuForm.num" placeholder="请输入商品库存" />
       </el-form-item>
       <el-form-item label="商品副图" prop="subPics">
-        <UploadImg action="/api/upload" @getImgURL="getSkuImgUrl" />
+        <el-upload
+          action="/api/upload"
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :file-list="skuPicList"
+          :on-remove="handleRemove"
+          :on-change="getSkuImgUrl">
+          <i class="el-icon-plus"></i>
+        </el-upload>
       </el-form-item>
     </el-form>
     <el-button class="btn" @click="handleInitSku" icon="ios-add" type="primary">生成商品sku</el-button>
@@ -101,8 +115,12 @@ export default {
   },
   data() {
     return {
+      dialogImageUrl: '',
+      dialogVisible: false,
       value: '',
       pic_src: '',
+      detailPicList: [],
+      skuPicList: [],
       detailPic_src: '',
       tagList: [],
       visible: false,
@@ -245,6 +263,13 @@ export default {
    this.getSku()
   },
   methods: {
+    handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      },
     getProductData() {
       const params = {
         spuId: this.spuId
@@ -261,7 +286,16 @@ export default {
             categoryId: spuData.categoryId,
           }
           this.pic_src = spuData.pic
-          this.detailPic_src = spuData.detailPic
+          
+          spuData.detailPic.forEach((item,index) => {
+            let picObj = {}
+            picObj.name=index
+            picObj.url=item
+            this.detailPicList.push(picObj)
+            // console.log(this.detailPicList)
+          })
+          console.log(this.detailPicList)
+          // this.detailPicList = spuData.detailPic
           this.categoryList.map((item,index) => {
             if(item._id == spuData.categoryId) {
               this.value = item.categoryname
@@ -276,7 +310,6 @@ export default {
       }
       getSku(params).then(res => {
         if(res.code == 200) {
-          console.log(res.data[0].skuList)
           this.skuData = res.data[0].skuList
           if(this.skuData) {
             this.visible = true

@@ -55,7 +55,17 @@
         <UploadImg action="/api/upload" @getImgURL="getPicUrl" />
       </el-form-item>
       <el-form-item label="商品详情图" prop="detailPic">
-        <UploadImg action="/api/upload" @getImgURL="getDetailPicUrl" />
+        <el-upload
+          action="/api/upload"
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :on-change="getDetailPicUrl">
+          <i class="el-icon-plus"></i>
+        </el-upload>
+        <el-dialog :visible.sync="dialogVisible">
+          <img width="100%" :src="dialogImageUrl" alt="">
+        </el-dialog>
       </el-form-item>
     </el-form>
     <!-- sku -->
@@ -81,7 +91,14 @@
         <el-input v-model="skuForm.num" placeholder="请输入商品库存" />
       </el-form-item>
       <el-form-item label="商品副图" prop="subPics">
-        <UploadImg action="/api/upload" @getImgURL="getSkuImgUrl" />
+        <el-upload
+          action="/api/upload"
+          list-type="picture-card"
+          :on-preview="handlePictureCardPreview"
+          :on-remove="handleRemove"
+          :on-change="getSkuImgUrl">
+          <i class="el-icon-plus"></i>
+        </el-upload>
       </el-form-item>
     </el-form>
     <el-button class="btn" @click="handleInitSku" icon="ios-add" type="primary">生成商品sku</el-button>
@@ -112,6 +129,8 @@ export default {
   },
   data() {
     return {
+      dialogImageUrl: '',
+      dialogVisible: false,
       value: "",
       childValue: "",
       tagList: [],
@@ -123,6 +142,7 @@ export default {
       changeCategoryVisible: false,
       categoryListData: [],
       spuId: "",
+      detailPics: [],
       productForm: {
         spuId: "",
         name: "",
@@ -256,6 +276,13 @@ export default {
     //   }
     //   getSku(params).then()
     // },
+     handleRemove(file, fileList) {
+        console.log(file, fileList);
+      },
+      handlePictureCardPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+      },
     skuTableVisible() {
       if (this.skuData.length == 0) return;
       this.visible = true;
@@ -313,11 +340,17 @@ export default {
       // this.pic = url;
       this.productForm.pic = url;
     },
-    getDetailPicUrl(url) {
-      this.productForm.detailPic = url;
+    getDetailPicUrl(file,fileList) {
+      if(file.response) {
+        this.productForm.detailPic.push(file.response.data)
+      }
+    
     },
-    getSkuImgUrl(url) {
-      this.skuForm.subPics.push(url);
+    getSkuImgUrl(file) {
+      if(file.response) {
+        this.detailPics.push(file.response.data)
+        this.skuForm.subPics.push(file.response.data);
+      }
     },
     changeCategoryName(_id, categoryId) {
       // this.productForm.categoryId = _id
