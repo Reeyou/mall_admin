@@ -1,22 +1,21 @@
 <template>
   <div class="addContent">
     <div class="title">
-      <h2>商品新增</h2>
+      <h2>商品编辑</h2>
     </div>
-    <label class="label">商品属性</label>
+    <label class='label'>商品属性</label>
     <el-form
       ref="productForm"
       :model="productForm"
       :rules="productRule"
       label-width="100px"
       class="addForm"
-      label-position="left"
-    >
+      label-position="left">
       <el-form-item label="商品id" prop="spuId">
-        <el-input v-model="productForm.spuId" placeholder="请输入商品id" />
+        <el-input v-model="productForm.spuId" placeholder="请输入商品id"/>
       </el-form-item>
       <el-form-item label="标题" prop="name">
-        <el-input v-model="productForm.name" placeholder="请输入商品名称" />
+        <el-input v-model="productForm.name" placeholder="请输入商品名称"/>
       </el-form-item>
       <el-form-item label="商品描述" prop="desc">
         <el-input
@@ -27,35 +26,31 @@
         />
       </el-form-item>
       <el-form-item label="分类" prop="categoryId">
-        <el-select style="width:200px" v-model="value" class="tagList">
+        <el-select style="width:200px" v-model='value' class='tagList'>
           <el-option
             v-for="(item,index) in categoryList"
             :value="item.categoryname"
             :key="index"
             :label="item.categoryname"
-            @click.native="changeCategoryName(item._id,item.categoryId)"
-          >{{ item.categoryname }}</el-option>
-        </el-select>
-        <el-select
-          style="width:200px"
-          v-model="childValue"
-          v-show="changeCategoryVisible"
-          class="tagList"
-        >
-          <el-option
-            v-for="(item,index) in categoryChildList"
-            :value="item.categoryname"
-            :key="index"
-            :label="item.categoryname"
-            @click.native="changeCategoryChildName(item._id)"
+            @click.native='changeCategoryName(item._id)'
           >{{ item.categoryname }}</el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="商品主图" prop="pic">
-        <UploadImg action="/api/upload" @getImgURL="getPicUrl" />
+        <UploadImg
+          action="/api/upload"
+          @getImgURL="getPicUrl"
+          :pic='pic_src'
+          v-if="pic_src.length > 0"
+        />
       </el-form-item>
       <el-form-item label="商品详情图" prop="detailPic">
-        <UploadImg action="/api/upload" @getImgURL="getDetailPicUrl" />
+        <UploadImg
+          action="/api/upload"
+          @getImgURL="getDetailPicUrl"
+          :pic='detailPic_src'
+          v-if="detailPic_src.length > 0"
+        />
       </el-form-item>
     </el-form>
     <!-- sku -->
@@ -86,7 +81,6 @@
     </el-form>
     <el-button class="btn" @click="handleInitSku" icon="ios-add" type="primary">生成商品sku</el-button>
     <PageTable
-      v-show='visible'
       :tbData='skuData'
       :columns='skuColumns'
     />
@@ -96,14 +90,9 @@
 
 <script>
 import PageTable from "@/components/Page/pageTable";
-import {
-  getCategoryList,
-  createSku,
-  getSku,
-  addProduct
-} from "../../api/product";
+import {getCategoryList,createSku,getSku,addProduct,getProduct} from '../../api/product'
 import UploadImg from "@/components/UploadImg";
-import Sku from "./sku";
+import Sku from './sku'
 export default {
   components: {
     UploadImg,
@@ -112,24 +101,23 @@ export default {
   },
   data() {
     return {
-      value: "",
-      childValue: "",
+      value: '',
+      pic_src: '',
+      detailPic_src: '',
       tagList: [],
       visible: false,
-      width: 1080,
+       width: 1080,
+      spuData: {},
       skuData: [],
       categoryList: [],
-      categoryChildList: [],
-      changeCategoryVisible: false,
-      categoryListData: [],
-      spuId: "",
+      spuId: this.$route.query.spuId,
       productForm: {
         spuId: "",
         name: "",
         desc: "",
         pic: "",
         detailPic: [],
-        categoryId: ""
+        categoryId: "",
       },
       productRule: {
         spuId: [
@@ -138,7 +126,7 @@ export default {
             message: "商品id不能为空",
             trigger: "blur"
           }
-        ]
+        ],
         // name: [
         //   {
         //     required: true,
@@ -171,8 +159,13 @@ export default {
       },
       skuColumns: [
         {
+          label: "商品id",
+          prop: "_id",
+          width: 100
+        },
+        {
           label: "skuId",
-          prop: "skuId",
+          prop: "_id",
           width: 100
         },
         {
@@ -246,104 +239,109 @@ export default {
     };
   },
   created() {
-    this.getCategoryList();
-    this.skuTableVisible();
+   this.getCategoryList()
+  
+   this.getProductData()
+   this.getSku()
   },
   methods: {
-    // getSku() {
-    //   const params = {
-    //     spuId: this.spuId
-    //   }
-    //   getSku(params).then()
-    // },
-    skuTableVisible() {
-      if (this.skuData.length == 0) return;
-      this.visible = true;
+    getProductData() {
+      const params = {
+        spuId: this.spuId
+      }
+      getProduct(params).then(res => {
+        if(res.code == 200) {
+          let spuData = res.data[0]
+          this.productForm = {
+            spuId: spuData.spuId,
+            name: spuData.name,
+            desc: spuData.desc,
+            pic: spuData.pic,
+            detailPic: spuData.detailPic,
+            categoryId: spuData.categoryId,
+          }
+          this.pic_src = spuData.pic
+          this.detailPic_src = spuData.detailPic
+          this.categoryList.map((item,index) => {
+            if(item._id == spuData.categoryId) {
+              this.value = item.categoryname
+            }
+          })
+        }
+      })
+    },
+    getSku() {
+      const params = {
+        spuId: this.spuId
+      }
+      getSku(params).then(res => {
+        if(res.code == 200) {
+          console.log(res.data[0].skuList)
+          this.skuData = res.data[0].skuList
+          if(this.skuData) {
+            this.visible = true
+          }
+        }
+      })
     },
     handleInitSku() {
-      this.$refs["productForm"].validate(valid => {
-        if (valid) {
-          this.spuId = this.productForm.spuId;
-          console.log(this.spuId);
-        }
-      });
+       this.$refs["productForm"].validate(valid => {
+         if(valid) {
+           this.spuId = this.productForm.spuId
+         }
+       })
       this.$refs["skuForm"].validate(valid => {
         if (valid) {
-          this.visible = true;
-          const { color, version, price, num, subPics } = this.skuForm;
+          this.visible = true
+          const {color,version,price,num,subPics} = this.skuForm
           const params = {
             color,
             version,
             price,
             num,
             subPics
-          };
+          }
           this.$refs["skuForm"].resetFields();
-          let data = {skuList: []}
-          data.spuId = this.spuId;
-          data.skuList.push(params);
-          createSku(data).then(res => {
-            if (res.code == 200) {
-              // sessionStorage.removeItem("allSkuData")
-              // sessionStorage.setItem("allSkuData", data);
-              // let allSkuData = sessionStorage.getItem("allSkuData");
-              console.log(data)
-              this.skuData = data.skuList
-              console.log(this.skuData);
+          let allSkuData = JSON.parse(localStorage.getItem('allSkuData')) || {spuId: this.spuId,skuList: []}
+          allSkuData.spuId = this.spuId
+          allSkuData.skuList.push(params)
+          createSku(allSkuData).then(res => {
+            if(res.code == 200) {
+              allSkuData.skuId = res.data
+             localStorage.setItem('allSkuData',JSON.stringify(allSkuData))
             }
-          });
-
+          })
           
+          // this.skuData = JSON.parse(localStorage.getItem('allSkuData'))
+          // console.log(this.skuData)
         }
-      });
+      })
     },
     getCategoryList() {
       getCategoryList().then(res => {
-        if (res.code == 200) {
-          this.categoryListData = res.data.list;
-          res.data.list.map((i, index) => {
-            if (i.type == "1") {
-              this.categoryList.push(i);
-            }
-          });
+        if(res.code == 200) {
+          this.categoryList = res.data.list
         }
-      });
+      })
     },
     getPicUrl(url) {
       // this.pic = url;
-      this.productForm.pic = url;
+      this.productForm.pic = url
     },
     getDetailPicUrl(url) {
-      this.productForm.detailPic = url;
+      this.productForm.detailPic = url
     },
     getSkuImgUrl(url) {
       this.skuForm.subPics.push(url);
     },
-    changeCategoryName(_id, categoryId) {
-      // this.productForm.categoryId = _id
-      this.changeCategoryVisible = true;
-      this.categoryChildList = [];
-      this.categoryListData.map((i, index) => {
-        if (i.type == "2" && String(_id) == String(i.categoryId)) {
-          this.categoryChildList.push(i);
-        }
-      });
-    },
-    changeCategoryChildName(val) {
-      this.productForm.categoryId = val;
+    changeCategoryName(val) {
+      this.productForm.categoryId = val
     },
     // 提交
     handleSubmit() {
       this.$refs["productForm"].validate(valid => {
         if (valid) {
-          const {
-            spuId,
-            name,
-            desc,
-            pic,
-            detailPic,
-            categoryId
-          } = this.productForm;
+          const {spuId,name,desc,pic,detailPic,categoryId} = this.productForm
           const params = {
             spuId,
             name,
@@ -351,18 +349,18 @@ export default {
             pic,
             detailPic,
             categoryId
-          };
+          }
           addProduct(params).then(res => {
-            if (res.code == 200) {
+            if(res.code == 200) {
               // this.$Message.success("添加成功!")
             } else {
               // this.$Message.error("添加失败!");
             }
-          });
+          })
         }
       });
     },
-     handleEdit(scope) {
+    handleEdit(scope) {
 
     },
     handleDelete(scope) {
@@ -373,5 +371,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "./index.scss";
+@import './index.scss';
 </style>

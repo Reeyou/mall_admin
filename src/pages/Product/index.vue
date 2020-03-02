@@ -17,44 +17,58 @@
 </template>
 
 <script>
-import PageTable from "@/components/PageTable";
-// import { getArticleList } from '@/service/article'
+import PageTable from "@/components/Page";
+import { getProductList, getCategoryList } from '@/api/product'
 export default {
   data() {
     return {
       tbData: [],
       columns: [
         {
-          label: "文章标题",
-          key: "title",
-          width: 400
-        },
-        {
-          label: "文章描述",
-          key: "desc",
-          width: 400
-        },
-        {
-          label: "封面图",
-          key: "poster",
-          width: 300
-          // render: params => {
-          //   return (
-          //     <div class="action">
-          //       <img src={params} />
-          //     </div>
-          //   );
-          // }
-        },
-        {
-          label: "文章分类",
-          key: "tag",
+          label: "商品id",
+          prop: "spuId",
           width: 160
         },
         {
+          label: "分类id",
+          prop: "categoryId",
+          width: 160
+        },
+        {
+          label: "商品名称",
+          prop: "name",
+          width: 300
+        },
+        {
+          label: "商品描述",
+          prop: "desc",
+          width: 400,
+        },
+        {
+          label: "商品主图",
+          prop: "pic",
+          width: 120,
+          type: "pic"
+        },
+        {
+          label: "商品详情图",
+          prop: "detailPic",
+          width: 300,
+          type: "detailPic"
+        },
+        {
           label: "创建时间",
-          key: "create_time",
+          prop: "create_time",
           width: 200
+        },
+        {
+          label: "操作",
+          fixed: 'right',
+          width: 140,
+          handle: [
+            {icon: 'el-icon-edit', type:'primary',clickFun: this.handleEdit },
+            {icon: 'el-icon-delete', type:'danger',clickFun: this.handleDelete },
+          ]
         }
       ],
       filters: [
@@ -92,8 +106,14 @@ export default {
     this.getData()
   },
   methods: {
-    handleEdit(id) {
-      console.log(id)
+    handleEdit(scope) {
+      this.$router.push({
+                path: '/editProduct',
+                query: {
+                  spuId: scope.spuId
+                }
+              })
+      console.log(scope.spuId)
     },
     handleDelete(id) {
       console.log(id)
@@ -115,10 +135,17 @@ export default {
     addProduct() {
       this.$router.push("/addProduct");
     },
-    getData(pageSize = 1, limit = 10) {
-      // getArticleList({pageSize,limit}).then(res => {
-      //   this.tbData = res.data
+    getData() {
+      // getCategoryList().then(res => {
+      //   if(res.code == 200) {
+      //     this.tbData = res.data
+      //   }
       // })
+      getProductList().then(res => {
+        console.log(res.productList)
+        this.tbData = res.data.list
+        console.log(this.tbData)
+      })
     },
     editArticle(val) {
       console.log(val)

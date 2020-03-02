@@ -20,3 +20,21 @@ export async function createSku(params) {
     }
   })
 }
+
+export async function addProduct(params) {
+  return request('/api/admin/addProduct', {
+    method: 'POST',
+    body: {
+      ...params
+    }
+  })
+}
+export async function getProductList(params) {
+  return request('/api/admin/getProductList')
+}
+export async function getProduct(params) {
+  return request(`/api/admin/getProduct?${formatParam(params)}`)
+}
+export async function getSku(params) {
+  return request(`/api/admin/getSku?${formatParam(params)}`)
+}

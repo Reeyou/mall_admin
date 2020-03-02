@@ -13,10 +13,10 @@
       />
     </div>
     <div class="poster-preview" v-if="uploadStatus">
-      <img :src="poster_src" class="poster" alt="封面图片" />
+      <img :src="renderPic" class="poster" alt="封面图片" /> 
       <div class="preview-icon">
-        <el-icon class="el-icon-picture-outline icon" @click='handlePreview'></el-icon>
-        <el-icon class="el-icon-delete icon" @click='handleDelete'/>
+        <el-icon class="el-icon-picture-outline icon" @click.native='handlePreview'></el-icon>
+        <el-icon class="el-icon-delete icon" @click.native='handleDelete'/>
       </div>
     </div>
   </div>
@@ -26,14 +26,26 @@
 import dataURLtoBlob from "@/utils/dataURLtoBlob";
 import { instance } from '@/utils/request'
 export default {
-  props: ['action'],
+  props: ['action', 'pic'],
   data() {
     return {
       poster_src: "",
       uploadStatus: false,
       files: '',
-      imgData: ''
+      imgData: '',
+      test: 'http://localhost:3000/images/1583113535009.jpg'
     };
+  },
+  computed: {
+    renderPic() {
+      return this.poster_src ? this.poster_src : this.pic
+    }
+  },
+  created() {
+    if(this.pic) {
+      this.uploadStatus = true
+    }
+    console.log("pic:" + this.pic)
   },
   methods: {
     upload(e) {
@@ -44,7 +56,6 @@ export default {
       let reader = new FileReader()
       reader.readAsDataURL(self.files); // 转换为base64
       reader.onloadend = function() {
-        console.log(this.result)
         self.poster_src = this.result
         self.uploadStatus = true
 
@@ -63,6 +74,7 @@ export default {
 
     },
     handleDelete() {
+      console.log(1)
       this.poster_src = ''
       this.files = ''
       this.uploadStatus = false

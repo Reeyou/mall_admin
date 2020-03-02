@@ -44,7 +44,7 @@ export const routers = [
           path: '/productManage',
           name: 'productManage',
           hidden: false,
-          meta: { title: '商品管理', icon: 'el-icon-reading' },
+          meta: { title: '商品列表', icon: 'el-icon-reading' },
           component: () => import('@/pages/Product'),
         },
         {
@@ -55,10 +55,17 @@ export const routers = [
           component: () => import('@/pages/Product/addProduct.vue'),
         },
         {
+          path: '/editProduct',
+          name: 'editProduct',
+          hidden: true,
+          meta: { title: '编辑商品' },
+          component: () => import('@/pages/Product/editProduct.vue'),
+        },
+        {
           path: '/categoryManage',
           name: 'categoryManage',
           hidden: false,
-          meta: { title: '分类管理', icon: 'el-icon-collection-tag' },
+          meta: { title: '分类列表', icon: 'el-icon-collection-tag' },
           component: () => import('@/pages/Category')
         }
       ]

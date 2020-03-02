@@ -9,6 +9,11 @@ import axios from 'axios'
 import '@/assets/css/reset.css'
 import '@/assets/iconfont/iconfont.css'
 import store from './store'
+import * as filters from '@/utils/filters'
+ 
+Object.keys(filters).forEach(key => {
+   Vue.filter(key, filters[key])
+})
 
 Vue.config.productionTip = false
 
