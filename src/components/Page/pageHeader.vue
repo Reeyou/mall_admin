@@ -11,6 +11,9 @@
     <div class="addBtn2" v-if="addBtn2">
       <el-button type="primary" icon="el-icon-plus" @click="addBtn2.onAdd">{{addBtn2.label}}</el-button>
     </div>
+    <div class="addBtn2" v-if="addBtn3">
+      <el-button type="primary" icon="el-icon-plus" @click="addBtn3.onAdd">{{addBtn3.label}}</el-button>
+    </div>
   </div>
 </template>
 
@@ -20,6 +23,7 @@ export default {
   props: [
     "addBtn",
     "addBtn2",
+    "addBtn3",
     "title",
   ],
   data() {

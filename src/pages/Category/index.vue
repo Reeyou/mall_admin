@@ -5,14 +5,15 @@
       title="分类列表"
       :addBtn="{label: '添加分类',onAdd: addCategory}"
       :addBtn2="{label: '添加子分类',onAdd: addCategoryChild}"
+      :addBtn3="{label: '添加三级分类',onAdd: addCategoryChild2}"
     />
     <!-- 筛选内容 -->
-    <PageFilter
+    <!-- <PageFilter
       :filters="filters"
       @onFilter="handleFilter"
       @onReset="handleReset"
-    />
-    <el-table
+    />-->
+    <!-- <el-table
       :data="tbData"
       style="width: 100%;margin-bottom: 20px;"
       row-key="_id"
@@ -22,7 +23,8 @@
       <el-table-column prop="categoryId" label="id" sortable width="180"></el-table-column>
       <el-table-column prop="name" label="姓名" sortable width="180"></el-table-column>
       <el-table-column prop="categoryname" label="名字"></el-table-column>
-    </el-table>
+    </el-table>-->
+    <el-tree :data="allData" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
 
     <el-dialog title="添加分类名称" width="500px" :visible.sync="addVisible">
       <el-form :model="categoryForm" ref="categoryForm">
@@ -40,7 +42,7 @@
         <el-form-item label="分类" prop="categoryId">
           <el-select style="width:200px" v-model="value" class="tagList">
             <el-option
-              v-for="(item,index) in categoryList"
+              v-for="(item,index) in categoryList1"
               :value="item.categoryname"
               :key="index"
               :label="item.categoryname"
@@ -57,16 +59,113 @@
         <el-button type="primary" @click="handleAddChildOk">确 定</el-button>
       </div>
     </el-dialog>
+    <!-- 三级分类 -->
+    <el-dialog title="添三级分类" width="500px" :visible.sync="addChild2Visible">
+      <el-form :model="categoryChild2Form" ref="categoryChild2Form">
+        <el-form-item label="分类" prop="categoryId">
+          <el-select style="width:200px" v-model="value" class="tagList">
+            <el-option
+              v-for="(item,index) in categoryList1"
+              :value="item.categoryname"
+              :key="index"
+              :label="item.categoryname"
+              @click.native="selectCategory(item._id)"
+            >{{ item.categoryname }}</el-option>
+          </el-select>
+          <el-select style="width:200px" v-model="childValue" class="tagList">
+            <el-option
+              v-for="(item,index) in categoryList2"
+              :value="item.categoryname"
+              :key="index"
+              :label="item.categoryname"
+              @click.native="selectCategoryChild(item._id)"
+            >{{ item.categoryname }}</el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="分类名称" :label-width="formLabelWidth">
+          <el-input v-model="categoryChild2Form.name" :style="{width: '300px'}" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="子分类图片" prop="category_img">
+          <UploadImg action="/api/upload" @getImgURL="getPicUrl" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="handleAddChild2Cancel">取 消</el-button>
+        <el-button type="primary" @click="handleAddChild2Ok">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import PageFilter from "@/components/Page/pageFilter";
 import PageHeader from "@/components/Page/pageHeader";
+import UploadImg from "@/components/UploadImg";
 import { addCategory, getCategoryList } from "@/api/product";
 export default {
   data() {
     return {
+      data: [
+        {
+          label: "一级 1",
+          children: [
+            {
+              label: "二级 1-1",
+              children: [
+                {
+                  label: "三级 1-1-1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          label: "一级 2",
+          children: [
+            {
+              label: "二级 2-1",
+              children: [
+                {
+                  label: "三级 2-1-1"
+                }
+              ]
+            },
+            {
+              label: "二级 2-2",
+              children: [
+                {
+                  label: "三级 2-2-1"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          label: "一级 3",
+          children: [
+            {
+              label: "二级 3-1",
+              children: [
+                {
+                  label: "三级 3-1-1"
+                }
+              ]
+            },
+            {
+              label: "二级 3-2",
+              children: [
+                {
+                  label: "三级 3-2-1"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      defaultProps: {
+        children: "children",
+        label: "label"
+      },
       categoryForm: {
         name: ""
       },
@@ -74,11 +173,21 @@ export default {
         categoryId: "",
         name: ""
       },
+      categoryChild2Form: {
+        categoryId: "",
+        name: "",
+        category_img: ""
+      },
       value: "",
+      childValue: "",
+      allData: [],
       categoryList: [],
+      categoryList1: [],
+      categoryList2: [],
       formLabelWidth: "100px",
       addVisible: false,
       addChildVisible: false,
+      addChild2Visible: false,
       editVisible: false,
       loading: true,
       tbData: [],
@@ -148,6 +257,13 @@ export default {
     this.getData();
   },
   methods: {
+    handleNodeClick(data) {
+      console.log(data);
+    },
+    getPicUrl(url) {
+      // this.pic = url;
+      this.categoryChild2Form.category_img = url;
+    },
     handelChangePage(pageSize) {
       this.getData(pageSize);
     },
@@ -163,25 +279,72 @@ export default {
     selectCategory(val) {
       this.categoryChildForm.categoryId = val;
     },
+    selectCategoryChild(val) {
+      this.categoryChild2Form.categoryId = val;
+    },
     getData() {
       getCategoryList().then(res => {
         if (res.code == 200) {
           this.loading = false;
           let categoryChildData = [];
-          this.tbData = []
-          this.categoryList = []
+          this.tbData = [];
+          this.categoryList1 = [];
+          this.categoryList2 = [];
+
           res.data.list.map((i, index) => {
-            if (i.type == '1') {
-              this.categoryList.push(i)
-              i.children = []
+            if (i.type == "1") {
+              this.categoryList1.push(i);
+              i.children = [];
+
               res.data.list.map((j, index) => {
-                if(j.type == '2' && String(i._id) == String(j.categoryId)) {
+                if (j.type == "2" && String(i._id) == String(j.categoryId)) {
+                  j.children = [];
+                  this.categoryList2.push(j);
                   i.children.push(j);
+                  res.data.list.map((k, index) => {
+                    if (
+                      k.type == "3" &&
+                      String(j._id) == String(k.categoryId)
+                    ) {
+                      j.children.push(k);
+                    }
+                  });
                 }
-              })
-              // this.tbData = []
+              });
               this.tbData.push(i);
+              console.log(this.tbData);
             }
+          });
+          this.tbData.map((item, index) => {
+            let dataObj = {}
+            if (item.categoryId == 0) {
+              dataObj.categoryId = item.categoryId;
+              dataObj.label = item.categoryname;
+              if(item.children) {
+                dataObj.children = []
+                item.children.map((child, childIndex) => {
+                  let childObj = {}
+                  childObj.categoryId = child.categoryId
+                  childObj.label = child.categoryname
+                  dataObj.children.push(childObj)
+
+                  if(child.children) {
+                    console.log(child.children)
+                    let child2Obj = {}
+                     child.children.map((child2, index) => {
+                      child2Obj.label = child2.categoryname
+                      child2Obj.categoryId = child2.categoryId
+
+                      dataObj.children[childIndex].children = []
+                      dataObj.children[childIndex].children.push(child2Obj)
+                    })
+                  }
+                })
+              }
+            }
+
+            this.allData.push(dataObj);
+            // console.log(this.allData);
           });
         }
       });
@@ -192,12 +355,15 @@ export default {
     addCategoryChild() {
       this.addChildVisible = true;
     },
+    addCategoryChild2() {
+      this.addChild2Visible = true;
+    },
     handleAddOk() {
       this.$refs["categoryForm"].validate(valid => {
         if (valid) {
           const param = {
             categoryname: this.categoryForm.name,
-            type: '1'
+            type: "1"
           };
           addCategory(param).then(res => {
             if (res.code == 200) {
@@ -216,7 +382,27 @@ export default {
           const param = {
             categoryId: this.categoryChildForm.categoryId,
             categoryname: this.categoryChildForm.name,
-            type: '2'
+            type: "2"
+          };
+          addCategory(param).then(res => {
+            if (res.code == 200) {
+              this.addChildVisible = false;
+              this.getData();
+            }
+          });
+        } else {
+          console.log("err");
+        }
+      });
+    },
+    handleAddChild2Ok() {
+      this.$refs["categoryChild2Form"].validate(valid => {
+        if (valid) {
+          const param = {
+            categoryId: this.categoryChild2Form.categoryId,
+            categoryname: this.categoryChild2Form.name,
+            categoryImg: this.categoryChild2Form.category_img,
+            type: "3"
           };
           addCategory(param).then(res => {
             if (res.code == 200) {
@@ -237,6 +423,9 @@ export default {
     editTag() {
       this.editVisible = true;
     },
+    handleAddChild2Cancel() {
+      this.addChild2Visible = false;
+    },
     handleEdit() {
       // updateTagName(params).then(res => {
       // })
@@ -254,7 +443,8 @@ export default {
   },
   components: {
     PageFilter,
-    PageHeader
+    PageHeader,
+    UploadImg
   }
 };
 </script>
