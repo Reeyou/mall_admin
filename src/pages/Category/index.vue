@@ -13,19 +13,13 @@
       @onFilter="handleFilter"
       @onReset="handleReset"
     />-->
-    <!-- <el-table
-      :data="tbData"
-      style="width: 100%;margin-bottom: 20px;"
-      row-key="_id"
-      border
-      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
-    >
-      <el-table-column prop="categoryId" label="id" sortable width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" sortable width="180"></el-table-column>
-      <el-table-column prop="categoryname" label="名字"></el-table-column>
-    </el-table>-->
-    <el-tree :data="allData" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
 
+    <div :style="{width: '300px',float: 'left'}">
+      <el-tree :data="allData" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
+    </div>
+    <div :style="{width: '600px',float: 'left'}">
+    <CategoryInfo :categoryInfoData="categoryInfoData" />
+    </div>
     <el-dialog title="添加分类名称" width="500px" :visible.sync="addVisible">
       <el-form :model="categoryForm" ref="categoryForm">
         <el-form-item label="分类名称" :label-width="formLabelWidth">
@@ -74,7 +68,7 @@
           </el-select>
           <el-select style="width:200px" v-model="childValue" class="tagList">
             <el-option
-              v-for="(item,index) in categoryList2"
+              v-for="(item,index) in categoryList2Selected"
               :value="item.categoryname"
               :key="index"
               :label="item.categoryname"
@@ -101,67 +95,11 @@
 import PageFilter from "@/components/Page/pageFilter";
 import PageHeader from "@/components/Page/pageHeader";
 import UploadImg from "@/components/UploadImg";
+import CategoryInfo from "./CategoryInfo";
 import { addCategory, getCategoryList } from "@/api/product";
 export default {
   data() {
     return {
-      data: [
-        {
-          label: "一级 1",
-          children: [
-            {
-              label: "二级 1-1",
-              children: [
-                {
-                  label: "三级 1-1-1"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: "一级 2",
-          children: [
-            {
-              label: "二级 2-1",
-              children: [
-                {
-                  label: "三级 2-1-1"
-                }
-              ]
-            },
-            {
-              label: "二级 2-2",
-              children: [
-                {
-                  label: "三级 2-2-1"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: "一级 3",
-          children: [
-            {
-              label: "二级 3-1",
-              children: [
-                {
-                  label: "三级 3-1-1"
-                }
-              ]
-            },
-            {
-              label: "二级 3-2",
-              children: [
-                {
-                  label: "三级 3-2-1"
-                }
-              ]
-            }
-          ]
-        }
-      ],
       defaultProps: {
         children: "children",
         label: "label"
@@ -181,9 +119,11 @@ export default {
       value: "",
       childValue: "",
       allData: [],
+      categoryInfoData: [],
       categoryList: [],
       categoryList1: [],
       categoryList2: [],
+      categoryList2Selected: [],
       formLabelWidth: "100px",
       addVisible: false,
       addChildVisible: false,
@@ -258,7 +198,8 @@ export default {
   },
   methods: {
     handleNodeClick(data) {
-      console.log(data);
+      // console.log(data)
+      this.categoryInfoData = data
     },
     getPicUrl(url) {
       // this.pic = url;
@@ -278,75 +219,78 @@ export default {
     },
     selectCategory(val) {
       this.categoryChildForm.categoryId = val;
+      this.categoryList2Selected = []
+      this.categoryList2.map((item,index) => {
+        item.categoryId == val ? this.categoryList2Selected.push(item) : null
+      })
+      console.log(this.categoryList2Selected)
     },
     selectCategoryChild(val) {
       this.categoryChild2Form.categoryId = val;
+      
     },
     getData() {
       getCategoryList().then(res => {
         if (res.code == 200) {
           this.loading = false;
           let categoryChildData = [];
-          this.tbData = [];
-          this.categoryList1 = [];
-          this.categoryList2 = [];
-
-          res.data.list.map((i, index) => {
-            if (i.type == "1") {
-              this.categoryList1.push(i);
-              i.children = [];
-
-              res.data.list.map((j, index) => {
-                if (j.type == "2" && String(i._id) == String(j.categoryId)) {
-                  j.children = [];
-                  this.categoryList2.push(j);
-                  i.children.push(j);
-                  res.data.list.map((k, index) => {
-                    if (
-                      k.type == "3" &&
-                      String(j._id) == String(k.categoryId)
-                    ) {
-                      j.children.push(k);
-                    }
-                  });
+          this.tbData = res.data.list;
+          this.renderCategory()
+        }
+      })
+    },
+    renderCategory() {
+      this.allData = []
+      this.categoryList1 = [];
+      this.categoryList2 = [];
+      let initData = []
+      this.tbData.map((i, index) => {
+        if (i.type == "1") {
+          this.categoryList1.push(i);
+          i.children = [];
+          this.tbData.map((j, index) => {
+            if (j.type == "2" && String(i._id) == String(j.categoryId)) {
+              this.categoryList2.push(j);
+              j.children = [];
+              i.children.push(j);
+              this.tbData.map((k, index) => {
+                if (k.type == "3" && String(j._id) == String(k.categoryId)) {
+                  
+                  j.children.push(k);
                 }
               });
-              this.tbData.push(i);
-              console.log(this.tbData);
             }
           });
-          this.tbData.map((item, index) => {
-            let dataObj = {}
-            if (item.categoryId == 0) {
-              dataObj.categoryId = item.categoryId;
-              dataObj.label = item.categoryname;
-              if(item.children) {
-                dataObj.children = []
-                item.children.map((child, childIndex) => {
-                  let childObj = {}
-                  childObj.categoryId = child.categoryId
-                  childObj.label = child.categoryname
-                  dataObj.children.push(childObj)
-
-                  if(child.children) {
-                    console.log(child.children)
-                    let child2Obj = {}
-                     child.children.map((child2, index) => {
-                      child2Obj.label = child2.categoryname
-                      child2Obj.categoryId = child2.categoryId
-
-                      dataObj.children[childIndex].children = []
-                      dataObj.children[childIndex].children.push(child2Obj)
-                    })
-                  }
-                })
-              }
-            }
-
-            this.allData.push(dataObj);
-            // console.log(this.allData);
-          });
+          initData.push(i);
         }
+      });
+      initData.map((item, index) => {
+        let dataObj = {};
+        if (item.categoryId == 0) {
+          dataObj.categoryId = item.categoryId;
+          dataObj.label = item.categoryname;
+          if (item.children) {
+            dataObj.children = [];
+            item.children.map((child, childIndex) => {
+              let childObj = {};
+              childObj.categoryId = child.categoryId;
+              childObj.label = child.categoryname;
+              dataObj.children.push(childObj);
+              if (child.children) {
+                
+                dataObj.children[childIndex].children = [];
+                child.children.map((child2, _index) => {
+                  let child2Obj = {} 
+                  child2Obj.label = child2.categoryname;
+                  child2Obj.categoryId = child2.categoryId;
+                  child2Obj.categoryImg = child2.categoryImg
+                  dataObj.children[childIndex].children.push(child2Obj);
+                });
+              }
+            });
+          }
+        }
+        this.allData.push(dataObj);
       });
     },
     addCategory() {
@@ -406,7 +350,7 @@ export default {
           };
           addCategory(param).then(res => {
             if (res.code == 200) {
-              this.addChildVisible = false;
+              this.addChild2Visible = false;
               this.getData();
             }
           });
@@ -444,7 +388,8 @@ export default {
   components: {
     PageFilter,
     PageHeader,
-    UploadImg
+    UploadImg,
+    CategoryInfo
   }
 };
 </script>
