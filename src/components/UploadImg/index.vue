@@ -1,8 +1,8 @@
 <template>
   <div class="upload">
-    <div class="upload-container">
+    <div class="upload_container">
       <div class="icon">
-        <el-icon type="ios-add" class="el-icon-plus"></el-icon>
+        <el-icon type="ios-add" class="el-icon-plus add-icon"></el-icon>
         <p>上传图片</p>
       </div>
       <input
@@ -19,6 +19,9 @@
         <el-icon class="el-icon-delete icon" @click.native='handleDelete'/>
       </div>
     </div>
+    <el-dialog :visible.sync="dialogVisible">
+      <img width="100%" :src="dialogImgUrl" alt="">
+    </el-dialog>
   </div>
 </template>
 
@@ -33,6 +36,8 @@ export default {
       uploadStatus: false,
       files: '',
       imgData: '',
+      dialogVisible: false,
+      dialogImgUrl: '',
       test: 'http://localhost:3000/images/1583113535009.jpg'
     };
   },
@@ -71,7 +76,8 @@ export default {
       };
     },
     handlePreview() {
-
+      this.dialogVisible = true
+      this.dialogImgUrl = this.pic
     },
     handleDelete() {
       console.log(1)
@@ -84,82 +90,6 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.upload {
-  width: 80px;
-  height: 80px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  text-align: center;
-  position: relative;
-  &-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    .icon {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      padding: 10px 0;
-      // display: none;
-      .add-icon {
-        font-size: 20px;
-      }
-      > p {
-        margin-bottom: 0;
-        font-size: 12px;
-        line-height: 13px;
-        color: #aaa;
-      }
-    }
-    > input {
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-    }
-  }
-  .poster-preview {
-    width: 100%;
-    height: 100%;
-    z-index: -999;
-    .poster {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      border-radius: 6px;
-    }
-    &:hover {
-      .preview-icon {
-        display: block;
-      }
-    }
-    .preview-icon {
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      position: absolute;
-      top: 0;
-      left: 0;
-      display: none;
-      padding:  20px 0;
-      box-sizing: border-box;
-      border-radius: 6px;
-      .icon {
-        display: inline-block;
-        font-size: 20px;
-        color: #eee;
-        &:first-child {
-          margin-right: 10px;
-        }
-        &:hover {
-          cursor: pointer;
-        }
-      }
-    }
-  }
-}
+<style lang="scss">
+@import './index.scss';
 </style>

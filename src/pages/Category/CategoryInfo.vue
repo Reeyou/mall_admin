@@ -1,46 +1,31 @@
 <template>
   <div>
     <el-form label-width="80px" :model="categoryInfo">
-      <el-form-item label="名称">
-        <el-input v-model="categoryInfo.label"></el-input>
+      <el-form-item label="分类名称">
+        <el-input v-model="categoryInfo.categoryname"></el-input>
       </el-form-item>
-      <el-form-item label="分类">
-        <el-select style="width:200px" v-model="value" class="tagList">
-          <el-option
-            v-for="(item,index) in categoryList"
-            :value="item.categoryname"
-            :key="index"
-            :label="item.categoryname"
-            @click.native="changeCategoryName(item._id,item.categoryId)"
-          >{{ item.categoryname }}</el-option>
-        </el-select>
-        <el-select
-          style="width:200px"
-          v-model="childValue"
-          v-show="changeCategoryVisible"
-          class="tagList"
-        >
-          <el-option
-            v-for="(item,index) in categoryChildList"
-            :value="item.categoryname"
-            :key="index"
-            :label="item.categoryname"
-            @click.native="changeCategoryChildName(item._id)"
-          >{{ item.categoryname }}</el-option>
-        </el-select>
+      <el-form-item label="所属分类">
+        <category-module
+          :categoryList="categoryList"
+          :categoryCur="categoryCur"
+          @handle-select="handleSelect"
+        />
       </el-form-item>
-      <el-form-item label="分类logo" prop="categoryImg">
+      <el-form-item v-if="categoryInfo.categoryImg" label="分类图片" prop="categoryImg">
         <UploadImg
           action="/api/upload"
           @getImgURL="getPicUrl"
           :pic='categoryInfo.categoryImg'
-          v-if="categoryInfo.categoryImg.length > 0"
         />
       </el-form-item>
       <el-form-item label="分类类型">
         <el-input v-model="categoryInfo.type"></el-input>
       </el-form-item>
     </el-form>
+    <div class="btn">
+      <el-button type="primary">提交</el-button>
+      <el-button type="default">重置</el-button>
+    </div>
   </div>
 </template>
 
@@ -48,63 +33,73 @@
 import {
   getCategoryList
 } from "../../api/product";
+import UploadImg from "@/components/UploadImg";
+import categoryModule from '@/module/categoryModule'
 export default {
-  props: ['categoryInfoData'],
+  props: {
+    categoryInfoData: {
+      type: Object,
+      default: () => {
+        return {
+          label: "",
+          categoryId: ""
+        }
+      }
+    },
+    categoryList: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    categoryCur: Object
+  },
+  components: {
+    UploadImg,
+    "category-module": categoryModule
+  },
   data() {
     return {
       value: "",
+      initId: '',
+      initChildId: "",
       childValue: "",
+      child2Value: "",
       pic_src: "",
-      changeCategoryVisible: false,
-      categoryList: [],
-      categoryChildList: [],
+      childVisible: false,
+      child2Visible: true,
       categoryListData: [],
       newData: [],
       categoryInfo: {
-          label: '1',
-          categoryId: '',
-          categoryImg: '',
-          // type: ''
+          label: "",
+          categoryId: "",
         }
     };
   },
   created() {
-    this.getCategoryList()
+    this.categoryInfo = this.categoryInfoData
+    
   },
   watch: {
     categoryInfoData: {
-      handler: (val, newVal) => {
-        this.categoryInfo = val
-      },
       immediate:true,
-      deep:true
+      handler(val) {
+        this.categoryInfo = val
+        val.categoryId == 0 ? this.value = val.label : null
+        val.categoryId == 0 ? this.initId = val._id : null
+        val.type == 2 ? this.childValue = val.label : null
+        val.type == 2 ? this.initChildId = val._id : null
+        val.type == 3 ? this.child2Value = val.label : null
+        this.childVisible = val.type == 2 || val.type == 3 ? true : false
+        this.child2Visible = val.type == 3 ? true : false
+      }
     }
   },
   methods: {
-    getCategoryList() {
-      getCategoryList().then(res => {
-        if (res.code == 200) {
-          this.categoryListData = res.data.list;
-          res.data.list.map((i, index) => {
-            if (i.type == "1") {
-              this.categoryList.push(i);
-            }
-          });
-        }
-      });
-    },
-    changeCategoryName(_id, categoryId) {
-      // this.productForm.categoryId = _id
-      this.changeCategoryVisible = true;
-      this.categoryChildList = [];
-      this.categoryListData.map((i, index) => {
-        if (i.type == "2" && String(_id) == String(i.categoryId)) {
-          this.categoryChildList.push(i);
-        }
-      });
+    handleSelect(data) {
+      console.log(data)
     },
     getPicUrl(url) {
-      // this.pic = url;
       this.categoryInfo.pic = url
     },
     changeCategoryChildName(val) {
@@ -113,3 +108,8 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+  .btn {
+    margin-left: 80px;
+  }
+</style>

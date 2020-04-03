@@ -1,0 +1,85 @@
+.upload {
+  width: 80px;
+  height: 80px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  text-align: center;
+  position: relative;
+  &_container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    &:hover {
+      cursor: pointer;
+    }
+    .icon {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      padding: 10px 0;
+      .add-icon {
+        font-size: 20px;
+        &:hover {
+          cursor: pointer
+        }
+      }
+      > p {
+        margin-bottom: 0;
+        font-size: 12px;
+        line-height: 13px;
+        color: #aaa;
+      }
+    }
+    > input {
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
+  .poster-preview {
+    width: 100%;
+    height: 100%;
+    z-index: -999;
+    .poster {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: 6px;
+    }
+    &:hover {
+      .preview-icon {
+        display: block;
+      }
+    }
+    .preview-icon {
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: none;
+      padding:  20px 0;
+      box-sizing: border-box;
+      border-radius: 6px;
+      .icon {
+        display: inline-block;
+        font-size: 20px;
+        color: #eee;
+        &:first-child {
+          margin-right: 10px;
+        }
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
