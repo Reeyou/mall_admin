@@ -12,6 +12,22 @@ export async function addCategory(params) {
     }
   })
 }
+export async function updateCategory(params) {
+  return request('/api/admin/updateCategory', {
+    method: 'POST',
+    body: {
+      ...params
+    }
+  })
+}
+export async function deleteCategory(params) {
+  return request('/api/admin/deleteCategory', {
+    method: 'POST',
+    body: {
+      ...params
+    }
+  })
+}
 export async function createSku(params) {
   return request('/api/admin/createSku', {
     method: 'POST',
@@ -29,6 +45,7 @@ export async function addProduct(params) {
     }
   })
 }
+
 export async function getProductList(params) {
   return request('/api/admin/getProductList')
 }

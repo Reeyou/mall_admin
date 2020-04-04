@@ -80,7 +80,7 @@ export default {
       this.dialogImgUrl = this.pic
     },
     handleDelete() {
-      console.log(1)
+      this.$emit("handleDelete")
       this.poster_src = ''
       this.files = ''
       this.uploadStatus = false

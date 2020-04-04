@@ -1,9 +1,9 @@
 <template>
   <div class="categoty" :style="stylePadding">
     <div class="category-item" v-for="(node,index) in data" :key="index">
-      <p @click="((e) => {nodeItemClick(e,node)})">
-        <i class="el-icon-caret-right" v-if="!node.visible&&node.children" @click="nodeClick(node)"></i>
-        <i v-if="node.visible&&node.children" class="el-icon-caret-bottom" @click="nodeClick(node)"></i>
+      <p @click="nodeItemClick(node)">
+        <i class="el-icon-caret-right" v-if="node.children&&node.children.length>0&&!node.visible" @click="nodeOpenClick(node,index)"></i>
+        <i v-if="node.children&&node.children.length>0&&node.visible" class="el-icon-caret-bottom" @click="nodeCloseClick(node,index)"></i>
         <span>{{node.categoryname}}</span>
       </p>
       <el-button v-if="level<3" size="mini" icon="el-icon-plus add" @click="nodeAdd(node)"></el-button>
@@ -12,14 +12,12 @@
           class="add-input"
           placeholder="请输入分类名称"
           v-model="node.value"
-          @change="((val) => {nodeChange(val,node)})"
         ></el-input>
         <el-button size="mini" icon="el-icon-close" @click="nodeCancel(node)"></el-button>
         <el-button
           size="mini"
           type="primary"
           icon="el-icon-check"
-          :loading="node.loading"
           @click="nodeSubmit(node)"
         ></el-button>
       </div>
@@ -51,7 +49,10 @@ export default {
     return {
       value: "",
       expanded: false,
-      node: null
+      node: null,
+      activeIndex: 0,
+      currentIndex: null,
+      isActive: true
     }
   },
   computed: {
@@ -67,24 +68,31 @@ export default {
     }
   },
   methods: {
-    nodeItemClick (e,node) {
-      const dom = e.currentTarget
-      console.log(dom.parentElement.parentElement.childNodes)
+    nodeItemClick (node) {
+      console.log(node)
       bus.$emit("node-click", node)
       // this.$emit("handle-click", node)
     },
-    nodeClick (node) {
+    nodeOpenClick (node,index) {
       this.$set(node, "visible", node.visible ? false : true)
-      this.$set(node, "prevVisible", node.prevVisible ? true : false)
-      // this.node.visible = false
+      this.currentIndex = index
+      console.log(this.currentIndex);
+    },
+    nodeCloseClick (node,index) {
+      this.$set(node, "visible", node.visible ? false : true)
+      this.currentIndex = index + 100
+      console.log(this.currentIndex);
+      
     },
     nodeAdd (node) {
-      this.$set(node, "addVisible", node.addVisible ? false : true)
-    },
-    nodeChange (val, node) {
-      this.$set(node, "value", val)
+      if(node.type == "1") {
+        this.$set(node, "addVisible", node.addVisible ? false : true)
+      } else {
+        bus.$emit("add-child-category", node)
+      }
     },
     nodeSubmit (node) {
+      // this.$emit("handleSubmit", node)
       this.$emit("handleSubmit", node)
       this.$set(node, "loading", true)
     },

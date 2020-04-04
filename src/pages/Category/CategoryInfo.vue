@@ -4,18 +4,15 @@
       <el-form-item label="分类名称">
         <el-input v-model="categoryInfo.categoryname"></el-input>
       </el-form-item>
-      <el-form-item label="所属分类">
-        <category-module
-          :categoryList="categoryList"
-          :categoryCur="categoryCur"
-          @handle-select="handleSelect"
-        />
+      <el-form-item v-show="this.categoryInfo&&this.categoryInfo.type!='1'" label="所属分类">
+        <el-input disabled v-model="currentname"></el-input>
       </el-form-item>
-      <el-form-item v-if="categoryInfo.categoryImg" label="分类图片" prop="categoryImg">
+      <el-form-item v-if="categoryInfo.type == '3'" label="分类图片" prop="categoryImg">
         <UploadImg
           action="/api/upload"
           @getImgURL="getPicUrl"
           :pic='categoryInfo.categoryImg'
+          @handleDelete="handleDeleteImg"
         />
       </el-form-item>
       <el-form-item label="分类类型">
@@ -23,8 +20,9 @@
       </el-form-item>
     </el-form>
     <div class="btn">
-      <el-button type="primary">提交</el-button>
+      <el-button type="primary" :loading="loading" @click="onChange">提交修改</el-button>
       <el-button type="default">重置</el-button>
+      <el-button type="danger" @click="onDelete">删除</el-button>
     </div>
   </div>
 </template>
@@ -52,7 +50,8 @@ export default {
         return []
       }
     },
-    categoryCur: Object
+    categoryCur: Object,
+    loading: Boolean
   },
   components: {
     UploadImg,
@@ -60,38 +59,35 @@ export default {
   },
   data() {
     return {
-      value: "",
-      initId: '',
-      initChildId: "",
-      childValue: "",
-      child2Value: "",
       pic_src: "",
       childVisible: false,
       child2Visible: true,
       categoryListData: [],
-      newData: [],
       categoryInfo: {
-          label: "",
+          categoryImg: "",
           categoryId: "",
-        }
+        },
+        currentname: "",
     };
   },
   created() {
-    this.categoryInfo = this.categoryInfoData
-    
+    this.categoryInfo = JSON.parse( JSON.stringify(this.categoryInfoData))
   },
   watch: {
     categoryInfoData: {
       immediate:true,
       handler(val) {
         this.categoryInfo = val
-        val.categoryId == 0 ? this.value = val.label : null
-        val.categoryId == 0 ? this.initId = val._id : null
-        val.type == 2 ? this.childValue = val.label : null
-        val.type == 2 ? this.initChildId = val._id : null
-        val.type == 3 ? this.child2Value = val.label : null
-        this.childVisible = val.type == 2 || val.type == 3 ? true : false
-        this.child2Visible = val.type == 3 ? true : false
+        this.categoryList.map((item,index) => {
+          if(item._id == this.categoryInfo.categoryId) {
+              this.currentname = item.categoryname
+            }
+          item.children.map((_item,_index) => {
+            if(_item._id == this.categoryInfo.categoryId) {
+              this.currentname = _item.categoryname
+            }
+          })
+        })
       }
     }
   },
@@ -99,8 +95,17 @@ export default {
     handleSelect(data) {
       console.log(data)
     },
+    handleDeleteImg() {
+      this.categoryInfo.categoryImg = ""
+    },
+    onChange() {
+      this.$emit("handleChange",this.categoryInfo)
+    },
+    onDelete() {
+      this.$emit("handleDelete",this.categoryInfo._id)
+    },
     getPicUrl(url) {
-      this.categoryInfo.pic = url
+      this.categoryInfo.categoryImg = url
     },
     changeCategoryChildName(val) {
       this.categoryInfo.categoryId = val;
