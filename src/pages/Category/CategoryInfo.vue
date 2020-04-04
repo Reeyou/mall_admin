@@ -1,10 +1,10 @@
 <template>
   <div>
-    <el-form label-width="80px" :model="categoryInfo">
-      <el-form-item label="分类名称">
+    <el-form label-width="80px" ref='form' :model="categoryInfo" :rules="rules">
+      <el-form-item label="分类名称" prop="categoryname">
         <el-input v-model="categoryInfo.categoryname"></el-input>
       </el-form-item>
-      <el-form-item v-show="this.categoryInfo&&this.categoryInfo.type!='1'" label="所属分类">
+      <el-form-item v-if="Number(categoryInfo.type) > 1" label="所属分类">
         <el-input disabled v-model="currentname"></el-input>
       </el-form-item>
       <el-form-item v-if="categoryInfo.type == '3'" label="分类图片" prop="categoryImg">
@@ -15,9 +15,9 @@
           @handleDelete="handleDeleteImg"
         />
       </el-form-item>
-      <el-form-item label="分类类型">
+      <!-- <el-form-item label="分类类型">
         <el-input v-model="categoryInfo.type"></el-input>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <div class="btn">
       <el-button type="primary" :loading="loading" @click="onChange">提交修改</el-button>
@@ -64,14 +64,31 @@ export default {
       child2Visible: true,
       categoryListData: [],
       categoryInfo: {
-          categoryImg: "",
-          categoryId: "",
-        },
-        currentname: "",
+        categoryImg: "",
+        categoryId: "",
+      },
+      currentname: "",
+      rules: {
+        categoryname: [
+          {
+            required: true,
+            message: "分类名称不能为空",
+            trigger: "blur"
+          }
+        ],
+        categoryImg: [
+          {
+            required: true,
+            message: "分类图片不能为空",
+            trigger: "blur"
+          }
+        ]
+      }
     };
   },
   created() {
     this.categoryInfo = JSON.parse( JSON.stringify(this.categoryInfoData))
+    
   },
   watch: {
     categoryInfoData: {

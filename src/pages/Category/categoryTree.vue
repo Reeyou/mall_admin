@@ -1,10 +1,10 @@
 <template>
-  <div class="categoty" :style="stylePadding">
-    <div class="category-item" v-for="(node,index) in data" :key="index">
-      <p @click="nodeItemClick(node)">
+  <div class="categoty" >
+    <div class="category-item"  v-for="(node,index) in treeData" :key="node._id">
+      <p @click="nodeItemClick(node,index)" :class="{'active': node._id == current}" :style="stylePadding">
         <i class="el-icon-caret-right" v-if="node.children&&node.children.length>0&&!node.visible" @click="nodeOpenClick(node,index)"></i>
         <i v-if="node.children&&node.children.length>0&&node.visible" class="el-icon-caret-bottom" @click="nodeCloseClick(node,index)"></i>
-        <span>{{node.categoryname}}</span>
+        <span >{{node.categoryname}}</span>
       </p>
       <el-button v-if="level<3" size="mini" icon="el-icon-plus add" @click="nodeAdd(node)"></el-button>
       <div class="input-container" v-show="node.addVisible">
@@ -22,7 +22,7 @@
         ></el-button>
       </div>
       <el-collapse-transition>
-        <category-tree v-show="node.visible" :increment="level" :data="node.children"></category-tree>
+        <category-tree v-show="node.visible" :increment="level" :current="current" :treeData="node.children"></category-tree>
       </el-collapse-transition>
     </div>
   </div>
@@ -34,7 +34,7 @@ export default {
   name: "categoryTree",
   componentName: "categoryTree",
   props: {
-    data: {
+    treeData: {
       type: Array,
       default: () => {
         return []
@@ -43,15 +43,14 @@ export default {
     increment: {
       type: Number,
       default: 0
-    }
+    },
+    current: String
   },
   data () {
     return {
       value: "",
       expanded: false,
       node: null,
-      activeIndex: 0,
-      currentIndex: null,
       isActive: true
     }
   },
@@ -63,25 +62,20 @@ export default {
     },
     stylePadding () {
       return {
-        "padding-left": (this.level - 1) * 16 + "px"
+        "padding-left": (this.level - 1) * 30 + "px"
       }
     }
   },
   methods: {
-    nodeItemClick (node) {
-      console.log(node)
+    nodeItemClick (node,index) {
       bus.$emit("node-click", node)
-      // this.$emit("handle-click", node)
+      // this.$emit("handleClick", node)
     },
     nodeOpenClick (node,index) {
       this.$set(node, "visible", node.visible ? false : true)
-      this.currentIndex = index
-      console.log(this.currentIndex);
     },
     nodeCloseClick (node,index) {
       this.$set(node, "visible", node.visible ? false : true)
-      this.currentIndex = index + 100
-      console.log(this.currentIndex);
       
     },
     nodeAdd (node) {
@@ -107,6 +101,7 @@ export default {
 
 <style lang="scss" scoped>
 $defaultColor: #606266;
+$bgColor: #409EFF;
 .category {
   max-width: 500px;
   &-item {
@@ -120,6 +115,8 @@ $defaultColor: #606266;
         font-size: 20px;
         vertical-align: middle;
         color: $defaultColor;
+        margin-left: -6px;
+        margin-right: -4px;
         &:hover {
           cursor: pointer;
         }
@@ -128,6 +125,14 @@ $defaultColor: #606266;
         font-size: 14px;
         color: $defaultColor;
         vertical-align: middle;
+      }
+    }
+    .active {
+      > i {
+        color: $bgColor
+      }
+      > span {
+        color: $bgColor
       }
     }
     .add {

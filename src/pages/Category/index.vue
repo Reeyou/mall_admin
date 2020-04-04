@@ -3,11 +3,15 @@
     <!-- 标题 -->
     <PageHeader title="分类列表" :addBtn="{label: '添加分类',onAdd: addCategory}" />
     <div class="category-tree">
-      <CategoryTree @handleSubmit="handleSubmit" :data="initData" />
+      <CategoryTree
+        @handleSubmit="handleSubmit"
+        :current="currentId"
+        :treeData="initData"
+      />
     </div>
     <div class="category-info">
       <CategoryInfo
-        v-if="Object.keys(categoryInfoData).length > 0"
+        ref="categoryInfo"
         :categoryInfoData="categoryInfoData"
         :categoryList="initData"
         :categoryCur="categoryInfoData"
@@ -71,6 +75,7 @@ export default {
       submitData: null,
       node: null,
       changeLoading: false,
+      currentId: "",
       rules: {
         categoryname: [
           {
@@ -93,6 +98,7 @@ export default {
     this.getData();
     bus.$on("node-click", (node) => {
       this.categoryInfoData = node
+      this.currentId = node._id
     })
     bus.$on("add-child-category", (data) => {
       this.node = data
@@ -119,6 +125,9 @@ export default {
     //     }
     //   })
     // },
+    // handleClick(data) {
+    //   this.currentId = data._id
+    // },
     handleSubmit (data) {
       const param = {
         categoryname: data.value,
@@ -133,16 +142,22 @@ export default {
     },
     handleChange(data) {
       this.changeLoading = true
-      console.log(data)
-      updateCategory(data).then(res => {
-        this.changeLoading = false
-        if(res.code == 200) {
-          this.$message({
-            type: 'success',
-            message: res.msg
-          });
+      this.$refs.categoryInfo.$refs.form.validate(valid => {
+        if(valid) {
+          updateCategory(data).then(res => {
+            this.changeLoading = false
+            if(res.code == 200) {
+              this.$message({
+                type: 'success',
+                message: res.msg
+              });
+            }
+          })
+        } else {
+          this.changeLoading = false
         }
       })
+      
     },
     handleDelete (_id) {
       this.$confirm('是否删除该分类?', '提示', {
@@ -240,10 +255,10 @@ export default {
 
 <style lang="scss" scoped>
 .category-tree {
-  width: 300px;
+  width: 270px;
   float: left;
-  padding-left: 30px;
-  border-right: 1px solid #eee;
+  padding-left: 40px;
+  border-right: 1px solid #ddd;
 }
 .category-info {
   width: 470px;
