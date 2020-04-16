@@ -20,6 +20,13 @@ export const routers = [
       component: () => import('@/pages/Login/register')
     },
     {
+      path: '/test',
+      name: 'test',
+      hidden: true,
+      meta: { title: 'test' },
+      component: () => import('@/pages/test')
+    },
+    {
       path: "/",
       name: 'Layout',
       component: Layout,

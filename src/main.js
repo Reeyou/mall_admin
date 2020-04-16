@@ -9,10 +9,17 @@ import axios from 'axios'
 import '@/assets/css/reset.css'
 import '@/assets/iconfont/iconfont.css'
 import store from './store'
-import * as filters from '@/utils/filters'
+import * as filters from '@/filters'
+import * as directives from "@/directives"
  
+// 全局过滤器
 Object.keys(filters).forEach(key => {
    Vue.filter(key, filters[key])
+})
+
+// 全局指令
+Object.keys(directives).forEach(key => {
+  Vue.use(directives[key].install)
 })
 
 Vue.config.productionTip = false

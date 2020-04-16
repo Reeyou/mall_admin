@@ -1,13 +1,17 @@
 <template>
-  <div class='menuBar' :style="{width: menuWidth}">
-    <div class="system-info">
-      <img class="logo" src="@/assets/logo_bg.jpg" alt />
+  <div class='menuBar'>
+    <div class="system-info" :style="{'background-color': theme.themeColor}">
+      <img v-if="!isCollapse" class="logo" src="@/assets/logo_bg.jpg" alt />
+      <h1 v-else>R</h1>
     </div>
      <el-menu
-      class="el-menu-vertical-demo"
       router
       :default-active="currentRouter"
       @select='handleChange'
+      :collapse="isCollapse"
+      :background-color="theme.themeColor"
+      :text-color="theme.textColor"
+      :active-text-color="theme.activeTextColor"
     >
       <template
         v-for="item in routers"
@@ -19,7 +23,7 @@
           :index="item.children[0].path"
           :key="item.name"
         >
-          <i v-if="item.children[0].meta.icon" :class="item.children[0].meta.icon"></i>
+          <i :style="{'color': theme.textColor}" v-if="item.children[0].meta.icon" :class="item.children[0].meta.icon"></i>
           <span slot="title">{{item.children[0].meta.title}}</span>
         </el-menu-item>
         <!-- 多个子元素 -->
@@ -45,7 +49,6 @@ import isMobile from '@/utils/isMobile'
   export default {
     data() {
       return {
-        menuWidth: '240px',
         routers: routers,
         currentRouter: sessionStorage.getItem('currentRouter') ? sessionStorage.getItem('currentRouter') : '/',
       }
@@ -65,8 +68,9 @@ import isMobile from '@/utils/isMobile'
     },
     computed: {
       ...mapState({
-        menuVisible: state => state.menuVisible,
-        isMobile: state => state.isMobile
+        isCollapse: state => state.isCollapse,
+        isMobile: state => state.isMobile,
+        theme: state => state.theme
       })
     },
     methods: {
@@ -89,28 +93,25 @@ import isMobile from '@/utils/isMobile'
 
 <style lang="scss" scoped>
 .menuBar {
-  position: fixed;
-  // width: 240px;
   height: 100vh;
-  box-shadow: 7px 0 60px rgba(0,0,0,.05);
-  background: #fff;
-  z-index: 100;
+  border-right: 1px solid #eee;
+  overflow-y: hidden;
+  overflow-x: hidden;
   .system-info {
-    text-align: left;
-    padding: 0 20px 0 4px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     border-bottom: 1px solid #eee;
-    z-index: 999;
-    > i {
-      font-size: 30px;
-      position: absolute;
-      top: 50%;
-      right: 20px;
-      margin-top: -15px;
-      color: #000;
-    }
-    .pc {
-
+    > h1 {
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: #333;
+      background-color: #e5e5e5;
+      border-radius: 50%;
+      padding: 6px 10px;
     }
     .logo {
       height: 64px;
@@ -120,8 +121,15 @@ import isMobile from '@/utils/isMobile'
   }
   .el-menu {
     border-right: none;
-    box-shadow: 0.46875rem 0 6px rgba(4,9,20,.02);
+    min-height: 100%;
   }
+  .el-menu::-webkit-scrollbar { width: 0 !important }
+  // .el-menu-item i,.el-submenu__title i {
+  //   color: #85b1b1;
+  // }
+  // .el-menu-item.is-active i {
+  //   color: #fff;
+  // }
   .el-menu-slide {
     border-right: none;
     i {

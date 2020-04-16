@@ -3,9 +3,9 @@
     <!-- 筛选内容 -->
     <div class="filter">
       <el-form :inline="true" class="demo-form-inline">
-        <el-form-item v-for="(filter, index) in dataFilters" :key="index" :label="filter.label">
+        <el-form-item v-for="(filter, index) in dataFilters" :key="index">
           <!-- 单选框 -->
-          <el-input v-if="filter.type === 'Input'" placeholder="请输入" v-model="filter.value"></el-input>
+          <el-input v-if="filter.type === 'Input'" :placeholder="filter.label" v-model="filter.value"></el-input>
           <!-- 多选框 -->
           <el-select v-if="filter.type === 'Select'" placeholder="请选择" v-model="value">
             <el-option
@@ -28,8 +28,8 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleFilter">筛选</el-button>
-          <el-button type="primary" @click="handleReset">重置</el-button>
+          <el-button size="mini" type="primary" @click="handleFilter">筛选</el-button>
+          <el-button size="mini" type="primary" @click="handleReset">重置</el-button>
           <!-- <div class='collapse'>
             <span>收起</span>
             <i class='iconfont icon-arrow_u'></i>

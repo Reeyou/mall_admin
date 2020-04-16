@@ -1,5 +1,6 @@
 export const SCREEN_WIDTH = "SCREEN_WIDTH"
-export const MENU_VISIBLE = "MENU_VISIBLE"
+export const IS_COLLAPSE = "IS_COLLAPSE"
+export const SLIDER_WIDTH = "SLIDER_WIDTH"
 export const IS_MOBILE = "IS_MOBILE"
 export const SAVE_TOKEN = "SAVE_TOKEN"
 export const LOG_OUT = "LOG_OUT"

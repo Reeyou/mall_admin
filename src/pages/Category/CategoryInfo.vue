@@ -32,7 +32,6 @@ import {
   getCategoryList
 } from "../../api/product";
 import UploadImg from "@/components/UploadImg";
-import categoryModule from '@/module/categoryModule'
 export default {
   props: {
     categoryInfoData: {
@@ -54,8 +53,7 @@ export default {
     loading: Boolean
   },
   components: {
-    UploadImg,
-    "category-module": categoryModule
+    UploadImg
   },
   data() {
     return {

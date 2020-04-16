@@ -1,104 +1,107 @@
 <template>
   <div>
-    <category-select-base
-      class="select"
-      :categoryname="category"
-      :categoryList="categoryList"
-      @on-select="onSelect"
-    />
-    <category-select-base
-      class="select"
-      v-show="category_child"
-      :categoryname="category_child"
-      :categoryList="categoryList_child"
-      @on-select="onSelect"
-    />
-    <category-select-base
-      class="select"
-      v-show="category__child"
-      :categoryname="category__child"
-      :categoryList="categoryList__child"
-      @on-select="onSelect"
-    />
+    <el-select style="width:120px" v-model="name" class="tagList">
+      <el-option
+        v-for="(item,index) in categoryList"
+        :value="item.categoryname"
+        :key="index"
+        :label="item.categoryname"
+        @click.native="categorySelect(item)"
+      >{{ item.categoryname }}</el-option>
+    </el-select>
+    <el-select style="width:120px" v-model="childName" class="tagList">
+      <el-option
+        v-for="(child_item,index) in childList"
+        :value="child_item.categoryname"
+        :key="index"
+        :label="child_item.categoryname"
+        @click.native="categoryChildSelect(child_item)"
+      >{{ child_item.categoryname }}</el-option>
+    </el-select>
+    <el-select style="width:120px" v-model="sub_childName" class="tagList">
+      <el-option
+        v-for="(sub_child_item,index) in sub_childList"
+        :value="sub_child_item.categoryname"
+        :key="index"
+        :label="sub_child_item.categoryname"
+        @click.native="categorySubChildSelect(sub_child_item)"
+      >{{ sub_child_item.categoryname }}</el-option>
+    </el-select>
   </div>
 </template>
 
 <script>
-import categorySelectBase from './categorySelectBase'
+import {
+  getCategoryList
+} from "../api/product";
 export default {
-  name: "categorySelect",
-  props: {
-    categoryList: {
-      type: Array,
-      default: []
-    },
-    categoryCur: Object
-  },
+  // props: {
+  //   categoryList: {
+  //     type: Array,
+  //     default: []
+  //   },
+  //   categoryname: String
+  // },
   data () {
     return {
-      category: "",
-      category_child: "",
-      category__child: "",
-      categoryList_child: [],
-      categoryList__child: [],
-      childrenList: []
+      categoryListData: [],
+      categoryList: [],
+      childList: [],
+      sub_childList: [],
+      name: '',
+      childName: '',
+      sub_childName: '',
     }
   },
   created () {
-    this._renderCategotyName(this.categoryCur)
+    this.getCategoryList()
   },
-  watch: {
-    categoryCur (val) {
-      this._renderCategotyName(val)
-    }
-  },
-  components: {
-    "category-select-base": categorySelectBase
+  computed: {
+
   },
   methods: {
-    onSelect (item) {
-      this.$emit("handle-select", item)
+    getCategoryList () {
+      getCategoryList().then(res => {
+        if (res.code == 200) {
+          this.categoryListData = res.data.list;
+          res.data.list.map((i, index) => {
+            if (i.type == "1") {
+              this.categoryList.push(i);
+            }
+          });
+        }
+      });
     },
-    _renderCategotyName (val) {
-      switch (val.type) {
-        case "1":
-          this.category = this.categoryCur.categoryname
-          this.category_child = ""
-          this.category__child = ""
-          break;
-        case "2":
-          this.category_child = this.categoryCur.categoryname
-          this.category__child = ""
-          break;
-        case "3":
-          this.category__child = this.categoryCur.categoryname
-          break;
-        default:
-          break;
-      }
-      this.categoryList.map((item, index) => {
-        if (val.categoryname == item.categoryname) {
-          this.categoryList_child = item.children
-          item.children.map((_item,_index) => {
-            this.childrenList.push(_item)
-          })
+    // 一级分类选择
+    categorySelect (data) {
+      this.childList = []
+      this.childName = ''
+      this.sub_childName = ''
+      this.categoryListData.map(child => {
+        if(data._id == child.categoryId) {
+          this.childList.push(child)
         }
       })
-      this.childrenList.map((_item, _index) => {
-        if (val.categoryname == _item.categoryname) {
-          this.categoryList__child = _item.children
+    },
+
+    // 二级分类选择
+    categoryChildSelect(data) {
+      this.sub_childList = []
+      this.sub_childName = ''
+      this.categoryListData.map(child => {
+        if(data._id == child.categoryId) {
+          this.sub_childList.push(child)
         }
       })
+    },
+
+    //三级分类选择
+    categorySubChildSelect(data) {
+      this.$emit("handleSelectCategory", data._id)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.select {
-  display: inline-block;
-  + .select {
-    margin-left: 10px;
-  }
-}
 </style>

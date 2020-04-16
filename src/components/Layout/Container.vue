@@ -1,15 +1,15 @@
 <template>
   <el-container class="layout-content">
     <!-- 左侧菜单 -->
-    <el-aside v-if='menuVisible' style='width: 240px' ref='slider' class='slider'>
+    <el-aside :style="{'width': sliderWidth}" ref='slider' class='slider'>
       <slot name="left"></slot>
     </el-aside>
     <!-- 右侧页面 -->
     <el-main>
       <!-- 面包屑 -->
-      <div class="bread">
+      <!-- <div class="bread">
         <Breadcrumb />
-      </div>
+      </div> -->
       <!-- 页面内容 -->
       <div class="content">
         <slot name="content"></slot>
@@ -25,7 +25,8 @@ import Breadcrumb from './Breadcrumb'
     computed: {
       ...mapState({
         screenWidth: state => state.screenWidth,
-        menuVisible: state => state.menuVisible
+        menuVisible: state => state.menuVisible,
+        sliderWidth: state => state.sliderWidth + 'px'
       }),
     },
     created() {
@@ -67,12 +68,8 @@ import Breadcrumb from './Breadcrumb'
     margin-top: 64px;
     .bread {
       width: 100%;
-      background: #fff;
       height: 60px;
       border-right: none;
-      border-bottom: 1px solid #eee;
-      // background: #fefefe;
-      // box-shadow: 0 1px 10px rgba(0,0,0,.04);
       display: flex;
       align-items: center;
       position: fixed;
@@ -80,7 +77,6 @@ import Breadcrumb from './Breadcrumb'
       padding-left: 30px;
     }
     .content {
-      margin-top: 60px;
       padding: 14px;
       height: calc(100% - 54px);
       box-sizing: border-box;

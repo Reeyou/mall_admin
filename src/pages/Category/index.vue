@@ -2,6 +2,8 @@
   <div>
     <!-- 标题 -->
     <PageHeader title="分类列表" :addBtn="{label: '添加分类',onAdd: addCategory}" />
+    <input v-model="message" v-focus>
+    <span>{{ message | capitalize }}</span>
     <div class="category-tree">
       <CategoryTree
         @handleSubmit="handleSubmit"
@@ -56,6 +58,7 @@ import {
 export default {
   data () {
     return {
+      message: "",
       categoryForm: {
         categoryname: "",
         categoryImg: ""

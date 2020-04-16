@@ -10,8 +10,7 @@
       :rules="productRule"
       label-width="100px"
       class="addForm"
-      label-position="left"
-    >
+      label-position="left">
       <el-form-item label="商品id" prop="spuId">
         <el-input v-model="productForm.spuId" placeholder="请输入商品id" />
       </el-form-item>
@@ -27,29 +26,7 @@
         />
       </el-form-item>
       <el-form-item label="分类" prop="categoryId">
-        <el-select style="width:200px" v-model="value" class="tagList">
-          <el-option
-            v-for="(item,index) in categoryList"
-            :value="item.categoryname"
-            :key="index"
-            :label="item.categoryname"
-            @click.native="changeCategoryName(item._id,item.categoryId)"
-          >{{ item.categoryname }}</el-option>
-        </el-select>
-        <el-select
-          style="width:200px"
-          v-model="childValue"
-          v-show="changeCategoryVisible"
-          class="tagList"
-        >
-          <el-option
-            v-for="(item,index) in categoryChildList"
-            :value="item.categoryname"
-            :key="index"
-            :label="item.categoryname"
-            @click.native="changeCategoryChildName(item._id)"
-          >{{ item.categoryname }}</el-option>
-        </el-select>
+        <category-module @handleSelectCategory="handleSelectCategory" />
       </el-form-item>
       <el-form-item label="商品主图" prop="pic">
         <UploadImg action="/api/upload" @getImgURL="getPicUrl" />
@@ -60,11 +37,12 @@
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove"
-          :on-change="getDetailPicUrl">
+          :on-change="getDetailPicUrl"
+        >
           <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
-          <img width="100%" :src="dialogImageUrl" alt="">
+          <img width="100%" :src="dialogImageUrl" alt />
         </el-dialog>
       </el-form-item>
     </el-form>
@@ -84,29 +62,9 @@
       <el-form-item label="版本号" prop="version">
         <el-input v-model="skuForm.version" placeholder="请输入版本号" />
       </el-form-item>
-      <el-form-item label="价格" prop="price">
-        <el-input v-model="skuForm.price" placeholder="请输入商品价格" />
-      </el-form-item>
-      <el-form-item label="库存" prop="num">
-        <el-input v-model="skuForm.num" placeholder="请输入商品库存" />
-      </el-form-item>
-      <el-form-item label="商品副图" prop="subPics">
-        <el-upload
-          action="/api/upload"
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove"
-          :on-change="getSkuImgUrl">
-          <i class="el-icon-plus"></i>
-        </el-upload>
-      </el-form-item>
     </el-form>
     <el-button class="btn" @click="handleInitSku" icon="ios-add" type="primary">生成商品sku</el-button>
-    <PageTable
-      v-show='visible'
-      :tbData='skuData'
-      :columns='skuColumns'
-    />
+    <PageTable v-show="visible" :tbData="skuData" :columns="skuColumns" />
     <el-button class="btn submit" @click=" handleSubmit" icon="ios-add" type="primary">提交</el-button>
   </div>
 </template>
@@ -121,13 +79,15 @@ import {
 } from "../../api/product";
 import UploadImg from "@/components/UploadImg";
 import Sku from "./sku";
+import CategoryModule from "@/module/categoryModule"
 export default {
   components: {
     UploadImg,
     Sku,
-    PageTable
+    PageTable,
+    "category-module": CategoryModule
   },
-  data() {
+  data () {
     return {
       dialogImageUrl: '',
       dialogVisible: false,
@@ -224,8 +184,8 @@ export default {
         {
           label: "操作",
           handle: [
-            {icon: 'el-icon-edit', type:'primary',clickFun: this.handleEdit },
-            {icon: 'el-icon-delete', type:'danger',clickFun: this.handleDelete },
+            { icon: 'el-icon-edit', type: 'primary', clickFun: this.handleEdit },
+            { icon: 'el-icon-delete', type: 'danger', clickFun: this.handleDelete },
           ]
         }
       ],
@@ -265,8 +225,7 @@ export default {
       }
     };
   },
-  created() {
-    this.getCategoryList();
+  created () {
     this.skuTableVisible();
   },
   methods: {
@@ -276,18 +235,21 @@ export default {
     //   }
     //   getSku(params).then()
     // },
-     handleRemove(file, fileList) {
-        console.log(file, fileList);
-      },
-      handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
-      },
-    skuTableVisible() {
+    handleRemove (file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePictureCardPreview (file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    handleSelectCategory(id) {
+      console.log(id)
+    },
+    skuTableVisible () {
       if (this.skuData.length == 0) return;
       this.visible = true;
     },
-    handleInitSku() {
+    handleInitSku () {
       this.$refs["productForm"].validate(valid => {
         if (valid) {
           this.spuId = this.productForm.spuId;
@@ -306,7 +268,7 @@ export default {
             subPics
           };
           this.$refs["skuForm"].resetFields();
-          let data = {skuList: []}
+          let data = { skuList: [] }
           data.spuId = this.spuId;
           data.skuList.push(params);
           createSku(data).then(res => {
@@ -319,54 +281,26 @@ export default {
               console.log(this.skuData);
             }
           });
-
-          
         }
       });
     },
-    getCategoryList() {
-      getCategoryList().then(res => {
-        if (res.code == 200) {
-          this.categoryListData = res.data.list;
-          res.data.list.map((i, index) => {
-            if (i.type == "1") {
-              this.categoryList.push(i);
-            }
-          });
-        }
-      });
-    },
-    getPicUrl(url) {
+    getPicUrl (url) {
       // this.pic = url;
       this.productForm.pic = url;
     },
-    getDetailPicUrl(file,fileList) {
-      if(file.response) {
+    getDetailPicUrl (file, fileList) {
+      if (file.response) {
         this.productForm.detailPic.push(file.response.data)
       }
-    
     },
-    getSkuImgUrl(file) {
-      if(file.response) {
+    getSkuImgUrl (file) {
+      if (file.response) {
         this.detailPics.push(file.response.data)
         this.skuForm.subPics.push(file.response.data);
       }
     },
-    changeCategoryName(_id, categoryId) {
-      // this.productForm.categoryId = _id
-      this.changeCategoryVisible = true;
-      this.categoryChildList = [];
-      this.categoryListData.map((i, index) => {
-        if (i.type == "2" && String(_id) == String(i.categoryId)) {
-          this.categoryChildList.push(i);
-        }
-      });
-    },
-    changeCategoryChildName(val) {
-      this.productForm.categoryId = val;
-    },
     // 提交
-    handleSubmit() {
+    handleSubmit () {
       this.$refs["productForm"].validate(valid => {
         if (valid) {
           const {
@@ -395,10 +329,10 @@ export default {
         }
       });
     },
-     handleEdit(scope) {
+    handleEdit (scope) {
 
     },
-    handleDelete(scope) {
+    handleDelete (scope) {
 
     }
   }
