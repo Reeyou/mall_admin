@@ -71,14 +71,14 @@ import isMobile from '@/utils/isMobile'
     },
     methods: {
        ...mapMutations([
-        'MENU_VISIBLE',
+        'IS_COLLAPSE',
         'IS_MOBILE'
       ]),
       handleChange() {
         if(isMobile()) {
         // 异步回调改变菜单 打开状态
         setTimeout(() => {
-          this.$store.commit('MENU_VISIBLE',false)
+          this.$store.commit('IS_COLLAPSE',false)
         },100)
         }
       },

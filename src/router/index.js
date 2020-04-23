@@ -51,7 +51,7 @@ export const routers = [
           path: '/productManage',
           name: 'productManage',
           hidden: false,
-          meta: { title: '商品列表', icon: 'el-icon-reading' },
+          meta: { title: '商品列表' },
           component: () => import('@/pages/Product'),
         },
         {
@@ -72,7 +72,7 @@ export const routers = [
           path: '/categoryManage',
           name: 'categoryManage',
           hidden: false,
-          meta: { title: '分类列表', icon: 'el-icon-collection-tag' },
+          meta: { title: '分类列表' },
           component: () => import('@/pages/Category')
         }
       ]

@@ -1,50 +1,100 @@
-.addContent {
+.product-prop {
   width: 100%;
-  box-sizing: border-box;
-  padding: 10px 30px 0 20px;
-  .title {
-    padding: 0 0 20px 0px;
-    h2 {
-      // border-bottom: none;
-      font-size: 20px;
+  display: flex;
+  justify-content: space-between;
+  .steps {
+    background: #fff;
+    width: 200px;
+    height: 500px;
+    position: fixed;
+    box-sizing: border-box;
+    padding: 20px;
+    display: flex;
+    border-radius: 8px;
+    .steps-progress {
+      width: 40px;
+      text-align: center;
+      > ul {
+        .num {
+          width: 40px;
+          height: 40px;
+          line-height: 40px;
+          border-radius: 50%;
+          background: #75788a;
+          color: #fff;
+        }
+        .line {
+          width: 2px;
+          margin: 0 auto;
+          height: 120px;
+          background: #75788a;
+        }
+      }
+    }
+    .step {
+      margin: 14px 0 0 16px;
+      h1 {
+        font-size: 12px;
+      }
+      ul {
+        margin-top: 18px;
+        li+li {
+          margin-top: 10px;
+        }
+      }
+    }
+  }
+  .content {
+    flex: 1;
+    background: #fff;
+    box-sizing: border-box;
+    padding: 10px 30px 0 20px;
+    margin-left: 218px;
+    border-radius: 8px;
+    .title {
+      padding: 10px 0 20px 0px;
+      h2 {
+        // border-bottom: none;
+        font-size: 20px;
+        font-weight: bold;
+      }
+      p {
+        font-size: 12px;
+        color: #aaa;
+        margin: 10px 0 20px 0;
+      }
+    }
+    .label {
+      font-size: 16px;
       font-weight: bold;
+      padding: 0 0 0 10px;
+      position: relative;
+      &:after {
+        position: absolute;
+        content: '';
+        width: 4px;
+        height: 100%;
+        background: #000;
+        top: 0;
+        left: 0;
+      }
     }
-    p {
-      font-size: 12px;
-      color: #aaa;
-      margin: 10px 0 20px 0;
+    .addForm {
+      margin-top: 10px;
+      .el-input,.el-textarea {
+        width: 400px;
+      }
     }
-  }
-  .label {
-    font-size: 16px;
-    font-weight: bold;
-    padding: 0 0 0 10px;
-    position: relative;
-    &:after {
-      position: absolute;
-      content: '';
-      width: 4px;
-      height: 100%;
-      background: #000;
-      top: 0;
-      left: 0;
+    .btn {
+      margin-left: 80px;
+      display: block;
     }
-  }
-  .addForm {
-    margin-top: 10px;
-    .el-input,.el-textarea {
-      width: 400px;
+    .sku_table {
+      margin-top: 10px
     }
-  }
-  .btn {
-    margin-left: 80px;
-    display: block;
-  }
-  .sku_table {
-    margin-top: 10px
-  }
-  .submit {
-    margin-top: 20px;
+    .submit {
+      margin-top: 20px;
+    }
   }
 }
 .v-note-wrapper {

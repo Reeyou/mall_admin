@@ -35,18 +35,18 @@ import Breadcrumb from './Breadcrumb'
     watch: {
       // 监听屏幕尺寸变化
       screenWidth: function(val) {
-        val < 900 ? this.MENU_VISIBLE(false) : this.MENU_VISIBLE(true)
+        val < 900 ? this.IS_COLLAPSE(false) : this.IS_COLLAPSE(true)
       }
     },
     methods: {
       ...mapMutations([
-        'MENU_VISIBLE'
+        'IS_COLLAPSE'
       ]),
       isMobile() {
         const initialWidth = document.body.clientWidth
         console.log(initialWidth)
         if(initialWidth < 900) {
-          this.MENU_VISIBLE(false)
+          this.IS_COLLAPSE(false)
         }
       }
     },

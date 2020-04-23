@@ -1,6 +1,26 @@
 <template>
-  <div class="addContent">
-    <div class="title">
+  <div class="product-prop">
+    <div class="steps">
+      <div class="steps-progress">
+        <ul>
+          <li class='num'>1</li>
+          <li class='line'></li>
+          <li class='num'>2</li>
+          <li class='line'></li>
+          <li class='num'>3</li>
+        </ul>
+      </div>
+      <div class="step">
+        <h1>一、填写商品信息</h1>
+        <ul>
+          <li>商品基本信息</li>
+          <li>商品参数</li>
+          <li>商品属性</li>
+        </ul>
+      </div>
+    </div>
+   <div class="content">
+      <div class="title">
       <h2>{{title}}</h2>
     </div>
     <label class="label">商品属性</label>
@@ -14,7 +34,7 @@
       <el-form-item label="商品id" prop="spuId">
         <el-input v-model="productForm.spuId" placeholder="请输入商品id" />
       </el-form-item>
-      <el-form-item label="标题" prop="name">
+      <el-form-item label="商品标题" prop="name">
         <el-input v-model="productForm.name" placeholder="请输入商品名称" />
       </el-form-item>
       <el-form-item label="商品描述" prop="desc">
@@ -25,10 +45,10 @@
           placeholder="请输入商品描述"
         />
       </el-form-item>
-      <el-form-item label="分类" prop="categoryId">
+      <!-- <el-form-item label="分类" prop="categoryId">
         <category-module :categoryId="productForm.categoryId" @handleSelectCategory="handleSelectCategory" />
-      </el-form-item>
-      <el-form-item label="商品主图" prop="pic">
+      </el-form-item> -->
+      <!-- <el-form-item label="商品主图" prop="pic">
         <UploadImg action="/api/upload" @getImgURL="getPicUrl" :pic="productForm.pic"/>
       </el-form-item>
       <el-form-item label="商品详情图" prop="detailPic">
@@ -45,11 +65,12 @@
         <el-dialog :visible.sync="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt />
         </el-dialog>
-      </el-form-item>
+      </el-form-item> -->
     </el-form>
     <!-- sku -->
     <Sku />
     <el-button class="btn submit" @click=" handleSubmit" icon="ios-add" type="primary">提交</el-button>
+   </div>
   </div>
 </template>
 
@@ -140,7 +161,7 @@ export default {
   },
   created () {
     this.productForm = JSON.parse(localStorage.getItem("productInfo")).scope || []
-    this.productForm.detailPic.forEach((item,index) => {
+    this.productForm&&this.productForm.detailPic.forEach((item,index) => {
       let picObj = {}
       picObj.name=index
       picObj.url=item

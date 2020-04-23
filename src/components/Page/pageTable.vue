@@ -37,7 +37,16 @@
             </div>
             <!-- 输入框 -->
             <div v-else-if="column.type == 'input'">
-              <el-input v-model="scope.row[key]"></el-input>
+              <el-input :placeholder="column.label" v-model="column.value"></el-input>
+            </div>
+            <!-- 输入框 -->
+            <div v-else-if="column.type == 'upload'">
+              <el-upload
+                class="table-upload"
+                action="/api/upload"
+              >
+                <i class="el-icon-plus"></i>
+              </el-upload>
             </div>
             <!-- 主图 -->
             <div v-else-if="column.type == 'pic'">
@@ -71,18 +80,15 @@ export default {
   props: [
     "tbData",
     "columns",
-    "loading"
+    "loading",
+    "spanMethod"
   ],
   data() {
     return {
       value: "",
       dataColumns: this.columns || [],
+      spanArr: []
     };
-  },
-  methods: {
-    spanMethod({ row, column, rowIndex, columnIndex }) {
-      this.$emit('spanMethod',{ row, column, rowIndex, columnIndex })
-    }
   }
 };
 </script>
@@ -90,4 +96,25 @@ export default {
 <style lang='scss'>
 @import "@/assets/css/common.scss";
 @import "./index.scss";
+.table-upload {
+  .el-upload--picture-card {
+    width: 50px;
+    height: 50px;
+    position: relative;
+    .el-upload-list--picture-card .el-upload-list__item {
+      width: 50px;
+      height: 50px;
+    }
+     i {
+      position: absolute;
+      font-size: 14px;
+      top: 18px;
+      left: 18px;
+    }
+  }
+ 
+}
+.el-table td, .el-table th {
+  padding: 6px 0;
+}
 </style>
