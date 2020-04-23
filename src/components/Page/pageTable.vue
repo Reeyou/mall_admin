@@ -5,10 +5,10 @@
       <el-table
         :data="tbData"
         fit
+        border
         v-loading="loading"
         style="width: 100%"
-        :header-cell-style="{background:'#00A0E9',color:'#fff',fontWeight: 600}"
-        border
+        :span-method="spanMethod"
       >
         <el-table-column
           v-for="(column, index) in dataColumns"
@@ -34,6 +34,10 @@
                   size="mini"
                 >{{item.name}}</el-button>
               </template>
+            </div>
+            <!-- 输入框 -->
+            <div v-else-if="column.type == 'input'">
+              <el-input v-model="scope.row[key]"></el-input>
             </div>
             <!-- 主图 -->
             <div v-else-if="column.type == 'pic'">
@@ -67,13 +71,18 @@ export default {
   props: [
     "tbData",
     "columns",
-    "loading",
+    "loading"
   ],
   data() {
     return {
       value: "",
       dataColumns: this.columns || [],
     };
+  },
+  methods: {
+    spanMethod({ row, column, rowIndex, columnIndex }) {
+      this.$emit('spanMethod',{ row, column, rowIndex, columnIndex })
+    }
   }
 };
 </script>

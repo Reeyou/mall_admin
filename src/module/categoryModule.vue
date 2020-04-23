@@ -35,13 +35,9 @@ import {
   getCategoryList
 } from "../api/product";
 export default {
-  // props: {
-  //   categoryList: {
-  //     type: Array,
-  //     default: []
-  //   },
-  //   categoryname: String
-  // },
+  props: {
+    categoryId: String
+  },
   data () {
     return {
       categoryListData: [],
@@ -55,6 +51,7 @@ export default {
   },
   created () {
     this.getCategoryList()
+    console.log(this.categoryId)
   },
   computed: {
 
@@ -68,7 +65,16 @@ export default {
             if (i.type == "1") {
               this.categoryList.push(i);
             }
-          });
+            i.children&&i.children.map((item,index) => {
+              item.children&&item.children.map((child,index) => {
+                console.log(this.categoryId)
+                console.log(child)
+                if(child._id == this.categoryId) {
+                  console.log(child)
+                }
+              })
+            })
+          })
         }
       });
     },

@@ -1,5 +1,5 @@
 <template>
-  <div class='menuBar'>
+  <div class='menuBar' :style="{'width': sliderWidth}">
     <div class="system-info" :style="{'background-color': theme.themeColor}">
       <img v-if="!isCollapse" class="logo" src="@/assets/logo_bg.jpg" alt />
       <h1 v-else>R</h1>
@@ -55,11 +55,6 @@ import isMobile from '@/utils/isMobile'
     },
     created() {
       sessionStorage.setItem('currentRouter',this.$route.path)
-      // if (isMobile()) {
-      //   alert("手机端");
-      // } else {
-      //   alert("pc端");
-      // }
     },
     watch: {
       $route(to,from) {
@@ -70,7 +65,8 @@ import isMobile from '@/utils/isMobile'
       ...mapState({
         isCollapse: state => state.isCollapse,
         isMobile: state => state.isMobile,
-        theme: state => state.theme
+        theme: state => state.theme,
+        sliderWidth: state => state.sliderWidth + 'px'
       })
     },
     methods: {
@@ -97,6 +93,7 @@ import isMobile from '@/utils/isMobile'
   border-right: 1px solid #eee;
   overflow-y: hidden;
   overflow-x: hidden;
+  position: fixed;
   .system-info {
     height: 64px;
     display: flex;
@@ -121,7 +118,7 @@ import isMobile from '@/utils/isMobile'
   }
   .el-menu {
     border-right: none;
-    min-height: 100%;
+    height: calc(100% - 64px);
   }
   .el-menu::-webkit-scrollbar { width: 0 !important }
   // .el-menu-item i,.el-submenu__title i {

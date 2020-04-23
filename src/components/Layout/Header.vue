@@ -93,7 +93,6 @@ import { mapMutations, mapState } from 'vuex'
 .system-user {
   text-align: right;
   float: right;
-  padding-right: 40px;
   .userinfo-inner {
     color: #000;
     font-size: 16px;

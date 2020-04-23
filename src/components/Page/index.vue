@@ -3,12 +3,11 @@
     <!-- 标题 -->
     <PageHeader
       :title='title'
-      :addBtn='addBtn'
-      :addBtn2='addBtn2'
     />
     <!-- 筛选内容 -->
     <PageFilter
       :filters="filters"
+      :addBtn='addBtn'
       @onFilter="onFilter"
       @onReset="onReset"
     />

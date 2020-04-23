@@ -258,7 +258,6 @@ export default {
   },
   created() {
    this.getCategoryList()
-  
    this.getProductData()
    this.getSku()
   },

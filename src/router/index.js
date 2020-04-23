@@ -66,7 +66,7 @@ export const routers = [
           name: 'editProduct',
           hidden: true,
           meta: { title: '编辑商品' },
-          component: () => import('@/pages/Product/editProduct.vue'),
+          component: () => import('@/pages/Product/addProduct.vue'),
         },
         {
           path: '/categoryManage',

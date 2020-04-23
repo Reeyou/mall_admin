@@ -23,8 +23,7 @@ export default {
   data() {
     return {
       tbData: [],
-      columns: [
-        {
+      columns: [{
           label: "商品id",
           prop: "spuId",
           width: 160
@@ -69,8 +68,7 @@ export default {
             {icon: 'el-icon-edit', type:'primary',clickFun: this.handleEdit },
             {icon: 'el-icon-delete', type:'danger',clickFun: this.handleDelete },
           ]
-        }
-      ],
+        }],
       filters: [
         {
           label: "标题",
@@ -99,7 +97,11 @@ export default {
             }
           ]
         }
-      ]
+      ],
+      productInfo: {
+        title: '',
+        scope: null
+      }
     };
   },
   created() {
@@ -107,13 +109,10 @@ export default {
   },
   methods: {
     handleEdit(scope) {
-      this.$router.push({
-                path: '/editProduct',
-                query: {
-                  spuId: scope.spuId
-                }
-              })
-      console.log(scope.spuId)
+      this.productInfo.title = '商品编辑'
+      this.productInfo.scope = scope
+      localStorage.setItem("productInfo",JSON.stringify(this.productInfo))
+      this.$router.push({name: 'editProduct'})
     },
     handleDelete(id) {
       console.log(id)
@@ -133,7 +132,10 @@ export default {
       console.log(22);
     },
     addProduct() {
-      this.$router.push("/addProduct");
+      this.productInfo.title = '商品添加'
+      this.productInfo.scope = []
+      localStorage.setItem("productInfo",JSON.stringify(this.productInfo))
+      this.$router.push({name: "addProduct", params: {data: this.productInfo}});
     },
     getData() {
       // getCategoryList().then(res => {

@@ -3,7 +3,7 @@
     <!-- 筛选内容 -->
     <div class="filter">
       <el-form :inline="true" class="demo-form-inline">
-        <el-form-item v-for="(filter, index) in dataFilters" :key="index">
+        <el-form-item v-for="(filter, index) in dataFilters" :key="index" :label="filter.label">
           <!-- 单选框 -->
           <el-input v-if="filter.type === 'Input'" :placeholder="filter.label" v-model="filter.value"></el-input>
           <!-- 多选框 -->
@@ -28,17 +28,16 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button size="mini" type="primary" @click="handleFilter">筛选</el-button>
+          <el-button size="mini" type="primary" @click="handleFilter">查询</el-button>
           <el-button size="mini" type="primary" @click="handleReset">重置</el-button>
-          <!-- <div class='collapse'>
-            <span>收起</span>
-            <i class='iconfont icon-arrow_u'></i>
-            <span>展开</span>
-            <i class='iconfont icon-arrow_d'></i>
-          </div>-->
         </el-form-item>
       </el-form>
+      <!-- 添加按钮 -->
+    <div class="addBtn" v-if="addBtn">
+      <el-button size="small" type="primary" icon="el-icon-plus" @click="addBtn.onAdd">{{addBtn.label}}</el-button>
     </div>
+    </div>
+    
   </div>
 </template>
 
@@ -46,6 +45,7 @@
 export default {
   name: "PageFilter",
   props: [
+    "addBtn",
     "filters",
     "onFilter",
     "onReset"

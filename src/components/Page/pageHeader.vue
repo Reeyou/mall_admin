@@ -3,29 +3,24 @@
     <!-- 标题 -->
     <div class="title">
       <h2>{{title}}</h2>
+      <div class="bread">
+        <Breadcrumb />
+      </div>
     </div>
-    <!-- 添加按钮 -->
-    <div class="addBtn" v-if="addBtn">
-      <el-button type="primary" icon="el-icon-plus" @click="addBtn.onAdd">{{addBtn.label}}</el-button>
-    </div>
-    <div class="addBtn2" v-if="addBtn2">
-      <el-button type="primary" icon="el-icon-plus" @click="addBtn2.onAdd">{{addBtn2.label}}</el-button>
-    </div>
-    <div class="addBtn2" v-if="addBtn3">
-      <el-button type="primary" icon="el-icon-plus" @click="addBtn3.onAdd">{{addBtn3.label}}</el-button>
-    </div>
+    
   </div>
 </template>
 
 <script>
+import Breadcrumb from "@/components/Layout/Breadcrumb"
 export default {
   name: "PageHeader",
   props: [
-    "addBtn",
-    "addBtn2",
-    "addBtn3",
     "title",
   ],
+  components: {
+    Breadcrumb
+  },
   data() {
     return {
       value: "",
@@ -40,8 +35,7 @@ export default {
     tableDelete(id) {
       this.$emit("handleDelete", id);
     }
-  },
-  components: {}
+  }
 };
 </script>
 

@@ -50,13 +50,14 @@
 
 <style lang="scss" scoped>
   i {
-      font-size: 16px;
+      font-size: 14px;
       cursor: pointer;
-      padding-left: 16px;
+      padding-left: 10px;
+      vertical-align: middle;
     }
     .breadcrumb {
       display: inline-block;
       vertical-align: middle;
-      padding-left: 4px;
+      // padding-left: 1px;
     }
 </style>

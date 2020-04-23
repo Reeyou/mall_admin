@@ -1,7 +1,7 @@
 <template>
   <div class="addContent">
     <div class="title">
-      <h2>商品新增</h2>
+      <h2>{{title}}</h2>
     </div>
     <label class="label">商品属性</label>
     <el-form
@@ -26,16 +26,17 @@
         />
       </el-form-item>
       <el-form-item label="分类" prop="categoryId">
-        <category-module @handleSelectCategory="handleSelectCategory" />
+        <category-module :categoryId="productForm.categoryId" @handleSelectCategory="handleSelectCategory" />
       </el-form-item>
       <el-form-item label="商品主图" prop="pic">
-        <UploadImg action="/api/upload" @getImgURL="getPicUrl" />
+        <UploadImg action="/api/upload" @getImgURL="getPicUrl" :pic="productForm.pic"/>
       </el-form-item>
       <el-form-item label="商品详情图" prop="detailPic">
         <el-upload
           action="/api/upload"
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
+          :file-list="detailPicList"
           :on-remove="handleRemove"
           :on-change="getDetailPicUrl"
         >
@@ -47,24 +48,7 @@
       </el-form-item>
     </el-form>
     <!-- sku -->
-    <label class="label">商品sku</label>
-    <el-form
-      ref="skuForm"
-      :model="skuForm"
-      :rules="skuRule"
-      label-width="100px"
-      class="addForm"
-      label-position="left"
-    >
-      <el-form-item label="颜色" prop="color">
-        <el-input v-model="skuForm.color" placeholder="请输入商品颜色" />
-      </el-form-item>
-      <el-form-item label="版本号" prop="version">
-        <el-input v-model="skuForm.version" placeholder="请输入版本号" />
-      </el-form-item>
-    </el-form>
-    <el-button class="btn" @click="handleInitSku" icon="ios-add" type="primary">生成商品sku</el-button>
-    <PageTable v-show="visible" :tbData="skuData" :columns="skuColumns" />
+    <Sku />
     <el-button class="btn submit" @click=" handleSubmit" icon="ios-add" type="primary">提交</el-button>
   </div>
 </template>
@@ -80,6 +64,8 @@ import {
 import UploadImg from "@/components/UploadImg";
 import Sku from "./sku";
 import CategoryModule from "@/module/categoryModule"
+import axios from 'axios'
+import qs from 'qs'
 export default {
   components: {
     UploadImg,
@@ -101,15 +87,14 @@ export default {
       categoryChildList: [],
       changeCategoryVisible: false,
       categoryListData: [],
-      spuId: "",
       detailPics: [],
+      detailPicList: [],
       productForm: {
-        spuId: "",
-        name: "",
-        desc: "",
-        pic: "",
-        detailPic: [],
-        categoryId: ""
+        spuId: '',
+        categoryId: '',
+        name: '',
+        desc: '',
+        pic: ''
       },
       productRule: {
         spuId: [
@@ -149,91 +134,44 @@ export default {
         //   }
         // ],
       },
-      skuColumns: [
-        {
-          label: "skuId",
-          prop: "skuId",
-          width: 100
-        },
-        {
-          label: "颜色",
-          prop: "color",
-          width: 120
-        },
-        {
-          label: "版本号",
-          prop: "version",
-          width: 120
-        },
-        {
-          label: "价格",
-          prop: "price",
-          width: 120
-        },
-        {
-          label: "库存",
-          prop: "num",
-          width: 120
-        },
-        {
-          label: "商品副图",
-          prop: "subPics",
-          width: 400,
-          type: 'pic'
-        },
-        {
-          label: "操作",
-          handle: [
-            { icon: 'el-icon-edit', type: 'primary', clickFun: this.handleEdit },
-            { icon: 'el-icon-delete', type: 'danger', clickFun: this.handleDelete },
-          ]
-        }
-      ],
-      skuForm: {
-        color: "", //颜色
-        version: "", // 版本
-        price: "", // 价格
-        subPics: [], // 图片
-        num: ""
-      },
-      skuRule: {
-        color: [
-          {
-            required: true,
-            message: "商品颜色不能为空",
-            trigger: "blur"
-          }
-        ],
-        version: [
-          {
-            required: true,
-            message: "商品描述不能为空",
-            trigger: "blur"
-          }
-        ],
-        price: [
-          { required: true, message: "商品价格不能为空", trigger: "blur" }
-        ],
-        // subPics: [
-        //   {
-        //     required: true,
-        //     message: "商品副图不能为空",
-        //     trigger: "change"
-        //   }
-        // ],
-        num: [{ required: true, message: "商品库存不能为空", trigger: "blur" }]
-      }
+      skuForm: {},
+      title: JSON.parse(localStorage.getItem("productInfo")).title || ''
     };
   },
   created () {
-    this.skuTableVisible();
+    this.productForm = JSON.parse(localStorage.getItem("productInfo")).scope || []
+    this.productForm.detailPic.forEach((item,index) => {
+      let picObj = {}
+      picObj.name=index
+      picObj.url=item
+      this.detailPicList.push(picObj)
+    })
   },
   methods: {
-    // getSku() {
-    //   const params = {
-    //     spuId: this.spuId
-    //   }
-    //   getSku(params).then()
+    //  translate () {
+    //    console.log(process.env)
+    //    document.cookie = 'LMTBID=c548b635-06dc-46c3-b365-85068b869405|c321a72294a0f2d76d08813109b75603;domain=.deepl.com'
+    //    document.cookie = '_ga=GA1.2.1520949857.1586914809;domain=.deepl.com'
+    //    document.cookie = '_gid=GA1.2.1743258476.1587024825;domain=.deepl.com'
+    //   //  document.cookie = 'LMTBID=c548b635-06dc-46c3-b365-85068b869405|c321a72294a0f2d76d08813109b75603;
+    //   // _ga=GA1.2.1520949857.1586914809;
+    //   // _gid=GA1.2.1743258476.1587024825'
+    //    const data = {
+    //     id: 29020011,
+    //     jsonrpc: '2.0',
+    //     method: 'LMT_handle_jobs',
+    //     params: {
+    //       commonJobParams: {},
+    //       jobs: [{ kind: 'default', raw_en_sentence: '这里', raw_en_context_before: [], raw_en_context_after: [] }],
+    //       lang: { user_preferred_langs: ['EN', 'ZH'], source_lang_user_selected: 'auto', target_lang: 'EN' },
+    //       priority: -1,
+    //       timestamp: 1587024908305
+    //     }
+    //    }
+    //   axios.defaults.withCredentials = true
+    //   axios.post('/api/jsonrpc', data).then(res => {
+    //     console.log(res)
+    //   })
     // },
     handleRemove (file, fileList) {
       console.log(file, fileList);
@@ -243,47 +181,47 @@ export default {
       this.dialogVisible = true;
     },
     handleSelectCategory(id) {
-      console.log(id)
+      this.productForm.categoryId = id
     },
     skuTableVisible () {
       if (this.skuData.length == 0) return;
       this.visible = true;
     },
-    handleInitSku () {
-      this.$refs["productForm"].validate(valid => {
-        if (valid) {
-          this.spuId = this.productForm.spuId;
-          console.log(this.spuId);
-        }
-      });
-      this.$refs["skuForm"].validate(valid => {
-        if (valid) {
-          this.visible = true;
-          const { color, version, price, num, subPics } = this.skuForm;
-          const params = {
-            color,
-            version,
-            price,
-            num,
-            subPics
-          };
-          this.$refs["skuForm"].resetFields();
-          let data = { skuList: [] }
-          data.spuId = this.spuId;
-          data.skuList.push(params);
-          createSku(data).then(res => {
-            if (res.code == 200) {
-              // sessionStorage.removeItem("allSkuData")
-              // sessionStorage.setItem("allSkuData", data);
-              // let allSkuData = sessionStorage.getItem("allSkuData");
-              console.log(data)
-              this.skuData = data.skuList
-              console.log(this.skuData);
-            }
-          });
-        }
-      });
-    },
+    // handleInitSku () {
+    //   this.$refs["productForm"].validate(valid => {
+    //     if (valid) {
+    //       this.spuId = this.productForm.spuId;
+    //       console.log(this.spuId);
+    //     }
+    //   });
+    //   this.$refs["skuForm"].validate(valid => {
+    //     if (valid) {
+    //       this.visible = true;
+    //       const { color, version, price, num, subPics } = this.skuForm;
+    //       const params = {
+    //         color,
+    //         version,
+    //         price,
+    //         num,
+    //         subPics
+    //       };
+    //       this.$refs["skuForm"].resetFields();
+    //       let data = { skuList: [] }
+    //       data.spuId = this.spuId;
+    //       data.skuList.push(params);
+    //       createSku(data).then(res => {
+    //         if (res.code == 200) {
+    //           // sessionStorage.removeItem("allSkuData")
+    //           // sessionStorage.setItem("allSkuData", data);
+    //           // let allSkuData = sessionStorage.getItem("allSkuData");
+    //           console.log(data)
+    //           this.skuData = data.skuList
+    //           console.log(this.skuData);
+    //         }
+    //       });
+    //     }
+    //   });
+    // },
     getPicUrl (url) {
       // this.pic = url;
       this.productForm.pic = url;
@@ -303,23 +241,7 @@ export default {
     handleSubmit () {
       this.$refs["productForm"].validate(valid => {
         if (valid) {
-          const {
-            spuId,
-            name,
-            desc,
-            pic,
-            detailPic,
-            categoryId
-          } = this.productForm;
-          const params = {
-            spuId,
-            name,
-            desc,
-            pic,
-            detailPic,
-            categoryId
-          };
-          addProduct(params).then(res => {
+          addProduct(this.productForm).then(res => {
             if (res.code == 200) {
               // this.$Message.success("添加成功!")
             } else {
