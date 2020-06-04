@@ -1,0 +1,78 @@
+@font-face {
+    font-family: "sanji";
+    src: url("./assets/fonts/sj_guyuan.ttf")  format("truetype");
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: 0.1em;
+  }
+  @font-face {
+    font-family: "qingning";
+    src: url("./assets/fonts/qn_youyuan.ttf")  format("truetype");
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "zhongyuan";
+    src: url("./assets/fonts/zhongyuan.ttf")  format("truetype");
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "pf";
+    src: url("./assets/fonts/PingFang.ttf")  format("truetype");
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "DIN";
+    src: url("./assets/fonts/DINCondensedC.ttf")  format("truetype");
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "HPS";
+    src: url("./assets/fonts/HPSimplifiedHansLight.ttf")  format("truetype");
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Halva";
+    src: url("./assets/fonts/Halva-medium-2.otf")  format("OpenType");
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Bucheon";
+    src: url("./assets/fonts/Bucheon-Monospaced.otf")  format("OpenType");
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Lis";
+    src: url("./assets/fonts/LisboaPro-Regular.otf")  format("OpenType");
+    font-weight: 600;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "san";
+    src: url("./assets/fonts/santor.otf")  format("OpenType");
+    font-weight: 600;
+    font-style: normal;
+  }
+  
+  .qn_font {
+    font-family: "qingning";
+  }
+  .sj_font {
+    font-family: "sanji";
+  }
+  .zy_font {
+    font-family: "zhongyuan";
+  }
+  .pf_font {
+    font-family: "PingFang";
+  }
+  .DIN_font {
+    font-family: "DIN";
+  }
+  .HPS_font {
+    font-family: "HPS";
+  }
