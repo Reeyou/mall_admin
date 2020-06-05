@@ -9,6 +9,7 @@
         v-loading="loading"
         style="width: 100%"
         :span-method="spanMethod"
+        :header-cell-style="{background: '#f4f4f4'}"
       >
         <el-table-column
           v-for="(column, index) in dataColumns"

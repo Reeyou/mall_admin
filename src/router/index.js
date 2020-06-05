@@ -10,14 +10,14 @@ export const routers = [
       name: 'login',
       hidden: true,
       meta: { title: '系统登录' },
-      component: () => import('@/pages/Login')
+      component: () => import('@/pages/Auth/login')
     },
     {
       path: '/register',
       name: 'register',
       hidden: true,
       meta: { title: '系统注册' },
-      component: () => import('@/pages/Login/register')
+      component: () => import('@/pages/Auth/register')
     },
     {
       path: '/test',

@@ -13,7 +13,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import "./res/styles/global.scss";
+@import "@/res/styles/global.scss";
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

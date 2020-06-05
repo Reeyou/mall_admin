@@ -8,9 +8,12 @@ import 'element-ui/lib/theme-chalk/index.css';
 import axios from 'axios'
 import '@/assets/css/reset.css'
 import '@/assets/iconfont/iconfont.css'
+// import '@/res/styles/element-variables.scss'
 import store from './store'
 import * as filters from '@/filters'
 import * as directives from "@/directives"
+// import "@/res/styles/global.scss";
+import REEButton from '@/components/button'
  
 // 全局过滤器
 Object.keys(filters).forEach(key => {
@@ -24,6 +27,7 @@ Object.keys(directives).forEach(key => {
 
 Vue.config.productionTip = false
 
+Vue.use(REEButton)
 Vue.use(ElementUI);
 Vue.config.productionTip = false // 关闭生产环境错误提示
 Vue.prototype.$axios = axios

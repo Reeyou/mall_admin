@@ -164,17 +164,37 @@ export default {
   methods: {
     spanMethod ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
-        if (rowIndex % 2 === 0) {
-          return {
-            rowspan: 2,
-            colspan: 1
-          };
-        } else {
-          return {
-            rowspan: 0,
-            colspan: 0
-          };
-        }
+        console.log(this.skus)
+        this.skus.map((item,index) => {
+          // if(item['颜色'])
+          // console.log(item['颜色'])
+          console.log(this.skus[index]['颜色'])
+          if(this.skus.length>0) {
+            if(this.skus[index]['颜色'] == "黑色") {
+              console.log('span')
+              return {
+                rowspan: 2,
+                colspan: 1
+              };
+            }else {
+              return {
+                rowspan: 0,
+                colspan: 0
+              };
+            }
+          }
+        })
+        // if (rowIndex % 2 === 0) {
+        //   return {
+        //     rowspan: 2,
+        //     colspan: 1
+        //   };
+        // } else {
+        //   return {
+        //     rowspan: 0,
+        //     colspan: 0
+        //   };
+        // }
       }
     },
     addSku (key, prop) {
@@ -218,6 +238,7 @@ export default {
         _obj.prop = key
         _obj.width = 200
         !flag ? this.columns.splice(this.skuCount,0,_obj) : null
+        
       } else {
         this.removeSku(key)
       }
