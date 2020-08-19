@@ -126,3 +126,34 @@ $tablePadding: 18px 10px;
     bottom: 5px;
   }
 }
+
+@mixin delay($ms) {
+  animation-delay: $ms!important;
+}
+.delay-100 {
+  @include delay(100ms)
+}
+.delay-400 {
+  @include delay(400ms)
+}
+.delay-600 {
+  @include delay(600ms)
+}
+.delay-800 {
+  @include delay(800ms)
+}
+.delay-1200 {
+  @include delay(1200ms)
+}
+.delay-1600 {
+  @include delay(1600ms)
+}
+.delay-2000 {
+  @include delay(2000ms)
+}
+.delay-2200 {
+  @include delay(2200ms)
+}
+.delay-2400 {
+  @include delay(2400ms)
+}

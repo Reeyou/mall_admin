@@ -44,12 +44,27 @@
         }
       }
     }
+    .register {
+      .sidebar-content-item {
+        &:nth-child(2) {
+          background: #faf0e6;
+        }
+        &:nth-child(3) {
+          background: #feaaab;
+        }
+      }
+    }
   }
   .content {
     flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     position: relative;
     .header {
-      max-width: 420px;
+      width: 100%;
+      max-width: 416px;
       margin: 0 auto;
       position: relative;
       z-index: 10;
@@ -79,33 +94,33 @@
         line-height: 34px;
         font-weight: bold;
       }
-      .title {
-        animation-delay: 0.4s;
-      }
-      ._title {
-        animation-delay: 0.6s;
+    }
+    .register-header {
+      width: 100%;
+      max-width: 416px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+      animation-delay: 0.1s;
+      &:before {
+        position: absolute;
+        left: -200px;
+        top: -40px;
+        content: "";
+        width: 120px;
+        height: 120px;
+        background: $primary;
+        border-radius: 70% 30% 30% 70% / 60% 40% 60% 40%;
+        z-index: -1;
       }
     }
     .auth-content {
-      max-width: 416px;
+      min-width: 410px;
       margin: 0 auto;
       padding: 60px 30px;
       border-radius: 10px;
       .sub_title {
-        animation-delay: 0.8s;
         font-size: 24px;
-      }
-      .username {
-        animation-delay: 1.2s;
-      }
-      .password {
-        animation-delay: 1.6s;
-      }
-      .login-btn {
-        animation-delay: 2s;
-      }
-      .tips {
-        animation-delay: 2.4s;
       }
       form {
         .input_container {
@@ -179,7 +194,7 @@
           color: $primary;
           padding-left: 16px;
         }
-        .login-btn {
+        .btn {
           margin-top: 20px;
         }
         .tips {
@@ -189,7 +204,7 @@
           position: relative;
           z-index: 10;
           span {
-            font-size: 12px;
+            font-size: 13px;
             color: #999;
           }
           .first {
@@ -216,166 +231,12 @@
       }
     }
     .footer {
-      animation-name: fadein;
-      animation-duration: 0.4s;
-      animation-fill-mode: backwards;
-      animation-delay: 2.8s;
       position: absolute;
-      bottom: -14vh;
+      bottom: 20px;
       left: 50%;
       margin-left: -112px;
       p {
         font-size: 13px;
-      }
-    }
-  }
-}
-.wrapper_home {
-  width: 100%;
-  height: 500vh;
-  background: $bgWhite;
-  .section {
-    &_one,
-    &_three,
-    &_four,
-    &_five {
-      height: 100vh;
-      display: table;
-      width: 1200px;
-      margin: 0 auto;
-      &_container {
-        display: table-cell;
-        vertical-align: middle;
-
-        .left {
-          display: inline-block;
-          width: 50%;
-          position: relative;
-          animation: fadeLeftIn 800ms ease;
-          h1 {
-            font-size: 40px;
-            font-weight: 600px;
-            color: $Black;
-          }
-          h2 {
-            display: inline-block;
-            font-size: 26px;
-            font-weight: 500;
-            line-height: 12px;
-            margin: 30px 0;
-            color: $Black;
-            position: relative;
-          }
-          span {
-            font-size: 16px;
-            color: $BlackRgb;
-          }
-          &:after {
-            content: "";
-            position: absolute;
-            top: 108px;
-            left: 0;
-            width: 80px;
-            height: 3px;
-            background: $Black;
-          }
-        }
-        .right {
-        }
-      }
-    }
-    &_two {
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      &_container {
-        // display: table-cell;
-        // vertical-align: middle;
-        width: 1200px;
-        margin: 0 auto;
-        // padding-left: 100px;
-        .left {
-          display: inline-block;
-          width: 50%;
-          position: relative;
-          animation: fadeLeftIn 800ms ease;
-          h1 {
-            width: 500px;
-            font-size: 40px;
-            font-weight: 600px;
-            color: $Black;
-          }
-          h2 {
-            display: inline-block;
-            font-size: 26px;
-            font-weight: 500;
-            line-height: 12px;
-            margin: 30px 0;
-            color: $Black;
-            position: relative;
-          }
-          span {
-            font-size: 16px;
-            color: $BlackRgb;
-          }
-          &:after {
-            content: "";
-            position: absolute;
-            top: 108px;
-            left: 0;
-            width: 80px;
-            height: 3px;
-            background: $Black;
-          }
-        }
-        .right {
-        }
-      }
-    }
-    &_three {
-    }
-    &_four {
-    }
-    &_five {
-    }
-  }
-  .fixedRight {
-    position: fixed;
-    width: 40px;
-    height: 200px;
-    top: 50%;
-    right: 100px;
-    margin-top: -100px;
-    ul {
-      li {
-        margin: 20px 0;
-        width: 10px;
-        height: 10px;
-        border: $borderBlack;
-        border-radius: 50%;
-        position: relative;
-        animation: fadein 400ms ease-in-out;
-        transition: all 400ms ease;
-        cursor: pointer;
-        &:hover {
-          transform: scale(1.1);
-        }
-        &:after {
-          content: "";
-          position: absolute;
-          top: 2px;
-          left: 2px;
-          width: 4px;
-          height: 4px;
-          border: $borderBlackRgb;
-          border-radius: 50%;
-        }
-      }
-      .active {
-        background: $BlackRgb;
-        &:hover {
-          transform: scale(1);
-        }
       }
     }
   }

@@ -1,6 +1,145 @@
-.fadeTop {
-    animation-name: fadeTop;
-    animation-duration: 0.4s;
-    animation-fill-mode: backwards;
-    animation-delay: 0.4s;
+
+.clearFix {
+  clear: both;
+  font-size: 0;
+  overflow: hidden;
+}
+
+@keyframes fadeTop {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-60%);
   }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+//导航栏按钮出现动画
+@keyframes fadein {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+//导航栏fixed动画
+// @keyframes fixedFadein {
+//   0% {
+//     background: $bgWhite;
+//     box-shadow: 0px 0px 1px 0px transparent;
+//   }
+//   100% {
+//     background: #fff;
+//     box-shadow: 0px 0px 1px 0px $BlackRgbO;
+//   }
+// }
+// @keyframes fixedFadeout {
+//   0% {
+//     background: #fff;
+//     box-shadow: 0px 0px 1px 0px $BlackRgbO;
+//   }
+//   100% {
+//     background: transparent;
+//     box-shadow: 0px 0px 1px 0px transparent;
+//   }
+// }
+//首页加载动画
+@keyframes fadeLeftIn {
+  0% {
+    left: -200px;
+    top: 0;
+    opacity: 0;
+  }
+  100% {
+    left: 0;
+    top: 0;
+    opacity: 1;
+  }
+}
+//首页prev next等待动画
+@keyframes prevWaiting {
+  0% {
+    transform: scale(0);
+    top: 0;
+  }
+  75% {
+    top: 3px;
+  }
+  100% {
+    // font-size: 50px;
+    top: 5px;
+  }
+}
+@keyframes breath {
+  0% {
+    box-shadow: 0px 0px 2px 0px transparent;
+  }
+  50% {
+    box-shadow: 0px 0px 20px 2px rgba(0,0,0,.28);
+  }
+  100% {
+    box-shadow: 0px 0px 2px 0px transparent;
+  }
+}
+@keyframes nextWaiting {
+  0% {
+    top: 0;
+  }
+  75% {
+    bottom: 3px;
+  }
+  100% {
+    bottom: 5px;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.fadeIn {
+  animation-name: fadeIn;
+  animation-duration: 0.4s;
+  animation-fill-mode: backwards;
+  animation-delay: 0.4s;
+}
+@mixin delay($ms) {
+  animation-delay: $ms!important;
+}
+.delay-100 {
+  @include delay(100ms)
+}
+.delay-400 {
+  @include delay(400ms)
+}
+.delay-600 {
+  @include delay(600ms)
+}
+.delay-800 {
+  @include delay(800ms)
+}
+.delay-800 {
+  @include delay(1000ms)
+}
+.delay-1200 {
+  @include delay(1200ms)
+}
+.delay-1600 {
+  @include delay(1600ms)
+}
+.delay-2000 {
+  @include delay(2000ms)
+}
+.delay-2200 {
+  @include delay(2200ms)
+}
+.delay-2400 {
+  @include delay(2400ms)
+}
