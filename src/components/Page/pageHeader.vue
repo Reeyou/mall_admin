@@ -3,24 +3,17 @@
     <!-- 标题 -->
     <div class="title">
       <h2>{{title}}</h2>
-      <div class="bread">
-        <Breadcrumb />
-      </div>
     </div>
     
   </div>
 </template>
 
 <script>
-import Breadcrumb from "@/components/Layout/Breadcrumb"
 export default {
   name: "PageHeader",
   props: [
     "title",
   ],
-  components: {
-    Breadcrumb
-  },
   data() {
     return {
       value: "",

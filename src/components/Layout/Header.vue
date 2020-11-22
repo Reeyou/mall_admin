@@ -1,9 +1,12 @@
 <template>
-  <div class='header' :style="{'margin-left': sliderWidth, 'width': `calc(100% - ${sliderWidth})`}">
-    <!-- <i v-if='!isCollapse' class='iconfont icon-menuOpen mobile' @click='openMenu'></i> -->
-    <!-- <i v-else class='iconfont icon-md-close mobile' @click='closeMenu'></i> -->
-    <i v-if="isCollapse" class='iconfont icon-menuOpen pc' @click='openMenu'></i>
-    <i v-else class='iconfont icon-menuClose pc' @click='closeMenu'></i>
+  <div class='header' style="width: 100%">
+    <i v-if='isCollapse&&isMobile' class='iconfont icon-menuOpen mobile' @click='openPhoneMenu'></i>
+    <i v-if='!isCollapse&&isMobile' class='iconfont icon-md-close mobile' @click='closePhoneMenu'></i>
+    <!-- <i v-if="isCollapse&&!isMobile" class='iconfont icon-menuOpen pc' @click='openMenu'></i>
+    <i v-if="!isCollapse&&!isMobile" class='iconfont icon-menuClose pc' @click='closeMenu'></i> -->
+    <div class="system-logo">
+      <img class="logo" src="@/assets/logo_bg.jpg" alt />
+    </div>
     <el-dropdown class="system-user">
       <span class="userinfo-inner">
         <span>欢迎您</span> <span class='name'>Reeyou</span>
@@ -22,16 +25,10 @@ import { mapMutations, mapState } from 'vuex'
   export default {
     data() {
       return {
-        scrrenWidth: '',
         userinfo: JSON.parse(localStorage.getItem('userinfo'))
       }
     },
-    mounted() {
-      window.onresize = () => {
-        this.scrrenWidth = document.body.clientWidth
-        this.$store.commit('SCREEN_WIDTH',this.scrrenWidth)
-      }
-    },
+   
     computed: {
       ...mapState({
         isCollapse: state => state.isCollapse,
@@ -50,17 +47,13 @@ import { mapMutations, mapState } from 'vuex'
         sessionStorage.removeItem('token')
         localStorage.removeItem('userinfo')
       },
-      collapse() {
-        console.log('collapse')
-        // this.menuWidth = '100px'
-      },
-      openMenu() {
+      openPhoneMenu() {
         this.IS_COLLAPSE(false)
         this.SLIDER_WIDTH(200)
       },
-      closeMenu() {
+      closePhoneMenu() {
         this.IS_COLLAPSE(true)
-        this.SLIDER_WIDTH(64)
+        this.SLIDER_WIDTH(0)
       }
     }
   }
@@ -75,13 +68,10 @@ import { mapMutations, mapState } from 'vuex'
   height: 64px;
   padding: 0 28px;
   border-bottom: 1px solid #e5e5e5;
-  // box-shadow: 0 2px 8px 2px rgba(0,0,0,0.08);
-  .logo {
-    display: none;
-  }
+  box-shadow: 0 0 8px 1px #e7e7e7;
+  z-index: 999;
   .mobile {
     font-size: 30px;
-    margin-left: 20px;
     color: #000;
   }
   .pc {
@@ -89,6 +79,15 @@ import { mapMutations, mapState } from 'vuex'
     color: #000;
     cursor: pointer;
   }
+}
+.system-logo {
+    width: auto;
+    height: 100%;
+    float: left;
+    > img {
+        width: 100%;
+        height: 100%;
+    }
 }
 .system-user {
   text-align: right;

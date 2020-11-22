@@ -1,77 +1,103 @@
 <template>
-  <div class="sku-content">
-    <!-- sku -->
-    <label class="label">商品sku</label>
-    <el-form
-      ref="skuForm"
-      label-width="100px"
-      class="addForm"
-      label-position="left"
-    >
-      <!-- 
-      颜色 白色 黑色
-      尺寸  l m
-      -->
-      <div class="prop prop-base">
-        <div class="header">
-          <p class="name">{{colorProps.key}}</p>
-          <p class="handler">管理属性值</p>
-        </div>
-        <el-checkbox-group v-model="checkList">
-          <el-checkbox
-            v-for="(item,index) in colorProps.colorArr"
-            :key="index"
-            :label="item"
-            @change="skuSelect($event,item,colorProps.key)"
-          />
-        </el-checkbox-group>
+  <div class="sku">
+    <div class="sku-content">
+      <!-- sku -->
+      <p>销售属性：</p>
+      <div class="sku-content-block">
+        <el-form
+          ref="skuForm"
+          label-width="100px"
+          class="addForm"
+          label-position="left"
+        >
+          <div class="prop prop-base">
+            <div class="header">
+              <p class="name"><em>*</em>{{ colorProps.keyWord }}</p>
+              <p class="handler">管理属性值</p>
+            </div>
+            <el-checkbox-group v-model="colorObj">
+              <el-checkbox
+                v-for="(item, index) in colorProps.colorArr"
+                :key="index"
+                :label="item.label"
+                @change="
+                  skuSelect(
+                    $event,
+                    item    ,
+                    colorProps.key,
+                    colorProps.keyWord,
+                    colorProps.level
+                  )
+                "
+              >
+              <template>
+                  <div>
+                      <span :style="{display:'inline-block',background:item.color,width: 14+'px',height: 14+'px',verticalAlign:'text-top',borderRadius: '2px',marginRight: '2px',marginTop: '-1px'}"></span>
+                      <span>{{item.label}}</span>
+                  </div>
+              </template></el-checkbox>
+            </el-checkbox-group>
+          </div>
+          <div class="prop prop-base">
+            <div class="header">
+              <p class="name"><em>*</em>{{ sizeProps.keyWord }}</p>
+              <p class="handler">管理属性值</p>
+            </div>
+            <el-checkbox-group v-model="sizeObj">
+              <el-checkbox
+                v-for="(item, index) in sizeProps.sizeArr"
+                :key="index"
+                :label="item.label"
+                @change="
+                  skuSelect(
+                    $event,
+                    item.label,
+                    sizeProps.key,
+                    sizeProps.keyWord,
+                    sizeProps.level
+                  )
+                "
+              ></el-checkbox>
+            </el-checkbox-group>
+          </div>
+          <div class="prop prop-base">
+            <div class="header">
+              <p class="name"><em>*</em>{{ versionProps.keyWord }}</p>
+              <p class="handler">管理属性值</p>
+            </div>
+            <el-checkbox-group v-model="versionObj">
+              <el-checkbox
+                v-for="(item, index) in versionProps.versionArr"
+                :key="index"
+                :label="item.label"
+                @change="
+                  skuSelect(
+                    $event,
+                    item.label,
+                    versionProps.key,
+                    versionProps.keyWord,
+                    versionProps.level
+                  )
+                "
+              />
+            </el-checkbox-group>
+          </div>
+          <div class="add-prop prop-base">
+            <i class="el-icon-plus"></i>
+            <span>添加更多属性</span>
+          </div>
+        </el-form>
       </div>
-      <div class="prop prop-base">
-        <div class="header">
-          <p class="name">{{sizeProps.key}}</p>
-          <p class="handler">管理属性值</p>
-        </div>
-        <el-checkbox-group v-model="checkList">
-          <el-checkbox
-            v-for="(item,index) in sizeProps.sizeArr"
-            :key="index"
-            :label="item"
-            @change="skuSelect($event,item,sizeProps.key)"
-          ></el-checkbox>
-        </el-checkbox-group>
-      </div>
-      <div class="prop prop-base">
-        <div class="header">
-          <p class="name">{{versionProps.key}}</p>
-          <p class="handler">管理属性值</p>
-        </div>
-        <el-checkbox-group v-model="checkList">
-          <el-checkbox
-            v-for="(item,index) in versionProps.versionArr"
-            :key="index"
-            :label="item"
-            @change="skuSelect($event,item,versionProps.key)"
-          />
-        </el-checkbox-group>
-      </div>
-      <div class="add-prop prop-base">
-        <i class="el-icon-plus"></i>
-        <span>添加更多属性</span>
-      </div>
-    </el-form>
-    <!-- <el-button class="btn" @click="handleInitSku" icon="ios-add" type="primary">生成商品sku</el-button> -->
-    <!-- <el-table v-show='visible' class="sku_table" :data="skuData" border style="width: 1200px">
-      <el-table-column
-        v-for="(column, index) in columns"
-        :key="index"
-        :prop="column.key"
-        :label="column.label"
-        :width="column.width"
-        align="center"
-        fit
-      ></el-table-column>
-    </el-table>-->
-    <PageTable :tbData="skus" :columns="columns" :spanMethod="spanMethod" />
+    </div>
+    <!-- <div v-if="required"> -->
+    <div style="width: 900px;margin-left: 100px;margin-top: 20px">
+      <PageTable
+        :tbData="skuData"
+        :columns="columns"
+        :spanMethod="spanMethod"
+      />
+      
+    </div>
   </div>
 </template>
 
@@ -79,6 +105,7 @@
 import { createSku } from '../../api/product'
 import UploadImg from "@/components/UploadImg";
 import PageTable from "@/components/Page/pageTable";
+import _util from '../../utils/util'
 export default {
   name: 'sku',
   components: {
@@ -90,18 +117,65 @@ export default {
   },
   data () {
     return {
-      checkList: ['选中且禁用', '复选框 A'],
+      colorObj: [],
+      sizeObj: [],
+      versionObj: [],
+      // required: false,
       colorProps: {
-        key: '颜色',
-        colorArr: ['默认', '白色', '黑色', '银色', '灰色', '红色', '粉红色', '墨绿色', '砖红色'],
+        keyWord: '颜色',
+        key: 'color',
+        level: '0',
+        colorArr: [
+          { label: '白色', color: '#fff' },
+          { label: '象牙白', color: '#FFFFF0' },
+          { label: '黑色', color: '#000' },
+          { label: '薰衣草', color: '#E6E6FA' },
+          { label: '橙色', color: '#FFA500' },
+          { label: '黄色', color: '#FFFF00' },
+          { label: '深黄色', color: '#FFD700' },
+          { label: '灰色', color: '#808080' },
+          { label: '浅灰色', color: '#D3D3D3' },
+          { label: '红色', color: '#DC143C' },
+          { label: '砖红色', color: '#CD5C5C' },
+          { label: '粉红色', color: '#FFC0CB' },
+          { label: '绿色', color: '#008000' },
+          { label: '深绿色', color: '#006400' },
+          { label: '蓝色', color: '#4682B4' },
+          { label: '浅蓝色', color: '#87CEFA' },
+          { label: '深蓝色', color: '#00BFFF' },
+          { label: '天蓝色', color: '#87CEEB' },
+          { label: '青色', color: '#00FFFF' },
+          { label: '卡其色', color: '#BDB76B' },
+          { label: '米色', color: '#6B8E23' },
+          { label: '紫色', color: '#800080' },
+          { label: '浅紫色', color: '#DA70D6' },
+        ],
       },
+
       sizeProps: {
-        key: '尺寸',
-        sizeArr: ['xxl', 'xl', 'l', 'm', 's', 'sm'],
+        keyWord: '尺寸',
+        key: 'size',
+        level: '1',
+        sizeArr: [
+          { label: 'XXL' },
+          { label: 'XL' },
+          { label: 'L' },
+          { label: 'M' },
+          { label: 'S' },
+          { label: 'SM' },
+        ],
       },
       versionProps: {
-        key: '版本号',
-        versionArr: ['6GB+64GB', '6GB+128GB', '8GB+64GB', '8GB+128GB', '8GB+256GB']
+        keyWord: '版本号',
+        key: 'version',
+        level: '2',
+        versionArr: [
+          { label: '6GB+64GB' },
+          { label: '6GB+128GB' },
+          { label: '8GB+64GB' },
+          { label: '8GB+128GB' },
+          { label: '8GB+256GB' },
+        ]
       },
       visible: false,
       width: 80,
@@ -119,12 +193,6 @@ export default {
           width: 200,
           type: 'input',
           value: ""
-        },
-        {
-          label: "sku缩略图",
-          prop: "skupic",
-          width: 400,
-          type: 'upload'
         }
       ],
       skuForm: {
@@ -143,7 +211,10 @@ export default {
 
   },
   computed: {
-    skus () {
+    required () {
+      return this.colorObj.length > 0 && this.sizeObj.length > 0 && this.versionObj.length > 0
+    },
+    skuData () {
       // 过滤掉用户没有填写数据的规格参数
       const arr = this.skuArr.filter(s => s.prop.length > 0);
       // 通过reduce进行累加笛卡尔积
@@ -154,7 +225,7 @@ export default {
             const obj = {};
             Object.assign(obj, o);
             obj[spec.label] = option;
-            result.push(obj);
+            result.push(obj)
           })
         })
         return result
@@ -164,85 +235,96 @@ export default {
   methods: {
     spanMethod ({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0) {
-        console.log(this.skus)
-        this.skus.map((item,index) => {
-          // if(item['颜色'])
-          // console.log(item['颜色'])
-          console.log(this.skus[index]['颜色'])
-          if(this.skus.length>0) {
-            if(this.skus[index]['颜色'] == "黑色") {
-              console.log('span')
-              return {
-                rowspan: 2,
-                colspan: 1
-              };
-            }else {
-              return {
-                rowspan: 0,
-                colspan: 0
-              };
-            }
-          }
-        })
-        // if (rowIndex % 2 === 0) {
-        //   return {
-        //     rowspan: 2,
-        //     colspan: 1
-        //   };
-        // } else {
-        //   return {
-        //     rowspan: 0,
-        //     colspan: 0
-        //   };
-        // }
+        const _row = this.getSpanArr()[rowIndex];
+        const _col = _row > 0 ? 1 : 0;
+        return {
+          rowspan: _row,
+          colspan: _col
+        }
       }
     },
     addSku (key, prop) {
       var skuObj = {}
       skuObj.label = key
+
       skuObj.prop = []
       skuObj.prop.push(prop)
+      console.log(skuObj)
       this.skuArr.push(skuObj)
     },
-    removeSku (key) {
-      let _index
-      let newArr = this.skus.filter((item, index) => {
-        if (Object.keys(item) == key) {
-          _index = index
+    removeSku (value) {
+      let _index, __index1, __index2
+      this.skuData.filter((item, index) => {
+        Object.values(item).map((val, i) => {
+          if (val === value) {
+            _index = i
+          }
+        })
+      })
+      this.skuArr.map((a, i) => {
+        a.prop.map((p, j) => {
+          if (p === value) {
+            __index1 = i
+            __index2 = j
+          }
+        })
+      })
+      this.skuData.splice(_index, 1)
+      this.skuArr[__index1]['prop'].splice(__index2, 1)
+    },
+    getSpanArr () {
+      let position = 0, spanArr = []
+      this.skuData.forEach((item, index) => {
+        if (index === 0) {
+          spanArr.push(1);
+          position = 0;
+        } else {
+          if (this.skuData[index].color === this.skuData[index - 1].color) {
+            spanArr[position] += 1;
+            spanArr.push(0);
+          } else {
+            spanArr.push(1);
+            position = index;
+          }
         }
       })
-      this.skus.splice(_index, 1)
-      console.log(this.skus)
+      return spanArr
     },
     // 多选错误
-    skuSelect ($event, prop, key) {
+    skuSelect ($event, prop, key, keyWord, level) {
       if ($event) {
         if (this.skuArr.length > 0) {
           // 加锁判断是否存在同样的prop
           var flag = false
-          this.skuArr.filter((item,index) => {
-            if(item.label == key) {
+          this.skuArr.filter((item, index) => {
+            if (item.label == key) {
               flag = true
               this.skuArr[index].prop.push(prop)
             }
           })
           !flag ? this.addSku(key, prop) : null
-          !flag ? this.skuCount++: null
+          !flag ? this.skuCount++ : null
         } else {
           this.skuCount++
           this.addSku(key, prop)
         }
-        // skuColumns
+        this.$emit('handle-submit', this.skuData)
         let _obj = {}
-        _obj.label = key
+        _obj.label = keyWord
         _obj.prop = key
         _obj.width = 200
-        !flag ? this.columns.splice(this.skuCount,0,_obj) : null
-        
-      } else {
-        this.removeSku(key)
-      }
 
+        if(prop.constructor === Object) {
+            _obj.type='color'
+        }
+        // Object.keys(prop).length>1?_obj.type='color':''
+        // console.log(_obj)
+        !flag ? this.columns.splice(this.skuCount, 0, _obj) : null
+      } else {
+        // this.columns.splice(0,1)
+        this.removeSku(prop)
+      }
+      this.$emit('get-skuData',this.skuData)
     },
     getImgURL (url) {
       this.skuForm.subPics.push(url);
@@ -253,8 +335,24 @@ export default {
 
 <style lang="scss" scoped>
 @import "./index.scss";
-$color: #409EFF;
-.sku-content {
+$color: #409eff;
+.sku {
+  &-content {
+    > p {
+      display: inline-block;
+      width: 100px;
+      vertical-align: top;
+      text-align: right;
+      color: #606266;
+    }
+    &-block {
+      display: inline-block;
+      .addForm {
+        width: 900px;
+        background: #f5f5f5;
+      }
+    }
+  }
   .prop-base {
     padding: 20px;
   }
@@ -265,8 +363,6 @@ $color: #409EFF;
       justify-content: space-between;
       margin-bottom: 20px;
       font-size: 14px;
-      .name {
-      }
       .handler {
         color: $color;
         font-weight: bold;
@@ -287,9 +383,9 @@ $color: #409EFF;
     }
   }
   .add-prop {
-      color: $color;
-      cursor: pointer;
-      font-weight: bold;
+    color: $color;
+    cursor: pointer;
+    font-weight: bold;
   }
 }
 </style>

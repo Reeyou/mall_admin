@@ -8,13 +8,14 @@
             size ? size : '',
             {
                 'plain': plain,
+                'none': none,
                 'loading': loading,
                 'disabled': disabled
             }
         ]"
     >
         <i class='el-icon-loading' v-if='loading'></i>
-        <i :class='icon' v-if="icon && !loading"></i>
+        <i :class="icon" v-if="icon && !loading"></i>
         <slot></slot>
     </button>
 </template>
@@ -30,6 +31,7 @@
             loading: Boolean,
             size: String,
             plain: Boolean,
+            none: Boolean,
             icon: String,
             disabled: Boolean
         },

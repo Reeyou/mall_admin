@@ -1,39 +1,86 @@
 @import "./variables.scss";
 @import './font.scss';
-
-@mixin btn(
-    $bgColor: $primary,
-    $bg_hover_color: $primary_hover,
-    $hover_color: #fff
-) {
-    font-family: 'sanji';
-    outline: none;
-    border: none;
+@mixin btn( $bgColor: $primary, $bg_hover_color: $primary_hover, $color: #fff, $hover_color: #fff) {
+    // font-family: 'sanji';
+    color: $color;
     background: $bgColor;
-    padding: 10px 60px;
-    border-radius: 10px;
-    color: #fff;
-    font-size: 18px;
-    transition: all 300ms ease-in-out;
     &:hover {
-        cursor: pointer;
         background: $bg_hover_color;
         color: $hover_color;
     }
 }
 
+.re-button {
+    display: inline-block;
+    line-height: 1;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 13px;
+    transition: all 300ms ease-in-out;
+    cursor: pointer;
+    i {
+        font-size: 26px;
+        font-weight: bold;
+    }
+}
+
+.none {
+    @include btn(transparent, transparent, $primary, $primary_hover);
+    border: none;
+}
+
 .primary-btn {
     @include btn;
 }
+
+.default-btn {
+    @include btn(transparent, transparent, $default, #666);
+    border: 1px solid #999;
+}
+
+.text-btn {
+    @include btn(transparent, transparent, $text_color, $text_hover_color);
+}
+
 .plain {
     @include btn(transparent, $primary);
     border: 1px solid $primary;
     color: $primary;
 }
+
 .re-button {
-    display: inline-block;
-}
-.re-button + .re-button {
-    margin-left: 14px;
+    i {
+        font-size: 26px;
+        font-weight: bold;
+    }
 }
 
+.large {
+    font-size: 15px;
+    padding: 10px 40px;
+}
+
+.small {
+    font-size: 13px;
+    padding: 12px 14px;
+    border-radius: 4px;
+    i {
+        font-size: 12px;
+    }
+}
+
+.mini {
+    font-size: 12px;
+    padding: 8px 10px;
+    border-radius: 4px;
+    i {
+        font-size: 12px;
+    }
+}
+
+// .re-button+.re-button {
+//     margin-left: 6px;
+// }

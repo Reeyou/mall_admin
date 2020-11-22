@@ -2,10 +2,11 @@
   <div class="upload">
     <div class="upload_container">
       <div class="icon">
-        <el-icon type="ios-add" class="el-icon-plus add-icon"></el-icon>
-        <p>上传图片</p>
+        <el-icon type="ios-add" class="iconfont icon-camera"></el-icon>
+        <p>{{label}}</p>
       </div>
       <input
+        :data-key="imgKey"
         type="file"
         id="image"
         @change="upload"
@@ -13,9 +14,9 @@
       />
     </div>
     <div class="poster-preview" v-if="uploadStatus">
-      <img :src="renderPic" class="poster" alt="封面图片" /> 
+      <img :src="src" class="poster" alt="封面图片" /> 
       <div class="preview-icon">
-        <el-icon class="el-icon-picture-outline icon" @click.native='handlePreview'></el-icon>
+        <el-icon v-show='preview' class="el-icon-picture-outline icon" @click.native='handlePreview'></el-icon>
         <el-icon class="el-icon-delete icon" @click.native='handleDelete'/>
       </div>
     </div>
@@ -29,7 +30,7 @@
 import dataURLtoBlob from "@/utils/dataURLtoBlob";
 import { instance } from '@/utils/request'
 export default {
-  props: ['action', 'pic'],
+  props: ['action', 'imgUrl', 'label', 'preview', 'imgKey', 'onSuccess'],
   data() {
     return {
       poster_src: "",
@@ -42,15 +43,14 @@ export default {
     };
   },
   computed: {
-    renderPic() {
-      return this.poster_src ? this.poster_src : this.pic
+    src() {
+      return this.poster_src ? this.poster_src : this.imgUrl
     }
   },
   created() {
-    if(this.pic) {
+    if(this.imgUrl) {
       this.uploadStatus = true
     }
-    console.log("pic:" + this.pic)
   },
   methods: {
     upload(e) {
@@ -71,13 +71,13 @@ export default {
 
         instance.post(self.action,formdata).then(res => {
           self.imgData = res.data.data
-          self.$emit('getImgURL',self.imgData);
+          self.onSuccess(e,self.imgData)
         })
       };
     },
     handlePreview() {
       this.dialogVisible = true
-      this.dialogImgUrl = this.pic
+      this.dialogImgUrl = this.imgUrl
     },
     handleDelete() {
       this.$emit("handleDelete")

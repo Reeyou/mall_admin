@@ -9,6 +9,10 @@
       :addBtn="{label: '添加商品',onAdd: addProduct}"
       :onFilter="handleFilter"
       :onReset="handleReset"
+      @handleEdit='handleEdit'
+      @handleDelete='handleDelete'
+      @handelChangeSize='handelChangeSize'
+      @handelChangePage='handelChangePage'
     />
   </div>
 </template>
@@ -62,8 +66,8 @@ export default {
           fixed: 'right',
           width: 140,
           handle: [
-            {label: '查看', type:'primary',clickFun: this.handleEdit },
-            {label: '搭配账户', type:'danger',clickFun: this.handleDelete },
+            {icon: 'el-icon-edit', type:'primary',clickFun: this.handleEdit },
+            {icon: 'el-icon-delete', type:'danger',clickFun: this.handleDelete },
           ]
         }],
       filters: [
@@ -137,9 +141,8 @@ export default {
     },
     getData() {
       getProductList().then(res => {
-          this.loading = false
           if(res.code === 200) {
-              
+              this.loading = false
                 this.tbData = res.data.list
           }
       })

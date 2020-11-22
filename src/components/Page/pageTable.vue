@@ -5,7 +5,6 @@
       <el-table
         :data="tbData"
         fit
-        border
         v-loading="loading"
         style="width: 100%"
         :span-method="spanMethod"
@@ -24,17 +23,13 @@
           <template slot-scope="scope">
             <!-- 操作栏 -->
             <div v-if="column.handle">
-              <template v-for="(item, key) in column.handle">
-                <el-button
-                  class="handle"
-                  v-if="item.isShow ? item.isShow(scope.row) : true"
-                  :key="key"
-                  @click="item.clickFun(scope.row)"
-                  :type="item.type"
-                  :icon="item.icon"
-                  size="mini"
-                >{{item.name}}</el-button>
+              <template v-for="(item, i) in column.handle">
+                <el-button :key='i' @click="item.clickFun(scope.row)" type="text" size="small">{{item.label}}</el-button>
               </template>
+            </div>
+            <div v-else-if="column.type == 'color'">
+                <span :style="{display:'inline-block',background:scope.row.color.color,width: 14+'px',height: 14+'px',verticalAlign:'text-top',borderRadius: '2px',marginRight: '2px',marginTop: '1px'}"></span>
+                <span>{{scope.row.color.label}}</span>
             </div>
             <!-- 输入框 -->
             <div v-else-if="column.type == 'input'">

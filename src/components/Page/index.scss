@@ -1,171 +1,171 @@
 .page {
-  background: #fff;
-  .el-input-inner {
-    height: 30px;
-  }
-  .title {
-    display: inline-block;
-    h2 {
-      font-size: 18px;
-      color: $Black;
-      font-weight: bold;
-      padding: 18px 0 2px 18px;
-    }
-    .bread {
-      padding: 24px 0 24px 14px;
-    }
-  }
-  
-  .filter {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-sizing: content-box;
-    padding: $tablePadding;
-    overflow: hidden;
     background: #fff;
-    box-shadow: 0 0 4px 1px rgba(0,0,0,0.08);
-    border-radius: 20px 20px 0 0;
-    .el-form {
-      .el-form-item {
-        box-sizing: content-box;
-        display: flex;
-        float: left;
-        margin-right: 0;
-        margin-bottom: 0px;
-        padding: 0 8px;
-        &__content {
-          flex: 1;
-          .el-select {
-            width: 100%;
-          }
-          .el-date-editor.el-input__inner {
-            height: 32px;
-          }
-          .el-input {
-            width: 140px;
-            &__inner {
-              height: 28px;
-              line-height: 28px;
-              padding: 0 10px;
-              background: transparent;
-              font-size: 12px;
-            } 
-          }
-          .el-button--mini {
-            padding: 7px 10px;
-          }
-        }
-        &__label {
-          font-size: 12px;
-          text-align: left;
-          color: #666;
-        }
-        .collapse {
-          display: inline-block;
-          margin-left: 18px;
-          color: $Blue;
-          transition: all 400ms ease;
-          &:hover {
-            cursor: pointer;
-            opacity: 0.8;
-          }
-        }
-      }
+    border-radius: 0 0 6px 6px;
+    .el-input-inner {
+        height: 30px;
     }
-    .addBtn {
-      margin-right: 10px;
-      .el-button--small, .el-button--small.is-round {
-        padding: 9px 10px;
-      }
-    }
-  }
-  .table {
-    .el-table--border {
-      border-radius: 16px 16px 0 0;
-    }
-    .main_image {
-      width: 80px;
-      height: 80px;
-      border-radius: 8px;
-    }
-    .goods_image {
-      width: 60px;
-      height: 60px;
-      border-radius: 8px;
-      &:nth-child(n + 2) {
-        margin-left: 6px;
-      }
-    }
-  }
-  .pageFooter {
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: $tablePadding;
-    .pagination {
-      float: right;
-    }
-  }
-}
-@media screen and (max-width: 1200px) {
-  .page {
-    .filter {
-      .el-form {
-        .el-form-item {
-          position: relative;
-          .el-button {
-            padding: 12px 14px;
-          }
-          .collapse {
-            position: absolute;
-            top: 0;
-            right: -40px;
-            margin-left: 18px;
-            color: $Blue;
-            transition: all 400ms ease;
-            &:hover {
-              cursor: pointer;
-              opacity: 0.8;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-@media screen and (max-width: 900px) {
-  .page {
     .title {
-      h2 {
-        padding: 0 0 0 10px;
-      }
-    }
-    .addBtn {
-      margin-right: 20px;
-      margin-top: -4px;
-      .el-button {
-        padding: 8px 10px;
-      }
+        display: inline-block;
+        h2 {
+            font-size: 18px;
+            color: $Black;
+            font-weight: bold;
+            padding: 24px 0 24px 16px;
+        }
     }
     .filter {
-      .el-form {
-        .el-form-item {
-          display: flex;
-          width: 100%;
-          padding: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: content-box;
+        padding: $tablePadding;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.08);
+        border-radius: 20px 20px 0 0;
+        .el-form {
+            .el-form-item {
+                box-sizing: content-box;
+                display: flex;
+                float: left;
+                margin-right: 0;
+                margin-bottom: 0px;
+                padding: 0 8px;
+                &__content {
+                    flex: 1;
+                    .el-select {
+                        width: 100%;
+                    }
+                    .el-date-editor.el-input__inner {
+                        height: 32px;
+                    }
+                    .el-input {
+                        width: 140px;
+                        &__inner {
+                            height: 28px;
+                            line-height: 28px;
+                            padding: 0 10px;
+                            background: transparent;
+                            font-size: 12px;
+                        }
+                    }
+                    .el-button--mini {
+                        padding: 7px 10px;
+                    }
+                }
+                &__label {
+                    font-size: 12px;
+                    text-align: left;
+                    color: #666;
+                }
+                .collapse {
+                    display: inline-block;
+                    margin-left: 18px;
+                    color: $Blue;
+                    transition: all 400ms ease;
+                    &:hover {
+                        cursor: pointer;
+                        opacity: 0.8;
+                    }
+                }
+            }
         }
-        &__label {
-          flex: 0 0 25%;
+        .addBtn {
+            margin-right: 10px;
+            .el-button--small,
+            .el-button--small.is-round {
+                padding: 9px 10px;
+            }
         }
-        &__content {
-          flex: 1;
-        }
-      }
     }
     .table {
-      padding: 0;
+        .el-table--border {
+            border-radius: 16px 16px 0 0;
+        }
+        .main_image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+        }
+        .goods_image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            &:nth-child(n + 2) {
+                margin-left: 6px;
+            }
+        }
     }
-  }
+    .pageFooter {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: $tablePadding;
+        .pagination {
+            float: right;
+        }
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .page {
+        .filter {
+            .el-form {
+                .el-form-item {
+                    position: relative;
+                    .el-button {
+                        padding: 12px 14px;
+                    }
+                    .collapse {
+                        position: absolute;
+                        top: 0;
+                        right: -40px;
+                        margin-left: 18px;
+                        color: $Blue;
+                        transition: all 400ms ease;
+                        &:hover {
+                            cursor: pointer;
+                            opacity: 0.8;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .page {
+        .title {
+            h2 {
+                padding: 0 0 0 10px;
+            }
+        }
+        .addBtn {
+            margin-right: 20px;
+            margin-top: -4px;
+            .el-button {
+                padding: 8px 10px;
+            }
+        }
+        .filter {
+            .el-form {
+                .el-form-item {
+                    display: flex;
+                    width: 100%;
+                    padding: 0;
+                }
+                &__label {
+                    flex: 0 0 25%;
+                }
+                &__content {
+                    flex: 1;
+                }
+            }
+        }
+        .table {
+            padding: 0;
+        }
+    }
 }

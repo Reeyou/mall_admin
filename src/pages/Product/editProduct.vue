@@ -3,44 +3,46 @@
     <div class="title">
       <h2>商品编辑</h2>
     </div>
-    <label class='label'>商品属性</label>
+    <label class="label">商品属性</label>
     <el-form
       ref="productForm"
       :model="productForm"
       :rules="productRule"
       label-width="100px"
       class="addForm"
-      label-position="left">
+      label-position="left"
+    >
       <el-form-item label="商品id" prop="spuId">
-        <el-input v-model="productForm.spuId" placeholder="请输入商品id"/>
+        <el-input v-model="productForm.spuId" placeholder="请输入商品id" />
       </el-form-item>
       <el-form-item label="标题" prop="name">
-        <el-input v-model="productForm.name" placeholder="请输入商品名称"/>
+        <el-input v-model="productForm.name" placeholder="请输入商品名称" />
       </el-form-item>
       <el-form-item label="商品描述" prop="desc">
         <el-input
           v-model="productForm.desc"
           type="textarea"
-          :autosize="{minRows: 2,maxRows: 5}"
+          :autosize="{ minRows: 2, maxRows: 5 }"
           placeholder="请输入商品描述"
         />
       </el-form-item>
       <el-form-item label="分类" prop="categoryId">
-        <el-select style="width:200px" v-model='value' class='tagList'>
+        <el-select style="width: 200px" v-model="value" class="tagList">
           <el-option
-            v-for="(item,index) in categoryList"
+            v-for="(item, index) in categoryList"
             :value="item.categoryname"
             :key="index"
             :label="item.categoryname"
-            @click.native='changeCategoryName(item._id)'
-          >{{ item.categoryname }}</el-option>
+            @click.native="changeCategoryName(item._id)"
+            >{{ item.categoryname }}</el-option
+          >
         </el-select>
       </el-form-item>
       <el-form-item label="商品主图" prop="pic">
         <UploadImg
           action="/api/upload"
           @getImgURL="getPicUrl"
-          :pic='pic_src'
+          :pic="pic_src"
           v-if="pic_src.length > 0"
         />
       </el-form-item>
@@ -51,60 +53,29 @@
           :on-preview="handlePictureCardPreview"
           :file-list="detailPicList"
           :on-remove="handleRemove"
-          :on-change="getDetailPicUrl">
+          :on-change="getDetailPicUrl"
+        >
           <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
-          <img width="100%" :src="dialogImageUrl" alt="">
+          <img width="100%" :src="dialogImageUrl" alt="" />
         </el-dialog>
       </el-form-item>
     </el-form>
-    <!-- sku -->
-    <label class="label">商品sku</label>
-    <el-form
-      ref="skuForm"
-      :model="skuForm"
-      :rules="skuRule"
-      label-width="100px"
-      class="addForm"
-      label-position="left"
+    <PageTable :tbData="skuData" :columns="skuColumns" />
+    <el-button
+      class="btn submit"
+      @click="handleSubmit"
+      icon="ios-add"
+      type="primary"
+      >提交</el-button
     >
-      <el-form-item label="颜色" prop="color">
-        <el-input v-model="skuForm.color" placeholder="请输入商品颜色" />
-      </el-form-item>
-      <el-form-item label="版本号" prop="version">
-        <el-input v-model="skuForm.version" placeholder="请输入版本号" />
-      </el-form-item>
-      <el-form-item label="价格" prop="price">
-        <el-input v-model="skuForm.price" placeholder="请输入商品价格" />
-      </el-form-item>
-      <el-form-item label="库存" prop="num">
-        <el-input v-model="skuForm.num" placeholder="请输入商品库存" />
-      </el-form-item>
-      <el-form-item label="商品副图" prop="subPics">
-        <el-upload
-          action="/api/upload"
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :file-list="skuPicList"
-          :on-remove="handleRemove"
-          :on-change="getSkuImgUrl">
-          <i class="el-icon-plus"></i>
-        </el-upload>
-      </el-form-item>
-    </el-form>
-    <el-button class="btn" @click="handleInitSku" icon="ios-add" type="primary">生成商品sku</el-button>
-    <PageTable
-      :tbData='skuData'
-      :columns='skuColumns'
-    />
-    <el-button class="btn submit" @click=" handleSubmit" icon="ios-add" type="primary">提交</el-button>
   </div>
 </template>
 
 <script>
 import PageTable from "@/components/Page/pageTable";
-import {getCategoryList,createSku,getSku,addProduct,getProduct} from '../../api/product'
+import { getCategoryList, createSku, getSku, addProduct, getProduct } from '../../api/product'
 import UploadImg from "@/components/UploadImg";
 import Sku from './sku'
 export default {
@@ -113,7 +84,7 @@ export default {
     Sku,
     PageTable
   },
-  data() {
+  data () {
     return {
       dialogImageUrl: '',
       dialogVisible: false,
@@ -124,7 +95,7 @@ export default {
       detailPic_src: '',
       tagList: [],
       visible: false,
-       width: 1080,
+      width: 1080,
       spuData: {},
       skuData: [],
       categoryList: [],
@@ -215,8 +186,8 @@ export default {
         {
           label: "操作",
           handle: [
-            {icon: 'el-icon-edit', type:'primary',clickFun: this.handleEdit },
-            {icon: 'el-icon-delete', type:'danger',clickFun: this.handleDelete },
+            { icon: 'el-icon-edit', type: 'primary', clickFun: this.handleEdit },
+            { icon: 'el-icon-delete', type: 'danger', clickFun: this.handleDelete },
           ]
         }
       ],
@@ -256,25 +227,25 @@ export default {
       }
     };
   },
-  created() {
-   this.getCategoryList()
-   this.getProductData()
-   this.getSku()
+  created () {
+    this.getCategoryList()
+    this.getProductData()
+    this.getSku()
   },
   methods: {
-    handleRemove(file, fileList) {
-        console.log(file, fileList);
-      },
-      handlePictureCardPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
-      },
-    getProductData() {
+    handleRemove (file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePictureCardPreview (file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    getProductData () {
       const params = {
         spuId: this.spuId
       }
       getProduct(params).then(res => {
-        if(res.code == 200) {
+        if (res.code == 200) {
           let spuData = res.data[0]
           this.productForm = {
             spuId: spuData.spuId,
@@ -285,47 +256,47 @@ export default {
             categoryId: spuData.categoryId,
           }
           this.pic_src = spuData.pic
-          
-          spuData.detailPic.forEach((item,index) => {
+
+          spuData.detailPic.forEach((item, index) => {
             let picObj = {}
-            picObj.name=index
-            picObj.url=item
+            picObj.name = index
+            picObj.url = item
             this.detailPicList.push(picObj)
             // console.log(this.detailPicList)
           })
           console.log(this.detailPicList)
           // this.detailPicList = spuData.detailPic
-          this.categoryList.map((item,index) => {
-            if(item._id == spuData.categoryId) {
+          this.categoryList.map((item, index) => {
+            if (item._id == spuData.categoryId) {
               this.value = item.categoryname
             }
           })
         }
       })
     },
-    getSku() {
+    getSku () {
       const params = {
         spuId: this.spuId
       }
-      getSku(params).then(res => {
-        if(res.code == 200) {
-          this.skuData = res.data[0].skuList
-          if(this.skuData) {
-            this.visible = true
-          }
+      // getSku(params).then(res => {
+      //   if(res.code == 200) {
+      //     this.skuData = res.data[0].skuList
+      //     if(this.skuData) {
+      //       this.visible = true
+      //     }
+      //   }
+      // })
+    },
+    handleInitSku () {
+      this.$refs["productForm"].validate(valid => {
+        if (valid) {
+          this.spuId = this.productForm.spuId
         }
       })
-    },
-    handleInitSku() {
-       this.$refs["productForm"].validate(valid => {
-         if(valid) {
-           this.spuId = this.productForm.spuId
-         }
-       })
       this.$refs["skuForm"].validate(valid => {
         if (valid) {
           this.visible = true
-          const {color,version,price,num,subPics} = this.skuForm
+          const { color, version, price, num, subPics } = this.skuForm
           const params = {
             color,
             version,
@@ -334,46 +305,46 @@ export default {
             subPics
           }
           this.$refs["skuForm"].resetFields();
-          let allSkuData = JSON.parse(localStorage.getItem('allSkuData')) || {spuId: this.spuId,skuList: []}
+          let allSkuData = JSON.parse(localStorage.getItem('allSkuData')) || { spuId: this.spuId, skuList: [] }
           allSkuData.spuId = this.spuId
           allSkuData.skuList.push(params)
           createSku(allSkuData).then(res => {
-            if(res.code == 200) {
+            if (res.code == 200) {
               allSkuData.skuId = res.data
-             localStorage.setItem('allSkuData',JSON.stringify(allSkuData))
+              localStorage.setItem('allSkuData', JSON.stringify(allSkuData))
             }
           })
-          
+
           // this.skuData = JSON.parse(localStorage.getItem('allSkuData'))
           // console.log(this.skuData)
         }
       })
     },
-    getCategoryList() {
+    getCategoryList () {
       getCategoryList().then(res => {
-        if(res.code == 200) {
+        if (res.code == 200) {
           this.categoryList = res.data.list
         }
       })
     },
-    getPicUrl(url) {
+    getPicUrl (url) {
       // this.pic = url;
       this.productForm.pic = url
     },
-    getDetailPicUrl(url) {
+    getDetailPicUrl (url) {
       this.productForm.detailPic = url
     },
-    getSkuImgUrl(url) {
+    getSkuImgUrl (url) {
       this.skuForm.subPics.push(url);
     },
-    changeCategoryName(val) {
+    changeCategoryName (val) {
       this.productForm.categoryId = val
     },
     // 提交
-    handleSubmit() {
+    handleSubmit () {
       this.$refs["productForm"].validate(valid => {
         if (valid) {
-          const {spuId,name,desc,pic,detailPic,categoryId} = this.productForm
+          const { spuId, name, desc, pic, detailPic, categoryId } = this.productForm
           const params = {
             spuId,
             name,
@@ -383,7 +354,7 @@ export default {
             categoryId
           }
           addProduct(params).then(res => {
-            if(res.code == 200) {
+            if (res.code == 200) {
               // this.$Message.success("添加成功!")
             } else {
               // this.$Message.error("添加失败!");
@@ -392,10 +363,10 @@ export default {
         }
       });
     },
-    handleEdit(scope) {
+    handleEdit (scope) {
 
     },
-    handleDelete(scope) {
+    handleDelete (scope) {
 
     }
   }
@@ -403,5 +374,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import './index.scss';
+@import "./index.scss";
 </style>

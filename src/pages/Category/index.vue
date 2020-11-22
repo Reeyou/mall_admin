@@ -1,271 +1,258 @@
 <template>
-  <div>
-    <!-- 标题 -->
-    <PageHeader title="分类列表" :addBtn="{label: '添加分类',onAdd: addCategory}" />
-    <input v-model="message" v-focus>
-    <span>{{ message | capitalize }}</span>
-    <div class="category-tree">
-      <CategoryTree
-        @handleSubmit="handleSubmit"
-        :current="currentId"
-        :treeData="initData"
+  <div class="contains">
+    <PageHeader title="分类列表" />
+    <div class="table">
+      <tree-table
+        :columns="columns"
+        :tbData="tbData"
+        :addBtn="{ label: '添加分类', onAdd: handleAdd }"
+        :submit="handleSubmit"
+        :loading="loading"
       />
     </div>
-    <div class="category-info">
-      <CategoryInfo
-        ref="categoryInfo"
-        :categoryInfoData="categoryInfoData"
-        :categoryList="initData"
-        :categoryCur="categoryInfoData"
-        :loading="changeLoading"
-        @handleChange="handleChange"
-        @handleDelete="handleDelete"
-      />
-    </div>
-    <el-dialog :title="dialog.title" width="500px" :visible.sync="dialog.visible">
-      <el-form :model="categoryForm" :rules="rules" ref="categoryForm">
-        <el-form-item label="分类名称" prop="categoryname" :label-width="formLabelWidth">
-          <el-input
-            v-model="categoryForm.categoryname"
-            :style="{width: '300px'}"
-            autocomplete="off"
-          ></el-input>
+    <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="30%">
+      <el-form
+        ref="categoryForm"
+        :model="categoryForm"
+        :rules="categoryFormRule"
+        class="category-form"
+        label-width="120px"
+      >
+        <el-form-item :label="dialog.label" prop="category_name">
+          <el-input v-model="categoryForm.category_name"></el-input>
         </el-form-item>
-        <el-form-item v-if="node" label="分类图片" prop="categoryImg" :label-width="formLabelWidth">
-          <UploadImg action="/api/upload" @getImgURL="getPicUrl" :pic="categoryForm.categoryImg" />
+        <el-form-item label="是否在首页展示" prop="show_home">
+          <el-checkbox v-model="categoryForm.show_home"></el-checkbox>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="handleAddCancel">取 消</el-button>
-        <el-button type="primary" @click="handleAddOk">确 定</el-button>
-      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="handleCancel">取消</el-button>
+        <el-button type="primary" @click="handleOk">确定</el-button>
+      </span>
     </el-dialog>
   </div>
 </template>
-
 <script>
-import bus from "./bus"
-import PageHeader from "@/components/Page/pageHeader";
-import UploadImg from "@/components/UploadImg";
-import CategoryInfo from "./CategoryInfo";
-import CategoryTree from "./categoryTree";
+import PageHeader from '@/components/Page/pageHeader'
+import { handleCategoryListData } from '../../module/util'
 import {
   addCategory,
   getCategoryList,
   deleteCategory,
   updateCategory
 } from "@/api/product";
+import {flatten} from '../../utils/util'
 export default {
+    inject: ['reload'],
+  components: {
+    PageHeader
+  },
   data () {
     return {
-      message: "",
-      categoryForm: {
-        categoryname: "",
-        categoryImg: ""
-      },
       dialog: {
         visible: false,
-        title: ""
+        title: '',
+        label: ''
       },
-      value: "",
-      childValue: "",
-      categoryInfoData: {},
-      categoryList: [],
-      formLabelWidth: "100px",
-      loading: true,
       tbData: [],
-      initData: [],
-      submitData: null,
-      node: null,
-      changeLoading: false,
-      currentId: "",
-      rules: {
-        categoryname: [
-          {
-            required: true,
-            message: "分类名称不能为空",
-            trigger: "blur"
-          }
-        ],
-        categoryImg: [
-          {
-            required: true,
-            message: "分类图片不能为空",
-            trigger: "blur"
-          }
-        ]
-      }
+      loading: true,
+      categoryForm: {
+        category_name: '',
+        type: 0,
+        show_home: false
+      },
+      categoryFormRule: {
+        category_name: [{ required: true, message: "分类名称不能为空", trigger: "blur" }]
+      },
+      columns: [
+        {
+          label: '分类',
+          key: 'category_name',
+          type: 'collapse',
+          width: 340
+        },
+        {
+          label: '排序值',
+          key: 'sort',
+          width: 200,
+          type: 'input'
+        },
+        {
+          label: '是否在首页展示商品',
+          key: 'show_home',
+          type: 'checkbox',
+          width: 300
+        },
+        {
+          label: '展开子分类',
+          key: 'expand',
+          type: 'checkbox',
+          width: 200,
+        },
+        {
+          label: '添加子分类',
+          key: 'status',
+          type: 'text-handle',
+          width: 200,
+          handle: [
+            { label: '添加子分类', type: 'text', clickFun: this.handleAdd },
+          ]
+        },
+        {
+          label: "操作",
+          fixed: 'right',
+          type: 'handle',
+          handle: [
+            { icon: 'iconfont icon-delete_s', type: 'danger', clickFun: this.handleDelete },
+          ]
+        }
+      ],
+      testData: [
+        {
+          category_name: '测试',
+          sex: 'male',
+          age: 18,
+          status: 'ok',
+          children: [
+            {
+              category_name: 'test1',
+              sex: 'male',
+              age: 18,
+              status: 'ok',
+              children: [
+                {
+                  category_name: 'test1-1',
+                  sex: 'male',
+                  age: 18,
+                  status: 'ok',
+                },
+              ]
+            },
+            {
+              category_name: 'test2',
+              sex: 'male',
+              age: 18,
+              status: 'ok',
+
+            },
+            {
+              category_name: 'test3',
+              sex: 'male',
+              age: 18,
+              status: 'ok',
+
+            }
+          ]
+        },
+        {
+          category_name: 'rrssss',
+          sex: 'female',
+          age: 18,
+          status: 'ok'
+        },
+        {
+          category_name: 'ttsss',
+          sex: 'male',
+          age: 18,
+          status: 'ok'
+        },
+        {
+          category_name: 'ggsss',
+          sex: 'male',
+          age: 18,
+          status: 'ok'
+        },
+      ]
     }
   },
   created () {
-    this.getData();
-    bus.$on("node-click", (node) => {
-      this.categoryInfoData = node
-      this.currentId = node._id
-    })
-    bus.$on("add-child-category", (data) => {
-      this.node = data
-      this.dialog.visible = true
-      this.dialog.title = "添加三级分类"
-      this.$refs.categoryForm.clearValidate()
-    })
+    this.getCategoryList()
   },
   methods: {
-    // handleNodeClick(node) {
-    //   this.categoryInfoData = node
-    // },
-    // handleSubmit(data) {
-    //   console.log(data)
-    //   const param = {
-    //     categoryname: data.value,
-    //     categoryId: data.categoryId,
-    //     type: "2"
-    //   };
-    //   addCategory(param).then(res => {
-    //     if (res.code == 200) {
-    //       this.dialog.visible = false;
-    //       this.getData();
-    //     }
-    //   })
-    // },
-    // handleClick(data) {
-    //   this.currentId = data._id
-    // },
-    handleSubmit (data) {
-      const param = {
-        categoryname: data.value,
-        categoryId: data._id,
-        type: Number(data.type) + 1
-      };
-      addCategory(param).then(res => {
-        if (res.code == 200) {
-          this.getData();
-        }
+    getCategoryList () {
+      getCategoryList().then(res => {
+          this.loading = false
+          // 不被监听改变
+        //   this.targetData = JSON.parse(JSON.stringify(res.data.list))
+          this.tbData = handleCategoryListData(res.data.list)
       })
     },
-    handleChange(data) {
-      this.changeLoading = true
-      this.$refs.categoryInfo.$refs.form.validate(valid => {
-        if(valid) {
-          updateCategory(data).then(res => {
-            this.changeLoading = false
-            if(res.code == 200) {
-              this.$message({
-                type: 'success',
-                message: res.msg
-              });
-            }
+    handleAdd (data) {
+      //Todo 判断条件优化
+      if (data.hasOwnProperty('category_name')) {
+        this.dialog.title = '添加子分类'
+        this.dialog.label = '子分类名称'
+        this.categoryForm.category_id = data._id
+        this.categoryForm.type = data.type=='1'?"2":"1"
+      } else {
+        this.dialog.title = '添加分类'
+        this.dialog.label = '分类名称'
+      }
+      this.dialog.visible = true
+    },
+    handleOk () {
+      this.$refs["categoryForm"].validate(valid => {
+        if (valid) {
+            this.loading = true
+          addCategory(this.categoryForm).then(res => {
+            this.dialog.visible = false
+            this.$refs['categoryForm'].resetFields()
+            this.getCategoryList()
           })
-        } else {
-          this.changeLoading = false
         }
       })
-      
     },
-    handleDelete (_id) {
+    handleCancel () {
+      this.dialog.visible = false
+      this.$refs['categoryForm'].resetFields()
+    },
+    handleSubmit () {
+        let data = flatten(this.tbData)
+        this.loading = true
+        updateCategory(data).then(res => {
+            this.getCategoryList()
+            this.reload()
+        })
+    },
+    handleDelete (data) {
       this.$confirm('是否删除该分类?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        deleteCategory({ _id }).then(res => {
-          if (res.code == 200) {
-            this.getData();
-          }
-          this.$message({
-              type: 'success',
-              message: res.msg
-            });
+        deleteCategory({ _id: data._id }).then(res => {
+            this.getCategoryList();
+            this.$message({
+                type: 'success',
+                message: res.msg
+            })
+        }).catch(e=>{
+            this.$message({
+                type: 'error',
+                message: e.msg
+            })
         })
       })
     },
-    getPicUrl (url) {
-      this.categoryForm.categoryImg = url;
-    },
-    getData () {
-      getCategoryList().then(res => {
-        if (res.code == 200) {
-          this.loading = false;
-          let categoryChildData = [];
-          this.tbData = res.data.list;
-          this.renderCategory()
-        }
-      })
-    },
-    renderCategory () {
-      this.initData = []
-      this.categoryList1 = [];
-      this.categoryList2 = [];
-      this.tbData.map((i, index) => {
-        if (i.type == "1") {
-          this.categoryList1.push(i);
-          this.$set(i, "children", [])
-          this.tbData.map((j, index) => {
-            if (j.type == "2" && String(i._id) == String(j.categoryId)) {
-              this.categoryList2.push(j);
-              this.$set(j, "children", [])
-              i.children.push(j);
-              this.tbData.map((k, index) => {
-                if (k.type == "3" && String(j._id) == String(k.categoryId)) {
-                  j.children.push(k);
-                }
-              })
-            }
-          })
-          this.initData.push(i);
-        }
-      })
-    },
-    addCategory () {
-      this.dialog.visible = true
-      this.dialog.title = "添加总分类"
-      this.$refs.categoryForm.clearValidate()
-      this.node = null
-    },
-    handleAddOk () {
-      this.$refs["categoryForm"].validate(valid => {
-        if (valid) {
-          const param = {
-            ...this.categoryForm,
-            type: this.node ? Number(this.node.type) + 1 : "1"
-          };
-          this.node ? param.categoryId = this.node._id : null
-          addCategory(param).then(res => {
-            if (res.code == 200) {
-              this.dialog.visible = false;
-              this.getData();
-              this.$refs.categoryForm.resetFields();
-            }
-          });
-        } else {
-          console.log("err");
-        }
-      });
-    },
-    handleAddCancel () {
-      this.dialog.visible = false;
-
-    },
-  },
-  components: {
-    PageHeader,
-    UploadImg,
-    CategoryInfo,
-    CategoryTree
+    handleEdit (data) {
+      console.log(data)
+    }
   }
-};
+}
 </script>
 
-<style lang="scss" scoped>
-.category-tree {
-  width: 270px;
-  float: left;
-  padding-left: 40px;
-  border-right: 1px solid #ddd;
-}
-.category-info {
-  width: 470px;
-  float: left;
-  margin: 20px 0 0 100px;
+<style lang='scss'>
+.contains {
+  /* width: 960px; */
+  background: #fff;
+  .table {
+      box-shadow: 0 0 4px 1px rgba(0,0,0,0.08);
+    border-radius: 20px 20px 0 0;
+  }
+  .category-form {
+    .el-form-item:last-child {
+      margin-bottom: 0;
+    }
+  }
 }
 </style>

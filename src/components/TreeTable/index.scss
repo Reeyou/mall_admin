@@ -1,0 +1,180 @@
+.m-tree-table {
+    width: 100%;
+    font-size: 14px;
+    padding-bottom: 20px;
+    .header {
+        text-align: right;
+        padding: 20px 0;
+        margin-right: 20px;
+        .el-button--small,
+        .el-button--small.is-round {
+            padding: 9px 10px;
+        }
+    }
+    .m-table {
+        position: relative;
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            transition: opacity .3s;
+            &:before {
+                position: absolute;
+                content: '';
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(255, 255, 255, 0.9);
+                z-index: 10;
+            }
+            .spinner {
+                top: 50%;
+                margin-top: -21px;
+                width: 100%;
+                text-align: center;
+                position: absolute;
+                z-index: 20;
+                .circular {
+                    height: 42px;
+                    width: 42px;
+                    animation: loading-rotate 2s linear infinite;
+                    .path {
+                        animation: loading-dash 1.5s ease-in-out infinite;
+                        stroke-dasharray: 90, 150;
+                        stroke-dashoffset: 0;
+                        stroke-width: 2;
+                        stroke: #409eff;
+                        stroke-linecap: round;
+                    }
+                }
+            }
+        }
+    }
+    table {
+        width: 100%;
+        // table-layout: fixed;
+        thead {
+            width: 100%;
+            color: #909399;
+            background: #f4f4f4;
+            border-bottom: 1px solid #ebeef5;
+            tr {
+                th {
+                    line-height: 23px;
+                    padding: 6px 18px;
+                    box-sizing: border-box;
+                    text-align: center;
+                    vertical-align: middle;
+                    white-space: nowrap;
+                    word-break: break-all;
+                    word-wrap: break-word;
+                }
+            }
+        }
+        tbody {
+            color: #606266;
+            td {
+                text-align: center;
+                padding: 18px;
+                border-bottom: 1px solid #ebeef5;
+            }
+        }
+    }
+    .no_data {
+        padding: 20px 0;
+        text-align: center;
+        color: #bbb;
+    }
+    .submit {
+        width: 100%;
+        text-align: center;
+        padding: 20px 0;
+    }
+}
+
+.m-table-item {
+    width: 100%;
+    tbody {
+        width: 100%;
+        .level {
+            // 屏蔽双击不能选择文本样式
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -o-user-select: none;
+            user-select: none;
+            transition: background 0.25s ease;
+            &:hover {
+                background-color: #f5f7fa;
+            }
+        }
+        td {
+            .collapse_cell {
+                position: relative;
+                .collapse_icon {
+                    position: absolute;
+                    left: -14px;
+                    top: 14px;
+                    width: 0;
+                    height: 0;
+                    border-width: 6px;
+                    border-style: solid;
+                    cursor: pointer;
+                }
+                .is_open {
+                    border-color: transparent transparent transparent #777;
+                }
+                .is_close {
+                    top: 16px;
+                    left: -18px;
+                    border-color: #777 transparent transparent;
+                }
+                .collapse_label {
+                    font-size: 14px;
+                }
+            }
+        }
+        .cell {
+            padding-left: 40px;
+            text-align: left;
+        }
+        .level-1 .cell {
+            padding-left: 60px;
+        }
+        .level-2 .cell {
+            padding-left: 80px;
+        }
+        .level-1,
+        .level-2 {
+            .collapse_label {
+                position: relative;
+                padding-left: 14px;
+                &:before {
+                    content: "";
+                    position: absolute;
+                    top: 8px;
+                    left: 0;
+                    width: 1px;
+                    height: 14px;
+                    background: #aaa;
+                    z-index: 1;
+                }
+                &:after {
+                    content: "";
+                    position: absolute;
+                    bottom: 18px;
+                    left: 0;
+                    width: 10px;
+                    height: 1px;
+                    background: #aaa;
+                    z-index: 1;
+                }
+            }
+        }
+        .collapse_table {
+            display: block;
+        }
+    }
+}

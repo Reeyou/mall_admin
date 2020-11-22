@@ -28,13 +28,13 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-button size="mini" type="primary" @click="handleFilter">查询</el-button>
-          <el-button size="mini" type="primary" @click="handleReset">重置</el-button>
+          <re-button size="mini" plain type="primary" @click="handleFilter">查询</re-button>
+          <re-button size="mini" type="default" @click="handleReset">重置</re-button>
         </el-form-item>
       </el-form>
       <!-- 添加按钮 -->
     <div class="addBtn" v-if="addBtn">
-      <el-button size="small" type="primary" icon="el-icon-plus" @click="addBtn.onAdd">{{addBtn.label}}</el-button>
+      <re-button size="small" type="primary" icon="el-icon-plus" @click="addBtn.onAdd">{{addBtn.label}}</re-button>
     </div>
     </div>
     
