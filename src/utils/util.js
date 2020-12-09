@@ -102,7 +102,8 @@ function validateForms(formRefs) {
 const removeDuplication = (arr) => {
     const res = [];
     const _obj = {}
-    for (const item of arr) {
+    let _arr = arr || []
+    for (const item of _arr) {
         if (item.constructor == Object) {
             for (const prop in item) {
                 if (item[prop].constructor == Object) {
@@ -120,7 +121,5 @@ export {
     DeepClone,
     flatten,
     validateForms,
-    unique,
-    unique2,
     removeDuplication
 }

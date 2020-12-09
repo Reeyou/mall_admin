@@ -21,21 +21,27 @@
                 :key="index"
                 :label="item.label"
                 @change="
-                  skuSelect(
-                    $event,
-                    item    ,
-                    colorProps.key,
-                    colorProps.keyWord,
-                    colorProps.level
-                  )
+                  skuSelect($event, item, colorProps.key, colorProps.keyWord)
                 "
               >
-              <template>
+                <template>
                   <div>
-                      <span :style="{display:'inline-block',background:item.color,width: 14+'px',height: 14+'px',verticalAlign:'text-top',borderRadius: '2px',marginRight: '2px',marginTop: '-1px'}"></span>
-                      <span>{{item.label}}</span>
+                    <span
+                      :style="{
+                        display: 'inline-block',
+                        background: item.color,
+                        width: 14 + 'px',
+                        height: 14 + 'px',
+                        verticalAlign: 'text-top',
+                        borderRadius: '2px',
+                        marginRight: '2px',
+                        marginTop: '-1px',
+                      }"
+                    ></span>
+                    <span>{{ item.label }}</span>
                   </div>
-              </template></el-checkbox>
+                </template></el-checkbox
+              >
             </el-checkbox-group>
           </div>
           <div class="prop prop-base">
@@ -53,8 +59,7 @@
                     $event,
                     item.label,
                     sizeProps.key,
-                    sizeProps.keyWord,
-                    sizeProps.level
+                    sizeProps.keyWord
                   )
                 "
               ></el-checkbox>
@@ -75,8 +80,7 @@
                     $event,
                     item.label,
                     versionProps.key,
-                    versionProps.keyWord,
-                    versionProps.level
+                    versionProps.keyWord
                   )
                 "
               />
@@ -89,14 +93,17 @@
         </el-form>
       </div>
     </div>
-    <!-- <div v-if="required"> -->
-    <div style="width: 900px;margin-left: 100px;margin-top: 20px">
+    <div style="width: 900px; margin-left: 100px; margin-top: 20px">
       <PageTable
         :tbData="skuData"
         :columns="columns"
         :spanMethod="spanMethod"
       />
-      
+      <div class="stoke_content">
+        <span class="stoke_label"
+          >库存总计:<span class="stoke_number">{{ stokeTotal }}</span></span
+        >
+      </div>
     </div>
   </div>
 </template>
@@ -124,7 +131,6 @@ export default {
       colorProps: {
         keyWord: '颜色',
         key: 'color',
-        level: '0',
         colorArr: [
           { label: '白色', color: '#fff' },
           { label: '象牙白', color: '#FFFFF0' },
@@ -133,8 +139,8 @@ export default {
           { label: '橙色', color: '#FFA500' },
           { label: '黄色', color: '#FFFF00' },
           { label: '深黄色', color: '#FFD700' },
-          { label: '灰色', color: '#808080' },
-          { label: '浅灰色', color: '#D3D3D3' },
+          { label: '深空灰色', color: '#808080' },
+          { label: '银色', color: '#D3D3D3' },
           { label: '红色', color: '#DC143C' },
           { label: '砖红色', color: '#CD5C5C' },
           { label: '粉红色', color: '#FFC0CB' },
@@ -155,7 +161,6 @@ export default {
       sizeProps: {
         keyWord: '尺寸',
         key: 'size',
-        level: '1',
         sizeArr: [
           { label: 'XXL' },
           { label: 'XL' },
@@ -168,7 +173,6 @@ export default {
       versionProps: {
         keyWord: '版本号',
         key: 'version',
-        level: '2',
         versionArr: [
           { label: '6GB+64GB' },
           { label: '6GB+128GB' },
@@ -183,16 +187,12 @@ export default {
         {
           label: "价格",
           prop: "price",
-          width: 200,
           type: 'input',
-          value: ""
         },
         {
           label: "库存",
-          prop: "num",
-          width: 200,
+          prop: "stoke",
           type: 'input',
-          value: ""
         }
       ],
       skuForm: {
@@ -212,24 +212,52 @@ export default {
   },
   computed: {
     required () {
-      return this.colorObj.length > 0 && this.sizeObj.length > 0 && this.versionObj.length > 0
+      return this.skuArr.length > 0
     },
     skuData () {
-      // 过滤掉用户没有填写数据的规格参数
       const arr = this.skuArr.filter(s => s.prop.length > 0);
-      // 通过reduce进行累加笛卡尔积
+
       return arr.reduce((last, spec) => {
-        const result = [];
+        const result = []
         last.forEach(o => {
           spec.prop.forEach(option => {
-            const obj = {};
+            const obj = {}
             Object.assign(obj, o);
             obj[spec.label] = option;
+
+            obj['price'] = '';
+            obj['stoke'] = '';
             result.push(obj)
           })
         })
         return result
       }, [{}])
+    },
+    sp_data () {
+      const arr = this.skuArr.filter(s => s.prop.length > 0);
+      let sp_data = []
+
+      return arr.reduce((last, spec) => {
+        const result = []
+        last.forEach(o => {
+          spec.prop.forEach(option => {
+            const obj = {}
+            Object.assign(obj, o);
+            let key = spec.key,
+              value = option.constructor === Object ? option.label : option
+            obj[spec.key] = value
+            result.push(obj)
+          })
+        })
+        return result
+      }, [{}])
+    },
+    stokeTotal () {
+      let total = 0
+      this.skuData.map(item => {
+        total += Number(item.stoke)
+      })
+      return total
     }
   },
   methods: {
@@ -243,13 +271,13 @@ export default {
         }
       }
     },
-    addSku (key, prop) {
+    addSku (key, keyWord, prop) {
       var skuObj = {}
       skuObj.label = key
+      skuObj.key = keyWord
 
       skuObj.prop = []
       skuObj.prop.push(prop)
-      console.log(skuObj)
       this.skuArr.push(skuObj)
     },
     removeSku (value) {
@@ -291,7 +319,7 @@ export default {
       return spanArr
     },
     // 多选错误
-    skuSelect ($event, prop, key, keyWord, level) {
+    skuSelect ($event, prop, key, keyWord) {
       if ($event) {
         if (this.skuArr.length > 0) {
           // 加锁判断是否存在同样的prop
@@ -302,32 +330,25 @@ export default {
               this.skuArr[index].prop.push(prop)
             }
           })
-          !flag ? this.addSku(key, prop) : null
+          !flag ? this.addSku(key, keyWord, prop) : null
           !flag ? this.skuCount++ : null
         } else {
           this.skuCount++
-          this.addSku(key, prop)
+          this.addSku(key, keyWord, prop)
         }
-        this.$emit('handle-submit', this.skuData)
         let _obj = {}
         _obj.label = keyWord
         _obj.prop = key
         _obj.width = 200
 
-        if(prop.constructor === Object) {
-            _obj.type='color'
+        if (prop.constructor === Object) {
+          _obj.type = 'color'
         }
-        // Object.keys(prop).length>1?_obj.type='color':''
-        // console.log(_obj)
         !flag ? this.columns.splice(this.skuCount, 0, _obj) : null
       } else {
-        // this.columns.splice(0,1)
         this.removeSku(prop)
       }
-      this.$emit('get-skuData',this.skuData)
-    },
-    getImgURL (url) {
-      this.skuForm.subPics.push(url);
+      this.$emit('get-skuData', { skuData: this.skuData, sp_data: this.sp_data, stokeTotal: this.stokeTotal })
     }
   }
 };
@@ -386,6 +407,21 @@ $color: #409eff;
     color: $color;
     cursor: pointer;
     font-weight: bold;
+  }
+  .stoke_content {
+    padding: 26px 0;
+    .stoke_label {
+      color: #606266;
+      .stoke_number {
+        margin-left: 10px;
+        padding: 6px 28px;
+        border: 1px solid #e4e7ed;
+        border-radius: 4px;
+        background: #f5f7fa;
+        color: #c0c4cc;
+        cursor: not-allowed;
+      }
+    }
   }
 }
 </style>

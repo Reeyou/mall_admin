@@ -36,7 +36,7 @@
                 style="width: 200px"
               >
                 <el-option
-                  v-for="item in logisticsOption"
+                  v-for="item in cacelOptions"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
@@ -51,7 +51,6 @@
           <el-form
             ref="paramForm"
             :model="paramForm"
-            :rules="paramRule"
             label-width="110px"
             class="paramForm margin30"
             label-position="right"
@@ -166,20 +165,13 @@
                   >自定义上架时间</el-radio
                 >
                 <el-form-item prop="saletime_value" ref="saletime_value">
-                  <el-select
-                    v-model="saletimeForm.saletime_value"
-                    placeholder="请选择"
+                    <el-date-picker
                     style="width: 200px"
-                    :disabled="saletimeForm.saletime_type !== '1'"
-                  >
-                    <el-option
-                      v-for="item in options"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
+                        :disabled="saletimeForm.saletime_type !== '1'"
+                        v-model="saletimeForm.saletime_value"
+                        type="datetime"
+                        placeholder="选择日期时间">
+                    </el-date-picker>
                 </el-form-item>
               </div>
               <div class="base-form-item radio-item">
@@ -217,18 +209,18 @@ export default {
   },
   data () {
     return {
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
+        cacelOptions: [{
+        value: '七天无理由退换货',
+        label: '七天无理由退换货'
       }, {
-        value: '选项2',
-        label: '双皮奶'
+        value: '拆封概不退换',
+        label: '拆封概不退换'
       }],
       logisticsOption: [{
-        value: '选项1',
+        value: '2020包邮',
         label: '2020包邮'
       }, {
-        value: '选项2',
+        value: '货到付款10元',
         label: '货到付款10元'
       }],
       infoForm: {},
@@ -238,12 +230,6 @@ export default {
         product_cacel: [{ required: true, message: "请选择退货模板", trigger: "change" }]
       },
       paramForm: {},
-      paramRule: {
-        long: [{ required: true, message: "包装(长)不能为空", trigger: "blur" }],
-        width: [{ required: true, message: "包装(宽)不能为空", trigger: "blur" }],
-        height: [{ required: true, message: "包装(高)不能为空", trigger: "blur" }],
-        weight: [{ required: true, message: "包装(重)不能为空", trigger: "blur" }]
-      },
       logisticsForm: {
         logistics_type: '0'
       },
@@ -287,7 +273,6 @@ export default {
           callback(new Error('请输入费用'));
         } else if (rule.field == 'model_value' && this.logisticsForm.logistics_type == '1') {
           callback(new Error('请选择运费模板'));
-
         }
       }
       callback()
@@ -307,24 +292,21 @@ export default {
       callback()
     },
     saveAndLook () {
-      let arr = ['infoForm', 'paramForm', 'logisticsForm', 'saletimeForm']
+      let arr = ['infoForm', 'logisticsForm', 'saletimeForm']
       let formRefs = this.saletimeForm.saletime_type === '1' ? arr : arr.slice(0, 3)
       let data = formRefs.map(val => this.$refs[val])
-      console.log(data)
       validateForms(data)
         .then((res) => {
-          console.log(res)
           if (res) {
             this.disabled = false
             let _form = this.logisticsForm
             _form.logistics_value = _form.money_value || _form.model_value
-            _form.money_value ? delete _form.money_value : ''
-            _form.model_value ? delete _form.model_value : ''
+            delete _form.money_value
+            delete _form.model_value
 
             this.productInfoForm = Object.assign({}, this.infoForm, this.paramForm, _form, this.saletimeForm)
             console.log(this.productInfoForm)
           }
-
         })
     },
     stepNextClick () {
