@@ -78,6 +78,14 @@ export const routers = [{
                 meta: { title: '分类列表' },
                 component: () =>
                     import ('@/pages/Category')
+            },
+            {
+                path: '/specsManage',
+                name: 'specsManage',
+                hidden: false,
+                meta: { title: '规格列表' },
+                component: () =>
+                    import ('@/pages/Specs')
             }
         ]
     },
@@ -131,6 +139,28 @@ export const routers = [{
             meta: { title: '内容管理', icon: 'iconfont icon-neirongguanli' },
             component: () =>
                 import ('@/pages/Content')
+        }]
+    },
+    {
+        path: '/userManage',
+        name: 'userManage',
+        hidden: false,
+        meta: { title: '用户管理', icon: 'iconfont icon-shangpinguanli' },
+        component: Layout,
+        children: [{
+            path: '/userManage',
+            name: 'userManage',
+            hidden: false,
+            meta: { title: '用户列表'},
+            component: () =>
+                import ('@/pages/User')
+        },{
+            path: '/addProduct',
+            name: 'addProduct',
+            hidden: true,
+            meta: { title: '添加商品' },
+            component: () =>
+                import ('@/pages/Product/add/addProduct.vue'),
         }]
     },
     {

@@ -1,0 +1,148 @@
+<template>
+  <div>
+    <PageHeader
+      title="用户列表"
+    />
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tab-pane label="管理端" name="first">
+            <UserAdmin />
+        </el-tab-pane>
+        <el-tab-pane label="App端" name="second">
+            <UserApp />
+        </el-tab-pane>
+    </el-tabs>
+  </div>
+</template>
+
+<script>
+import PageHeader from "@/components/Page/pageHeader";
+import UserAdmin from './user_admin'
+import UserApp from './user_app'
+import { getUserList } from '@/api/user'
+export default {
+  data() {
+    return {
+      tbData: [],
+       activeName: 'second',
+      columns: [{
+          label: "用户名称",
+          prop: "username",
+        },
+        {
+          label: "邮箱地址",
+          prop: "email",
+        },
+        {
+          label: "角色",
+          prop: "role",
+          width: 300,
+        },
+        {
+          label: "创建时间",
+          prop: "create_time",
+          width: 200
+        },
+        {
+          label: "操作",
+          fixed: 'right',
+          width: 140,
+          handle: [
+            {icon: 'el-icon-edit', type:'primary',clickFun: this.handleEdit },
+            {icon: 'el-icon-delete', type:'danger',clickFun: this.handleDelete },
+          ]
+        }],
+      filters: [
+        {
+          label: "标题",
+          type: "Input"
+        },
+        {
+          label: "标签",
+          type: "Input"
+        },
+        {
+          label: "类型",
+          type: "Input"
+        },
+        {
+          label: "状态",
+          type: "Select",
+          value: "",
+          selectList: [ 
+            {
+              value: "",
+              label: "全部"
+            },
+            {
+              value: 0,
+              label: "当前"
+            }
+          ]
+        }
+      ],
+      loading: true,
+      productInfo: {
+        title: '',
+        scope: null
+      }
+    };
+  },
+  created() {
+    this.getData()
+  },
+  methods: {
+    handleEdit(scope) {
+      this.productInfo.title = '商品编辑'
+      this.productInfo.scope = scope
+      localStorage.setItem("productInfo",JSON.stringify(this.productInfo))
+      this.$router.push({name: 'editProduct',query: {spuId:scope.spuId}})
+    },
+    handleClick(tab, event) {
+        console.log(tab, event);
+      },
+    handleDelete(id) {
+      console.log(id)
+    },
+    handelChangePage(pageSize) {
+     this.getData(pageSize)
+    },
+    handelChangeSize(limit) {
+     this.getData(1,limit)
+    },
+    handleFilter() {
+      console.log(11);
+      this.$router.go(-1)
+      console.log(this.$route)
+    },
+    handleReset() {
+      console.log(22);
+    },
+    addProduct() {
+      this.productInfo.title = '商品添加'
+      this.productInfo.scope = []
+      localStorage.setItem("productInfo",JSON.stringify(this.productInfo))
+      this.$router.push({name: "addProduct", params: {data: this.productInfo}});
+    },
+    getData() {
+      getUserList().then(res => {
+          if(res.code === 200) {
+              this.loading = false
+                this.tbData = res.data.list
+          }
+      })
+    },
+    editArticle(val) {
+      console.log(val)
+    },
+    deleteArticle() {}
+  },
+  components: {
+    PageHeader,
+    UserAdmin,
+    UserApp
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+</style>

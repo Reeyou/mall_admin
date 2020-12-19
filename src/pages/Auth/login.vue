@@ -2,40 +2,70 @@
   <div class="main-container">
     <section class="content">
       <div class="header fadeIn">
-        <h1 class="fadeTop delay-400">TMall</h1>
-        <h2 class="fadeTop delay-600">商城后台管理平台</h2>
+        <h1>TMall</h1>
+        <h2>商城后台管理平台</h2>
       </div>
       <div class="auth-content sj_font">
-        <h4 class="fadeTop delay-800 sub_title">用户登录</h4>
-        <form action>
-          <div :class="['input_container', 'fadeTop', 'delay-1200',{'err': error_msg}]">
-            <label>用户名/邮箱地址</label>
-            <i class="iconfont icon-user"></i>
-            <input autocomplete="off" v-model="loginForm.username" type="text" :placeholder="user" />
-          </div>
-          <p class="error_msg" v-show="error_msg">{{user}}</p>
-          <div :class="['input_container', 'fadeTop', 'delay-1200',{'err': error_msg}]">
-            <label>登录密码</label>
-            <i class="iconfont icon-password"></i>
-            <input autocomplete="off" v-model="loginForm.password" type="password" :placeholder="password" />
-          </div>
-          <p class="error_msg" v-show="error_msg">{{password}}</p>
-          <re-button type='primary' class="fadeTop btn delay-1600" @click="login">登录</re-button>
-          <div class="tips fadeIn delay-2000">
+        <h4 class="sub_title">用户登录</h4>
+        <el-form
+          label-position="top"
+          :model="loginForm"
+          :rules="loginRules"
+          ref="loginForm"
+        >
+          <el-form-item
+            label="用户名/邮箱地址"
+            class="input_container"
+            prop="username"
+          >
+            <el-input
+              type="text"
+              :placeholder="user"
+              v-model="loginForm.username"
+              autocomplete="off"
+            >
+              <i slot="prefix" class="el-input__icon iconfont icon-user"></i>
+            </el-input>
+          </el-form-item>
+          <el-form-item
+            label="登录密码"
+            class="input_container"
+            prop="password"
+          >
+            <el-input
+              type="password"
+              :placeholder="password"
+              v-model="loginForm.password"
+              autocomplete="off"
+            >
+              <i
+                slot="prefix"
+                class="el-input__icon iconfont icon-password"
+              ></i>
+            </el-input>
+          </el-form-item>
+          <el-button
+            type="primary"
+            class="btn sj_font"
+            :loading="loading"
+            @click="login"
+            >登录</el-button
+          >
+          <div class="tips">
             <span class="last">
               没有账号？
-              <a class='hlight-a' href="/register">前往注册</a>
+              <a class="hlight-a" href="/register">前往注册</a>
             </span>
           </div>
-        </form>
+        </el-form>
       </div>
-      <Footer class="footer sj_font fadeIn delay-2200" />
+      <Footer class="footer sj_font" />
     </section>
     <section class="sidebar">
       <div class="sidebar-content">
-        <div class='sidebar-content-item fadeIn'></div>
-        <div class='sidebar-content-item fadeIn'></div>
-        <div class='sidebar-content-item fadeIn'></div>
+        <div class="sidebar-content-item fadeIn"></div>
+        <div class="sidebar-content-item fadeIn"></div>
+        <div class="sidebar-content-item fadeIn"></div>
       </div>
     </section>
   </div>
@@ -51,35 +81,44 @@ export default {
     return {
       user: '请输入用户名/邮箱地址',
       password: '请输入密码',
-      error_msg: false,
-      loginForm: {
-        username: '',
-        password: ''
+      username_error_msg: false,
+      password_error_msg: false,
+      loading: false,
+      loginForm: {},
+      loginRules: {
+        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+        password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
       }
     }
   },
   methods: {
 
     login () {
-      login(this.loginForm).then(res => {
-        console.log(res)
+      this.$refs['loginForm'].validate((valid) => {
+
+        if (valid) {
+          this.loading = true
+          login(this.loginForm)
+            .then(res => {
+              this.loading = false
+              localStorage.setItem('userinfo', JSON.stringify(res.data.userinfo))
+              sessionStorage.setItem('token', `Bearer ${res.data.userinfo.token}`)
+              this.$router.push({ path: '/' })
+            })
+            .catch(e => {
+              this.$notify.error({
+                title: '提示',
+                message: e.msg,
+                duration: 3000
+              });
+            //   this.loginForm = {}
+              this.loading = false
+            })
+        }
       })
-      // this.$refs[formName].validate((valid) => {
-      //   if(valid) {
 
-      //   } else {
-
-      //   }
-      // })
-      // login(params).then(res => {
-      //   if(res.code == 200) {
-      //     localStorage.setItem('userinfo', JSON.stringify(res.data.userinfo))
-      //     sessionStorage.setItem('token',`Bearer ${res.data.token}`)
-      // this.$router.push({ path: '/' })
-      //   }
-      // })
     },
-    validateFields() {
+    validateFields () {
 
     }
   },

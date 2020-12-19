@@ -13,28 +13,30 @@ body {
     padding-left: 42px!important;
 }
 
-.el-button--text {
-    color: $text_color;
-    font-size: 14px;
-    transition: color ease .3s;
-    &:hover {
-        color: $text_hover_color
-    }
-}
-
 .el-button:hover {
     color: $primary;
     border-color: $primary_plain_border;
     background-color: $primary_plain_hover;
 }
 
+.el-button--text {
+    color: $text_color;
+    font-size: 14px;
+    transition: color ease .3s;
+    &:hover {
+        color: $text_hover_color;
+        background: transparent;
+        border-color: transparent;
+    }
+}
+
 .el-button--primary {
     background: $primary;
     border-color: $primary;
     color: #fff;
-    &:hover {
+    &:focus,&:hover {
         color: #fff;
-        // border-color: $primary;
+        border-color: transparent;
         background-color: $primary_hover;
     }
 }
@@ -94,19 +96,6 @@ body {
     background: #fff6f6!important;
 }
 
-.is-active {
-    position: relative;
-    &:before {
-        position: absolute;
-        content: '';
-        left: 0;
-        top: 0;
-        width: 4px;
-        height: 100%;
-        background: #ed484b;
-    }
-}
-
 .el-menu--popup,
 .el-menu--inline {
     .is-active {
@@ -157,11 +146,46 @@ body {
 .el-form-item__label {
     font-size: 13px;
 }
-
+// el-radio
 .el-radio__input.is-checked+.el-radio__label {
     color: #606266;
 }
-
+// el-tab
+// el-tabs {
+//     box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.08);
+//     border-radius: 20px 20px 0 0;
+// }
+// el-tabs .el-tabs--top {
+//     box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.08);
+//     border-radius: 20px 20px 0 0;
+// }
+.el-tabs__header {
+    margin: 0;
+    background: #fff;
+    padding: 0 20px;
+    box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.08);
+        border-radius: 20px 20px 0 0;
+}
+.el-tabs__content {
+    overflow: visible;
+}
+.el-tabs__nav-wrap::after {
+    height: 0;
+}
+.el-tabs__item {
+    height: 48px;
+    line-height: 48px;
+}
+.el-tabs__item:hover {
+    color: $primary_hover;
+}
+.el-tabs__item.is-active {
+    color: $primary;
+    font-weight: bold;
+}
+.el-tabs__active-bar {
+    background: $primary;
+}
 .label {
     font-size: 13px;
 }

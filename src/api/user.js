@@ -21,3 +21,19 @@ export async function login(params) {
       }
     })
   }
+  export async function sendCode(params) {
+    return request('/api/admin/sendCode', {
+      method: 'POST',
+      body: {
+        ...params
+      }
+    })
+  }
+  export async function getUserList(params) {
+    return request('/api/admin/getUserList', {
+      method: 'POST',
+      body: {
+        ...params
+      }
+    })
+  }
