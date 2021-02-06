@@ -54,13 +54,11 @@ export default {
   watch: {
     // 监听屏幕尺寸变化
     getScreenWidth (val) {
-      console.log(val)
 
       if (val < 1200 && val > 800) {
         this.IS_COLLAPSE(true)
         this.SLIDER_WIDTH(64)
       } else if (val < 800) {
-        console.log(1)
         this.IS_MOBILE(true)
         this.SLIDER_WIDTH(0)
       } else {

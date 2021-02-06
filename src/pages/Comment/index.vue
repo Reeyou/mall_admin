@@ -1,7 +1,7 @@
 <template>
   <div>
     <PageTable
-      title="商品列表"
+      title="评论列表"
       :tbData='tbData'
       :columns='columns'
       :loading='loading'
@@ -9,52 +9,65 @@
       :addBtn="{label: '添加商品',onAdd: addProduct}"
       :onFilter="handleFilter"
       :onReset="handleReset"
+      @handleEdit='handleEdit'
+      @handleDelete='handleDelete'
+      @handelChangeSize='handelChangeSize'
+      @handelChangePage='handelChangePage'
     />
   </div>
 </template>
 
 <script>
 import PageTable from "@/components/Page";
-import { getProductList, getCategoryList, deleteProduct } from '@/api/product'
+import { getProductList, getCategoryList } from '@/api/product'
 export default {
   data() {
     return {
       tbData: [],
-      columns: [
+      columns: [{
+          label: "商品id",
+          prop: "spuId",
+          width: 160
+        },
+        {
+          label: "分类id",
+          prop: "categoryId",
+          width: 160
+        },
         {
           label: "商品名称",
-          prop: "product_name",
+          prop: "name",
+          width: 300
         },
         {
-          label: "商品图片",
-          prop: "img_list",
+          label: "商品描述",
+          prop: "desc",
           width: 400,
-          type: "detailPic"
         },
         {
-          label: "上架状态",
-          prop: "saletime_type",
-          type: 'status',
-          width: 200,
-          format:(val) => {
-              if(val == 0) {
-                  return '上架'
-              }
-          }
+          label: "商品主图",
+          prop: "pic",
+          width: 120,
+          type: "pic"
+        },
+        {
+          label: "商品详情图",
+          prop: "detailPic",
+          width: 300,
+          type: "detailPic"
         },
         {
           label: "创建时间",
           prop: "create_time",
-          width: 200,
-          type: "time"
+          width: 200
         },
         {
           label: "操作",
           fixed: 'right',
           width: 140,
           handle: [
-            {label: '查看', type:'primary',clickFun: this.handleEdit },
-            {label: '删除', type:'danger', clickFun: this.handleDelete },
+            {icon: 'el-icon-edit', type:'primary',clickFun: this.handleEdit },
+            {icon: 'el-icon-delete', type:'danger',clickFun: this.handleDelete },
           ]
         }],
       filters: [
@@ -103,10 +116,8 @@ export default {
       localStorage.setItem("productInfo",JSON.stringify(this.productInfo))
       this.$router.push({name: 'editProduct',query: {spuId:scope.spuId}})
     },
-    handleDelete(row) {
-    //   deleteProduct({id: row._id}).then(res => {
-
-    //   })
+    handleDelete(id) {
+      console.log(id)
     },
     handelChangePage(pageSize) {
      this.getData(pageSize)
@@ -123,7 +134,6 @@ export default {
       console.log(22);
     },
     addProduct() {
-      console.log(111)
       this.productInfo.title = '商品添加'
       this.productInfo.scope = []
       localStorage.setItem("productInfo",JSON.stringify(this.productInfo))
@@ -131,9 +141,8 @@ export default {
     },
     getData() {
       getProductList().then(res => {
-          this.loading = false
           if(res.code === 200) {
-              
+              this.loading = false
                 this.tbData = res.data.list
           }
       })

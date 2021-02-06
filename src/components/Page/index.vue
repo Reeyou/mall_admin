@@ -3,6 +3,7 @@
     <!-- 标题 -->
     <PageHeader
       :title='title'
+      v-show="title"
     />
     <!-- 筛选内容 -->
     <PageFilter

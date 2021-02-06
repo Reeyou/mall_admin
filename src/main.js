@@ -15,6 +15,12 @@ import * as directives from "@/directives"
 // import "@/res/styles/global.scss";
 import REButton from '@/components/button'
 import TreeTable from '@/components/TreeTable'
+
+import ECharts from 'vue-echarts' // 在 webpack 环境下指向 components/ECharts.vue
+
+// 手动引入 ECharts 各模块来减小打包体积
+import 'echarts/lib/chart/bar'
+import 'echarts/lib/component/tooltip'
 // 全局过滤器
 Object.keys(filters).forEach(key => {
     Vue.filter(key, filters[key])
@@ -27,6 +33,7 @@ Object.keys(directives).forEach(key => {
 
 Vue.config.productionTip = false
 
+Vue.component('v-chart', ECharts)
 Vue.use(REButton)
 Vue.use(TreeTable)
 Vue.use(ElementUI);

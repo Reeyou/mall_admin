@@ -169,7 +169,6 @@ import {
 } from "../../../api/product";
 import UploadImg from "@/components/UploadImg";
 import Sku from "../sku";
-import CategoryModule from "@/module/categoryModule"
 import { VueEditor } from "vue2-editor";
 import { instance } from '@/utils/request'
 import { removeDuplication, DeepClone } from '../../../utils/util'
@@ -181,7 +180,6 @@ export default {
     PageTable,
     VueEditor,
     draggable,
-    "category-module": CategoryModule
   },
   data () {
     return {

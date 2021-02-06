@@ -23,7 +23,6 @@ import {
 } from "../../../api/product";
 import UploadImg from "@/components/UploadImg";
 import Sku from "../sku";
-import CategoryModule from "@/module/categoryModule"
 import axios from 'axios'
 import qs from 'qs'
 import { VueEditor } from "vue2-editor";
@@ -34,8 +33,7 @@ export default {
     PageTable,
     VueEditor,
     AddProductInfo,
-    AddProductDetail,
-    "category-module": CategoryModule
+    AddProductDetail
   },
   data () {
     return {

@@ -12,7 +12,7 @@
 <script>
 import {
   getCategoryList
-} from "../api/product";
+} from "../../api/product";
 import { handleCategoryCascaderData } from './util'
 export default {
   props: {

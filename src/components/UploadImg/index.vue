@@ -8,7 +8,6 @@
       <input
         :data-key="imgKey"
         type="file"
-        id="image"
         @change="upload"
         accept="image/jpg, image/jpeg, image/png, image/PNG"
       />
@@ -84,7 +83,6 @@ export default {
       this.poster_src = ''
       this.files = ''
       this.uploadStatus = false
-      document.querySelector('#image').innerHTML = ''
     }
   }
 };

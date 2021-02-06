@@ -89,8 +89,8 @@ function request (url, options) {
     //qs.parse()将Url解析成对象的形式
     function POST (url, params) {
         return new Promise((resolve, reject) => {
-            // instance.post(url, qs.stringify(params, { indices: false }))
-            instance.post(url, params)
+            instance.post(url, qs.stringify(params, { indices: false }))
+            // instance.post(url, params)
                 .then(res => {
                     resolve(res.data);
                 })

@@ -19,9 +19,18 @@
         label-width="120px"
       >
         <el-form-item :label="dialog.label" prop="category_name">
-          <el-input v-model="categoryForm.category_name"></el-input>
+          <el-input style="width: 60%" v-model="categoryForm.category_name"></el-input>
         </el-form-item>
-        <el-form-item label="是否在首页展示" prop="show_home">
+        <el-form-item label="添加图片" prop="show_home">
+          <UploadImg
+            action="/api/upload"
+            :on-success="uploadSuccess"
+            :imgUrl="categoryForm.img_url"
+            :preview="false"
+            label="分类图"
+            />
+        </el-form-item>
+        <el-form-item label="首页展示" prop="show_home">
           <el-checkbox v-model="categoryForm.show_home"></el-checkbox>
         </el-form-item>
       </el-form>
@@ -34,21 +43,24 @@
 </template>
 <script>
 import PageHeader from '@/components/Page/pageHeader'
-import { handleCategoryListData } from '../../module/util'
+import { handleCategoryListData } from './util'
 import {
   addCategory,
   getCategoryList,
   deleteCategory,
   updateCategory
 } from "@/api/product";
-import {flatten} from '../../utils/util'
+import { flatten } from '../../utils/util'
+import UploadImg from "@/components/UploadImg";
 export default {
-    inject: ['reload'],
+  inject: ['reload'],
   components: {
-    PageHeader
+    PageHeader,
+    UploadImg
   },
   data () {
     return {
+        imageUrl: '',
       dialog: {
         visible: false,
         title: '',
@@ -57,7 +69,7 @@ export default {
       tbData: [],
       loading: true,
       categoryForm: {
-        category_name: '',
+        img_url: "",
         type: 0,
         show_home: false
       },
@@ -106,62 +118,6 @@ export default {
             { icon: 'iconfont icon-delete_s', type: 'danger', clickFun: this.handleDelete },
           ]
         }
-      ],
-      testData: [
-        {
-          category_name: '测试',
-          sex: 'male',
-          age: 18,
-          status: 'ok',
-          children: [
-            {
-              category_name: 'test1',
-              sex: 'male',
-              age: 18,
-              status: 'ok',
-              children: [
-                {
-                  category_name: 'test1-1',
-                  sex: 'male',
-                  age: 18,
-                  status: 'ok',
-                },
-              ]
-            },
-            {
-              category_name: 'test2',
-              sex: 'male',
-              age: 18,
-              status: 'ok',
-
-            },
-            {
-              category_name: 'test3',
-              sex: 'male',
-              age: 18,
-              status: 'ok',
-
-            }
-          ]
-        },
-        {
-          category_name: 'rrssss',
-          sex: 'female',
-          age: 18,
-          status: 'ok'
-        },
-        {
-          category_name: 'ttsss',
-          sex: 'male',
-          age: 18,
-          status: 'ok'
-        },
-        {
-          category_name: 'ggsss',
-          sex: 'male',
-          age: 18,
-          status: 'ok'
-        },
       ]
     }
   },
@@ -171,11 +127,15 @@ export default {
   methods: {
     getCategoryList () {
       getCategoryList().then(res => {
-          this.loading = false
-          // 不被监听改变
+        this.loading = false
+        // 不被监听改变
         //   this.targetData = JSON.parse(JSON.stringify(res.data.list))
-          this.tbData = handleCategoryListData(res.data.list)
+        this.tbData = handleCategoryListData(res.data.list)
       })
+    },
+    uploadSuccess(e,url) {
+        this.categoryForm.img_url = url
+        console.log(this.categoryForm)
     },
     handleAdd (data) {
       //Todo 判断条件优化
@@ -183,7 +143,7 @@ export default {
         this.dialog.title = '添加子分类'
         this.dialog.label = '子分类名称'
         this.categoryForm.category_id = data._id
-        this.categoryForm.type = data.type=='1'?"2":"1"
+        this.categoryForm.type = data.type == '1' ? "2" : "1"
       } else {
         this.dialog.title = '添加分类'
         this.dialog.label = '分类名称'
@@ -193,10 +153,11 @@ export default {
     handleOk () {
       this.$refs["categoryForm"].validate(valid => {
         if (valid) {
-            this.loading = true
+          this.loading = true
           addCategory(this.categoryForm).then(res => {
             this.dialog.visible = false
             this.$refs['categoryForm'].resetFields()
+            this.categoryForm.img_url = ""
             this.getCategoryList()
           })
         }
@@ -204,15 +165,16 @@ export default {
     },
     handleCancel () {
       this.dialog.visible = false
+      this.categoryForm.img_url = ""
       this.$refs['categoryForm'].resetFields()
     },
     handleSubmit () {
-        let data = flatten(this.tbData)
-        this.loading = true
-        updateCategory(data).then(res => {
-            this.getCategoryList()
-            this.reload()
-        })
+      let data = flatten(this.tbData)
+      this.loading = true
+      updateCategory(data).then(res => {
+        this.getCategoryList()
+        this.reload()
+      })
     },
     handleDelete (data) {
       this.$confirm('是否删除该分类?', '提示', {
@@ -221,16 +183,16 @@ export default {
         type: 'warning'
       }).then(() => {
         deleteCategory({ _id: data._id }).then(res => {
-            this.getCategoryList();
-            this.$message({
-                type: 'success',
-                message: res.msg
-            })
-        }).catch(e=>{
-            this.$message({
-                type: 'error',
-                message: e.msg
-            })
+          this.getCategoryList();
+          this.$message({
+            type: 'success',
+            message: res.msg
+          })
+        }).catch(e => {
+          this.$message({
+            type: 'error',
+            message: e.msg
+          })
         })
       })
     },
@@ -246,7 +208,7 @@ export default {
   /* width: 960px; */
   background: #fff;
   .table {
-      box-shadow: 0 0 4px 1px rgba(0,0,0,0.08);
+    box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.08);
     border-radius: 20px 20px 0 0;
   }
   .category-form {

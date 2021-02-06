@@ -200,7 +200,7 @@
 import {
   getCategoryList,
 } from "../../../api/product";
-import CategoryCascader from "@/module/category-cascader"
+import CategoryCascader from "../../Category/category-cascader"
 import { validateForms } from '../../../utils/util'
 import bus from './bus'
 export default {

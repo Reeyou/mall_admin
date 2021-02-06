@@ -35,7 +35,7 @@
             font-size: 0;
             .el-form-item {
                 display: inline-block;
-                width: 50%;
+                width: 40%;
                 box-sizing: border-box;
             }
         }
@@ -97,7 +97,7 @@
         font-size: 0;
         .el-form-item {
             display: inline-block;
-            width: 34%;
+            width: 40%;
             box-sizing: border-box;
         }
     }
@@ -121,12 +121,13 @@
             width: 900px;
             display: inline-block;
             .pic-btn {
-                padding: 10px;
+                padding: 10px 6px;
                 display: inline-block;
                 border: 1px solid #dcdfe6;
                 border-radius: 4px;
                 color: #606266;
                 margin-top: -10px;
+                line-height: 10px;
             }
             >div {
                 padding: 20px;

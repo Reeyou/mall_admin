@@ -56,7 +56,7 @@
 </template>
 
 <script>
-import { routers } from '../../router';
+import { routers } from '../router';
 import { mapState, mapMutations } from 'vuex'
 import isMobile from '@/utils/isMobile'
 export default {

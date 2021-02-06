@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "853001",
+      "name": "百分比",
+      "font_class": "baifenbi",
+      "unicode": "e6a9",
+      "unicode_decimal": 59049
+    },
+    {
+      "icon_id": "16394881",
+      "name": "百分号",
+      "font_class": "baifenhao",
+      "unicode": "e679",
+      "unicode_decimal": 59001
+    },
+    {
       "icon_id": "5700815",
       "name": "money",
       "font_class": "money",
@@ -91,14 +105,14 @@
     },
     {
       "icon_id": "18174936",
-      "name": "double-arrow-left",
+      "name": "双箭头,双角符,左",
       "font_class": "double-arrow-left",
       "unicode": "ea4f",
       "unicode_decimal": 59983
     },
     {
       "icon_id": "18174962",
-      "name": "double-arrow-right",
+      "name": "双箭头,双角符,右",
       "font_class": "double-arrow-right",
       "unicode": "ea50",
       "unicode_decimal": 59984

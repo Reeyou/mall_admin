@@ -9,7 +9,7 @@
     </div>
     <el-dropdown class="system-user">
       <span class="userinfo-inner">
-        <span>欢迎您</span> <span class='name'>Reeyou</span>
+        <span>欢迎您</span> <span class='name'>{{userinfo.username}}</span>
         <img src="@/assets/logo.png" alt="">
       </span>
       <el-dropdown-menu slot="dropdown">

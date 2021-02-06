@@ -27,7 +27,7 @@
             v-if="filter.type === 'datePicker'"
           ></el-date-picker>
         </el-form-item>
-        <el-form-item>
+        <el-form-item v-show="filters">
           <re-button size="mini" plain type="primary" @click="handleFilter">查询</re-button>
           <re-button size="mini" type="default" @click="handleReset">重置</re-button>
         </el-form-item>

@@ -5,7 +5,7 @@
     <!-- 内容 -->
     <Container>
       <Slider slot="left"></Slider>
-      <router-view slot="content" v-if="isRouterAlive"></router-view>
+      <router-view slot="content" class='content' v-if="isRouterAlive"></router-view>
     </Container>
   </div>
 </template>
@@ -42,4 +42,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.layout {
+    .content {
+        // overflow: scroll;
+    }
+}
 </style>
