@@ -1,7 +1,15 @@
 <template>
-  <div class='header' style="width: 100%">
-    <i v-if='isCollapse&&isMobile' class='iconfont icon-menuOpen mobile' @click='openPhoneMenu'></i>
-    <i v-if='!isCollapse&&isMobile' class='iconfont icon-md-close mobile' @click='closePhoneMenu'></i>
+  <div class="header" style="width: 100%">
+    <i
+      v-if="isCollapse && isMobile"
+      class="iconfont icon-menuOpen mobile"
+      @click="openPhoneMenu"
+    ></i>
+    <i
+      v-if="!isCollapse && isMobile"
+      class="iconfont icon-md-close mobile"
+      @click="closePhoneMenu"
+    ></i>
     <!-- <i v-if="isCollapse&&!isMobile" class='iconfont icon-menuOpen pc' @click='openMenu'></i>
     <i v-if="!isCollapse&&!isMobile" class='iconfont icon-menuClose pc' @click='closeMenu'></i> -->
     <div class="system-logo">
@@ -9,12 +17,13 @@
     </div>
     <el-dropdown class="system-user">
       <span class="userinfo-inner">
-        <span>欢迎您</span> <span class='name'>{{userinfo.username}}</span>
-        <img src="@/assets/logo.png" alt="">
+        <!-- <span>欢迎您</span> <span class='name'>{{userinfo.username}}</span> -->
+        <span>欢迎您</span> <span class="name">test</span>
+        <img src="@/assets/logo.png" alt="" />
       </span>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item>个人中心</el-dropdown-item>
-        <el-dropdown-item @click.native='logout' divided>退出</el-dropdown-item>
+        <el-dropdown-item @click.native="logout" divided>退出</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -22,41 +31,42 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-  export default {
-    data() {
-      return {
-        userinfo: JSON.parse(localStorage.getItem('userinfo'))
-      }
+export default {
+  data () {
+    return {
+      // userinfo: JSON.parse(localStorage.getItem('userinfo'))
+    }
+  },
+
+  computed: {
+    ...mapState({
+      isCollapse: state => state.isCollapse,
+      isMobile: state => state.isMobile,
+      sliderWidth: state => state.sliderWidth + 'px'
+    })
+  },
+  methods: {
+    ...mapMutations([
+      'IS_COLLAPSE',
+      'SLIDER_WIDTH'
+    ]),
+    async logout () {
+      await this.$store.dispatch('user/logout')
+      this.$router.push('./login')
+      // sessionStorage.removeItem('currentRouter')
+      // sessionStorage.removeItem('token')
+      // localStorage.removeItem('userinfo')
     },
-   
-    computed: {
-      ...mapState({
-        isCollapse: state => state.isCollapse,
-        isMobile: state => state.isMobile,
-        sliderWidth: state => state.sliderWidth + 'px'
-      })
+    openPhoneMenu () {
+      this.IS_COLLAPSE(false)
+      this.SLIDER_WIDTH(200)
     },
-    methods: {
-      ...mapMutations([
-        'IS_COLLAPSE',
-        'SLIDER_WIDTH'
-      ]),
-      logout() {
-        this.$router.push('./login')
-        sessionStorage.removeItem('currentRouter')
-        sessionStorage.removeItem('token')
-        localStorage.removeItem('userinfo')
-      },
-      openPhoneMenu() {
-        this.IS_COLLAPSE(false)
-        this.SLIDER_WIDTH(200)
-      },
-      closePhoneMenu() {
-        this.IS_COLLAPSE(true)
-        this.SLIDER_WIDTH(0)
-      }
+    closePhoneMenu () {
+      this.IS_COLLAPSE(true)
+      this.SLIDER_WIDTH(0)
     }
   }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -81,13 +91,13 @@ import { mapMutations, mapState } from 'vuex'
   }
 }
 .system-logo {
-    width: auto;
+  width: auto;
+  height: 100%;
+  float: left;
+  > img {
+    width: 100%;
     height: 100%;
-    float: left;
-    > img {
-        width: 100%;
-        height: 100%;
-    }
+  }
 }
 .system-user {
   text-align: right;
@@ -97,7 +107,7 @@ import { mapMutations, mapState } from 'vuex'
     font-size: 16px;
     cursor: pointer;
     span {
-      font-size: 14PX;
+      font-size: 14px;
     }
     .name {
       color: red;
@@ -112,7 +122,7 @@ import { mapMutations, mapState } from 'vuex'
   }
 }
 @media screen and(max-width: 900px) {
-  .header{
+  .header {
     z-index: 200;
     .logo {
       display: inline;

@@ -1,17 +1,7 @@
 <template>
-  <el-container class="layout-content">
+  <el-container :class="classObj" class="layout-content">
     <!-- 左侧菜单 -->
-    <el-aside
-      :style="{
-        width: sliderWidth,
-        height: 'calc(100vh - 80px)',
-        marginTop: '16px'
-      }"
-      ref="slider"
-      class="slider"
-    >
-      <slot name="left"></slot>
-    </el-aside>
+    <slot name="left"></slot>
     <!-- 右侧页面 -->
     <el-main>
       <!-- 页面内容 -->
@@ -43,28 +33,15 @@ export default {
   },
   computed: {
     ...mapState({
+      sidebar: state => state.app.sidebar,
       menuVisible: state => state.menuVisible,
-      sliderWidth: state => state.sliderWidth + 'px'
     }),
-    ...mapGetters(['getScreenWidth'])
-  },
-  created () {
-    this.isMobile()
-  },
-  watch: {
-    // 监听屏幕尺寸变化
-    getScreenWidth (val) {
-
-      if (val < 1200 && val > 800) {
-        this.IS_COLLAPSE(true)
-        this.SLIDER_WIDTH(64)
-      } else if (val < 800) {
-        this.IS_MOBILE(true)
-        this.SLIDER_WIDTH(0)
-      } else {
-        this.IS_COLLAPSE(false)
-        this.SLIDER_WIDTH(200)
-        this.IS_MOBILE(false)
+    classObj () {
+      return {
+        hideSidebar: !this.sidebar.opened,
+        // openSidebar: this.sidebar.opened,
+        // withoutAnimation: this.sidebar.withoutAnimation,
+        // mobile: this.device === 'mobile'
       }
     }
   },
@@ -101,7 +78,8 @@ export default {
     .content {
       border-radius: 10px;
       box-shadow: 0 0 8px 1px #e7e7e7;
-      margin: 16px;
+      margin: 8px;
+      margin-left: 210px;
       border: 1px solid #eee;
       box-sizing: border-box;
       .bread {
@@ -115,6 +93,13 @@ export default {
         border-radius: 6px 6px 0 0;
         z-index: 10;
       }
+    }
+  }
+}
+.hideSidebar {
+  .el-main {
+    .content {
+      margin-left: 74px;
     }
   }
 }

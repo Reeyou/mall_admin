@@ -1,5 +1,5 @@
 <template>
-  <div class="menuBar" :style="{ width: sliderWidth }">
+  <div class="menuBar">
     <el-menu
       router
       :default-active="currentRouter"
@@ -8,61 +8,31 @@
       :background-color="theme.backgroundColor"
       :text-color="theme.textColor"
       :active-text-color="theme.activeTextColor"
+      class="el-menu-vertical"
+      :collapse-transition="false"
     >
-      <template
-        v-for="item in routers"
-        v-if="!item.hidden && item.children && item.children.length > 0"
-      >
-        <!-- 单个元素 -->
-        <el-menu-item
-          v-if="item.children.length == 1"
-          :index="item.children[0].path"
-          :key="item.name"
-        >
-          <i
-            :style="{ color: theme.textColor }"
-            v-if="item.children[0].meta.icon"
-            :class="item.children[0].meta.icon"
-          ></i>
-          <span slot="title">{{ item.children[0].meta.title }}</span>
-        </el-menu-item>
-        <!-- 多个子元素 -->
-        <el-submenu v-else :index="item.children[0].path" :key="item.name">
-          <template slot="title">
-            <i v-if="item.meta.icon" :class="item.meta.icon"></i>
-            <span v-if="item.meta && item.meta.title" slot="title">{{
-              item.meta.title
-            }}</span>
-          </template>
-          <el-menu-item
-            v-for="child in item.children"
-            v-if="!child.hidden"
-            :index="child.path"
-            :key="child.name"
-          >
-            <i v-if="child.meta.icon" :class="child.meta.icon"></i>
-            <span v-if="child.meta && child.meta.title" slot="title">{{
-              child.meta.title
-            }}</span>
-          </el-menu-item>
-        </el-submenu>
-      </template>
+      <sidebar-item v-for="route in permission_routes" :key="route.path" :item="route" :base-path="route.path" />
     </el-menu>
-    <div class="collapse cursor" @click='collapseClick'>
-        <i v-if='isCollapse&&!isMobile' class="iconfont icon-double-arrow-right" ></i>
-        <i v-if='!isCollapse&&!isMobile' class="iconfont icon-double-arrow-left" ></i>
+    <div class="collapse cursor" @click="collapseClick">
+      <i
+        v-if="isCollapse"
+        class="iconfont icon-double-arrow-right"
+      ></i>
+      <i
+        v-if="!isCollapse"
+        class="iconfont icon-double-arrow-left"
+      ></i>
     </div>
   </div>
 </template>
 
 <script>
-import { routers } from '../router';
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 import isMobile from '@/utils/isMobile'
+import SidebarItem from './SidebarItem'
 export default {
   data () {
     return {
-      routers: routers,
       currentRouter: sessionStorage.getItem('currentRouter') ? sessionStorage.getItem('currentRouter') : '/',
     }
   },
@@ -76,34 +46,25 @@ export default {
   },
   computed: {
     ...mapState({
-      isCollapse: state => state.isCollapse,
-      isMobile: state => state.isMobile,
       theme: state => state.theme,
-      sliderWidth: state => state.sliderWidth + 'px'
-    })
+    }),
+    ...mapGetters([
+      'permission_routes',
+      'sidebar'
+    ]),
+    isCollapse() {
+      return !this.sidebar.opened
+    }
   },
+  components: { SidebarItem },
   methods: {
     ...mapMutations([
       'IS_COLLAPSE',
       'IS_MOBILE',
       'SLIDER_WIDTH'
     ]),
-    collapseClick() {
-        if(this.isCollapse) {
-            this.IS_COLLAPSE(false)
-            this.SLIDER_WIDTH(200)
-        } else {
-            this.IS_COLLAPSE(true)
-            this.SLIDER_WIDTH(64)
-        }
-    },
-    openMenu() {
-    this.IS_COLLAPSE(false)
-    this.SLIDER_WIDTH(200)
-    },
-    closeMenu() {
-    this.IS_COLLAPSE(true)
-    this.SLIDER_WIDTH(64)
+    collapseClick () {
+      this.$store.dispatch('app/toggleSideBar')
     },
     handleChange () {
       if (isMobile()) {
@@ -113,15 +74,19 @@ export default {
         }, 100)
       }
     },
-
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.el-menu-vertical:not(.el-menu--collapse) {
+    width: 200px;
+    min-height: 400px;
+  }
 .menuBar {
-  height: calc(100vh - 80px);
-//   padding:20px 0;
+  height: calc(100vh - 72px);
+  margin-top: 8px;
+  //   padding:20px 0;
   border-right: 1px solid #eee;
   border-radius: 6px;
   box-shadow: 0 0 4px 1px #e7e7e7;
@@ -154,15 +119,15 @@ export default {
     // height: 40px;
     text-align: center;
     border-top: 1px solid #ddd;
-    padding:20px 0;
+    padding: 20px 0;
     transition: 400ms ease;
     &:hover {
-        background: #fff6f6;
+      background: #fff6f6;
     }
-      i {
-        font-size: 16px;
-        // font-weight: bold;
-      }
+    i {
+      font-size: 16px;
+      // font-weight: bold;
+    }
   }
 }
 @media screen and(max-width: 900px) {
