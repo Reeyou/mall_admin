@@ -78,18 +78,18 @@ export default {
         },
       ],
       tableLabel: [
-        { label: "user name", prop: "usr", sortable: true, fixed: 'left'},
-        { label: "company name", prop: "company", link: true, linkFn: this.linkTo, fixed: 'left', },
+        { label: "user name", prop: "usr", sortable: true, fixed: 'left', width: 160},
+        { label: "company name", prop: "company", link: true, linkFn: this.linkTo, fixed: 'left', width: 160 },
         { label: "office mailbox", prop: "email", width: 200 },
-        { label: "registration time", prop: "registetime", sortable: true },
-        { label: "registration time", prop: "email1" },
-        { label: "registration time", prop: "email2" },
-        { label: "registration time", prop: "email3" },
-        { label: "registration time", prop: "email4" },
-        { label: "registration time", prop: "email5" },
-        { label: "registration time", prop: "email6" },
+        { label: "registration time", prop: "registetime", sortable: true, width: 200 },
+        { label: "registration time", prop: "email1", width: 180 },
+        { label: "registration time", prop: "email2", width: 180 },
+        { label: "registration time", prop: "email3", width: 180 },
+        { label: "registration time", prop: "email4", width: 180 },
+        { label: "registration time", prop: "email5", width: 180 },
+        { label: "registration time", prop: "email6", width: 180 },
         {
-          label: "audit status", prop: "status", sortable: true,
+          label: "audit status", prop: "status", sortable: true, width: 160,
           render: row => {
             if (row.status == 0) {
               return "未接收";

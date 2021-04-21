@@ -14,6 +14,7 @@ export const constantRoutes = [
         path: "/",
         component: Layout,
         hidden: false,
+        dropdown: false,
         children: [
             { path: '/', name: 'home', meta: { title: '首页', icon: 'iconfont icon-home' }, component: () => import('@/pages/Home') }
         ]
@@ -22,6 +23,7 @@ export const constantRoutes = [
         path: '/redirect',
         component: Layout,
         hidden: true,
+        dropdown: false,
         children: [
             { path: '/redirect/:path(.*)', component: () => import('@/pages/Redirect/index') }
         ]
@@ -62,6 +64,7 @@ export const _asyncRoutes = [
         path: '/productManage',
         name: 'product',
         hidden: false,
+        dropdown: true,
         meta: { title: '商品管理', icon: 'iconfont icon-shangpinguanli', roles: ['admin'] },
         component: Layout,
         children: [
@@ -78,6 +81,7 @@ export const asyncRoutes = [
         path: '/productManage',
         name: 'productManage',
         hidden: false,
+        dropdown: true,
         meta: { title: '商品管理', icon: 'iconfont icon-shangpinguanli' },
         component: Layout,
         children: [
@@ -92,6 +96,7 @@ export const asyncRoutes = [
         path: '/orderManage',
         name: 'orderManage',
         hidden: false,
+        dropdown: false,
         component: Layout,
         children: [
             { path: '/orderManage', name: 'orderManage', meta: { title: '订单管理', icon: 'iconfont icon-order' }, component: () => import('@/pages/Order') }
@@ -101,6 +106,7 @@ export const asyncRoutes = [
         path: '/payManage',
         name: 'payManage',
         hidden: false,
+        dropdown: false,
         component: Layout,
         children: [
             { path: '/payManage', name: 'payManage', meta: { title: '支付管理', icon: 'iconfont icon-pay' }, component: () => import('@/pages/Pay') }
@@ -110,6 +116,7 @@ export const asyncRoutes = [
         path: '/commentManage',
         name: 'commentManage',
         hidden: false,
+        dropdown: false,
         component: Layout,
         children: [
             { path: '/commentManage', name: 'commentManage', hidden: false, meta: { title: '评论管理', icon: 'iconfont icon-guanggao' }, component: () => import('@/pages/Comment') }
@@ -119,6 +126,7 @@ export const asyncRoutes = [
         path: '/contentManage',
         name: 'contentManage',
         hidden: false,
+        dropdown: true,
         component: Layout,
         meta: { title: '内容管理', icon: 'iconfont icon-neirongguanli' },
         children: [
@@ -130,6 +138,7 @@ export const asyncRoutes = [
         path: '/userManage',
         name: 'userManage',
         hidden: false,
+        dropdown: false,
         component: Layout,
         children: [
             { path: '/userManage', name: 'userManage', hidden: false, meta: { title: '用户管理', icon: 'iconfont icon-shangpinguanli' }, component: () => import('@/pages/User') }
@@ -139,6 +148,7 @@ export const asyncRoutes = [
         path: '/systemManage',
         name: 'systemManage',
         hidden: false,
+        dropdown: true,
         component: Layout,
         meta: { title: '系统管理', icon: 'iconfont icon-system', roles: ['admin'] },
         children: [

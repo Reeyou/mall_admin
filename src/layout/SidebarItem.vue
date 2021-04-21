@@ -1,9 +1,9 @@
 <template>
-  <div v-if="!item.hidden">
-    <template v-if="!item.hidden && item.children">
+  <div>
+    <template>
       <!-- 单个元素 -->
       <el-menu-item
-        v-if="item.children.length == 1"
+        v-if="!item.hidden&&!item.dropdown&&item.children.length>0"
         :index="item.children[0].path"
         :key="item.name"
       >
@@ -15,10 +15,10 @@
         <span slot="title">{{ item.children[0].meta.title }}</span>
       </el-menu-item>
       <!-- 多个子元素 -->
-      <el-submenu v-else :index="item.children[0].path" :key="item.name">
+      <el-submenu v-if="!item.hidden&&item.dropdown" :index="item.children[0].path" :key="item.name">
         <template slot="title">
-          <i v-if="item.meta.icon" :class="item.meta.icon"></i>
-          <span v-if="item.meta && item.meta.title" slot="title">
+          <i :class="item.meta.icon"></i>
+          <span slot="title">
             {{ item.meta.title }}
           </span>
         </template>
