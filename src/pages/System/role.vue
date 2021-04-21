@@ -5,10 +5,10 @@
       :tbData="tbData"
       :columns="columns"
       :loading="loading"
-      :addBtn="{ label: '添加角色', onAdd: addSpecs }"
-      :popoverVisible="popover_visible"
-      @handlePopoverCancel="handlePopoverCancel"
-      @handlePopoverOk="handlePopoverOk"
+      :addBtn="{ label: '添加角色', onAdd: addRole }"
+      :filters='filters'
+      :onFilter="handleFilter"
+      :onReset="handleReset"
     />
     <el-dialog :title="dialog.title" :visible.sync="dialog.visible" width="30%">
       <el-form
@@ -31,10 +31,15 @@
           ></el-input>
         </el-form-item>
         <el-form-item :label="dialog.menus" prop="specs_name">
-          <el-input
-            style="width: 60%"
-            v-model="specsForm.specs_name"
-          ></el-input>
+           <el-tree
+            ref="tree"
+            :check-strictly="checkStrictly"
+            :data="routesData"
+            :props="defaultProps"
+            show-checkbox
+            node-key="id"
+            class="permission-tree"
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -51,6 +56,45 @@ import { getProductList, getCategoryList, deleteProduct } from '@/api/product'
 export default {
   data () {
     return {
+       defaultProps: {
+          children: 'children',
+          label: 'label'
+        },
+      routesData: [{
+          id: 1,
+          label: '一级 1',
+          children: [{
+            id: 4,
+            label: '二级 1-1',
+            children: [{
+              id: 9,
+              label: '三级 1-1-1'
+            }, {
+              id: 10,
+              label: '三级 1-1-2'
+            }]
+          }]
+        }, {
+          id: 2,
+          label: '一级 2',
+          children: [{
+            id: 5,
+            label: '二级 2-1'
+          }, {
+            id: 6,
+            label: '二级 2-2'
+          }]
+        }, {
+          id: 3,
+          label: '一级 3',
+          children: [{
+            id: 7,
+            label: '二级 3-1'
+          }, {
+            id: 8,
+            label: '二级 3-2'
+          }]
+        }],
       tbData: [],
       dialog: {
         visible: false,
@@ -81,10 +125,16 @@ export default {
           fixed: 'right',
           width: 200,
           handle: [
-            { label: '查看', type: 'primary', clickFun: this.handleEdit },
+            { label: '编辑权限', type: 'primary', clickFun: this.handleEdit },
             { label: '删除', type: 'danger', clickFun: this.handleDelete },
           ]
         }],
+      filters: [
+        {
+          label: "角色名",
+          type: "Input"
+        }
+      ],
       loading: true,
       popover_visible: false,
       specsForm: {
@@ -100,14 +150,11 @@ export default {
     this.getData()
   },
   methods: {
-    addSpecs () {
+    addRole () {
       this.dialog.visible = true
     },
     handleEdit (scope) {
-      this.productInfo.title = '商品编辑'
-      this.productInfo.scope = scope
-      localStorage.setItem("productInfo", JSON.stringify(this.productInfo))
-      this.$router.push({ name: 'editProduct', query: { spuId: scope.spuId } })
+     this.dialog.visible = true
     },
     handleOk () {
       this.dialog.visible = false
@@ -142,10 +189,7 @@ export default {
       console.log(22);
     },
     addProduct () {
-      this.productInfo.title = '商品添加'
-      this.productInfo.scope = []
-      localStorage.setItem("productInfo", JSON.stringify(this.productInfo))
-      this.$router.push({ name: "addProduct", params: { data: this.productInfo } });
+      this.dialog.visible = true
     },
     getData () {
       getProductList().then(res => {
@@ -168,4 +212,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.permission-tree {
+  margin-top: 10px
+}
 </style>

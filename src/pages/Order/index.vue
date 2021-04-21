@@ -1,206 +1,232 @@
 <template>
-  <div class="wrap-sku">
-    <div class="product-box">
-      <div class="product-content">
-        <div class="product-delcom">
-          <div
-            style="height: 140px"
-            v-for="(item, i) in skuNameList"
-            :key="i"
-          >
-            <p>{{ item.skuName }}</p>
-            <ul class="product-footerlist">
-              <li
-                v-for="(val, index) in item.skuValues"
-                :key="index"
-                @click="getSkuInfo(val)"
-              >
-                {{ val }}
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <!-- <div style="font-size: 20px;margin-top: 100px">选中的属性: 性别:{{ currentChoose.sex }}, 颜色：{{ currentChoose.color }}, 大小：{{ currentChoose.size }}</div> -->
+  <div>
+    <div class="block">
+      <span class="demonstration">默认 click 触发子菜单</span>
+      <el-cascader
+        v-model="value"
+        :options="options1"
+        @change="handleChange"
+      ></el-cascader>
+    </div>
+    <div class="block">
+      <span class="demonstration">hover 触发子菜单</span>
+      <el-cascader
+        v-model="value"
+        :options="options"
+        :props="{ expandTrigger: 'hover' }"
+        @change="handleChange"
+      ></el-cascader>
     </div>
   </div>
 </template>
 
 <script>
-import {
-  getProductDetail
-} from "@/api/product";
 export default {
   data () {
     return {
-      // 库存列表
-      skuList: [
-        {
-          skuId: '0',
-          skuGroup: ['红色', '大'],
-          remainStock: 7,
-          price: 2,
-          picUrl: 'https://dummyimage.com/100x100/ff00b4/ffffff&text=大'
-        },
-        {
-          skuId: '1',
-          skuGroup: ['红色', '小'],
-          remainStock: 3,
-          price: 4,
-          picUrl: 'https://dummyimage.com/100x100/ff00b4/ffffff&text=小'
-        },
-        {
-          skuId: '2',
-          skuGroup: ['蓝色', '大'],
-          remainStock: 0,
-          price: 0.01,
-          picUrl: 'https://dummyimage.com/100x100/0084ff/ffffff&text=大'
-        },
-        {
-          skuId: '3',
-          skuGroup: ['蓝色', '小'],
-          remainStock: 1,
-          price: 1,
-          picUrl: 'https://dummyimage.com/100x100/0084ff/ffffff&text=小'
-        }
-      ],
-
-      // 规格列表
-      skuNameList: [
-        {
-          skuName: "颜色",
-          skuValues: ["红色", "蓝色"]
-        },
-        {
-          skuName: "尺寸",
-          skuValues: ["大", "小"]
-        }
-      ]
-    }
-  },
-  created () {
-
+      value: [],
+      options1: [],
+      options: [{
+        value: 'zhinan',
+        label: '指南',
+        children: [{
+          value: 'shejiyuanze',
+          label: '设计原则',
+          children: [{
+            value: 'yizhi',
+            label: '一致'
+          }, {
+            value: 'fankui',
+            label: '反馈'
+          }, {
+            value: 'xiaolv',
+            label: '效率'
+          }, {
+            value: 'kekong',
+            label: '可控'
+          }]
+        }, {
+          value: 'daohang',
+          label: '导航',
+          children: [{
+            value: 'cexiangdaohang',
+            label: '侧向导航'
+          }, {
+            value: 'dingbudaohang',
+            label: '顶部导航'
+          }]
+        }]
+      }, {
+        value: 'zujian',
+        label: '组件',
+        children: [{
+          value: 'basic',
+          label: 'Basic',
+          children: [{
+            value: 'layout',
+            label: 'Layout 布局'
+          }, {
+            value: 'color',
+            label: 'Color 色彩'
+          }, {
+            value: 'typography',
+            label: 'Typography 字体'
+          }, {
+            value: 'icon',
+            label: 'Icon 图标'
+          }, {
+            value: 'button',
+            label: 'Button 按钮'
+          }]
+        }, {
+          value: 'form',
+          label: 'Form',
+          children: [{
+            value: 'radio',
+            label: 'Radio 单选框'
+          }, {
+            value: 'checkbox',
+            label: 'Checkbox 多选框'
+          }, {
+            value: 'input',
+            label: 'Input 输入框'
+          }, {
+            value: 'input-number',
+            label: 'InputNumber 计数器'
+          }, {
+            value: 'select',
+            label: 'Select 选择器'
+          }, {
+            value: 'cascader',
+            label: 'Cascader 级联选择器'
+          }, {
+            value: 'switch',
+            label: 'Switch 开关'
+          }, {
+            value: 'slider',
+            label: 'Slider 滑块'
+          }, {
+            value: 'time-picker',
+            label: 'TimePicker 时间选择器'
+          }, {
+            value: 'date-picker',
+            label: 'DatePicker 日期选择器'
+          }, {
+            value: 'datetime-picker',
+            label: 'DateTimePicker 日期时间选择器'
+          }, {
+            value: 'upload',
+            label: 'Upload 上传'
+          }, {
+            value: 'rate',
+            label: 'Rate 评分'
+          }, {
+            value: 'form',
+            label: 'Form 表单'
+          }]
+        }, {
+          value: 'data',
+          label: 'Data',
+          children: [{
+            value: 'table',
+            label: 'Table 表格'
+          }, {
+            value: 'tag',
+            label: 'Tag 标签'
+          }, {
+            value: 'progress',
+            label: 'Progress 进度条'
+          }, {
+            value: 'tree',
+            label: 'Tree 树形控件'
+          }, {
+            value: 'pagination',
+            label: 'Pagination 分页'
+          }, {
+            value: 'badge',
+            label: 'Badge 标记'
+          }]
+        }, {
+          value: 'notice',
+          label: 'Notice',
+          children: [{
+            value: 'alert',
+            label: 'Alert 警告'
+          }, {
+            value: 'loading',
+            label: 'Loading 加载'
+          }, {
+            value: 'message',
+            label: 'Message 消息提示'
+          }, {
+            value: 'message-box',
+            label: 'MessageBox 弹框'
+          }, {
+            value: 'notification',
+            label: 'Notification 通知'
+          }]
+        }, {
+          value: 'navigation',
+          label: 'Navigation',
+          children: [{
+            value: 'menu',
+            label: 'NavMenu 导航菜单'
+          }, {
+            value: 'tabs',
+            label: 'Tabs 标签页'
+          }, {
+            value: 'breadcrumb',
+            label: 'Breadcrumb 面包屑'
+          }, {
+            value: 'dropdown',
+            label: 'Dropdown 下拉菜单'
+          }, {
+            value: 'steps',
+            label: 'Steps 步骤条'
+          }]
+        }, {
+          value: 'others',
+          label: 'Others',
+          children: [{
+            value: 'dialog',
+            label: 'Dialog 对话框'
+          }, {
+            value: 'tooltip',
+            label: 'Tooltip 文字提示'
+          }, {
+            value: 'popover',
+            label: 'Popover 弹出框'
+          }, {
+            value: 'card',
+            label: 'Card 卡片'
+          }, {
+            value: 'carousel',
+            label: 'Carousel 走马灯'
+          }, {
+            value: 'collapse',
+            label: 'Collapse 折叠面板'
+          }]
+        }]
+      }, {
+        value: 'ziyuan',
+        label: '资源',
+        children: [{
+          value: 'axure',
+          label: 'Axure Components'
+        }, {
+          value: 'sketch',
+          label: 'Sketch Templates'
+        }, {
+          value: 'jiaohu',
+          label: '组件交互文档'
+        }]
+      }]
+    };
   },
   methods: {
-    /**
-* 获取sku信息
-* @param {Array} selected 已选属性数组
-* @return {Object} skuInfo
-*
-*/
-    getSkuInfo (selected) {
-      // 用以记录每个按钮状态的，例如 itemState['红色'] = true 表示高亮
-      const attrState = {};
-      let picUrl = '';
-      let minPrice = Number.MAX_VALUE;
-      let maxPrice = 0;
-      let remainStock = 0;
-
-      // in array not in others
-      const difference = (array, others) => {
-        return array.filter((item) => others.indexOf(item) === -1);
-      };
-
-      // every in array in others
-      const isSubset = (array, others) => {
-        return array.every((item) => others.indexOf(item) > -1);
-      };
-
-      // 遍历规格列表
-      this.skuNameList.forEach((spec) => {
-        // 移除当前遍历规格下的已选属性
-        const tempSelected = difference(selected, spec.skuValues).filter(name => name);
-
-        // 遍历规格属性
-        spec.skuValues.forEach((name) => {
-          const willSelected = [...tempSelected, name];
-
-          // 默认无库存不可选
-          attrState[name] = false;
-
-          // 在库存列表寻找匹配库存
-          for (let i = 0, len = this.skuList.length; i < len; i++) {
-            const skuGroup = this.skuList[i].skuGroup;
-
-            if (isSubset(willSelected, skuGroup) && this.skuList[i].remainStock) {
-              attrState[name] = true;
-              break;
-            }
-          }
-        });
-      });
-
-      // 实际已选属性，过滤空字符串
-      const realSelected = selected.filter((item) => item);
-
-      // 默认选择用于匹配当前图片
-      const defaultSelected = selected.map(
-        (name, idx) => name || this.skuNameList[idx].skuValues[0]
-      );
-
-      this.skuList.forEach((sku) => {
-        if (isSubset(realSelected, sku.skuGroup)) {
-          remainStock += sku.remainStock;
-          maxPrice = maxPrice > sku.price ? maxPrice : sku.price;
-          minPrice = minPrice < sku.price ? minPrice : sku.price;
-
-          // 取当前图片
-          if (isSubset(defaultSelected, sku.skuGroup)) {
-            picUrl = sku.picUrl;
-          }
-        }
-      });
-
-      return {
-        attrState,
-        picUrl,
-        minPrice,
-        maxPrice,
-        remainStock,
-      };
+    handleChange (value) {
+      console.log(value);
     }
   }
-}
+};
 </script>
-
-<style lang="scss">
-.wrap-sku {
-  .isStock {
-    background-color: #fff;
-  }
-  .noStock {
-    background-color: #000;
-    cursor: default !important;
-  }
-  .product-box {
-    width: 1200px;
-    display: block;
-    margin: 0 auto;
-  }
-  .product-delcom {
-    color: #323232;
-    font-size: 26px;
-    padding: 30px 0;
-  }
-  .product-footerlist {
-    margin-top: 10px;
-  }
-  .product-footerlist li {
-    border: 1px solid #606060;
-    border-radius: 5px;
-    color: #606060;
-    text-align: center;
-    padding: 10px 30px;
-    list-style: none;
-    margin-bottom: 20px;
-    float: left;
-    margin-right: 20px;
-    cursor: pointer;
-  }
-  .activeStock {
-    background-color: red;
-    color: #fff !important;
-    border-color: red !important;
-  }
-}
-</style>

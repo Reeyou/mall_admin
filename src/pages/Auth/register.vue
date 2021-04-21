@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+  <base-content>
     <section class="content">
       <div class="header fadeIn">
         <h1>TMall</h1>
@@ -113,19 +113,13 @@
       </div>
       <Footer class="footer sj_font" />
     </section>
-    <section class="sidebar">
-      <div class="sidebar-content">
-        <div class="sidebar-content-item fadeIn"></div>
-        <div class="sidebar-content-item fadeIn"></div>
-        <div class="sidebar-content-item fadeIn"></div>
-      </div>
-    </section>
-  </div>
+  </base-content>
 </template>
 
 <script>
 import { register, login, sendCode } from '@/api/user'
 // import { mapMutations } from 'vuex'
+import BaseContent from './baseContent'
 import Footer from '@/components/Footer'
 export default {
   name: 'login',
@@ -153,13 +147,13 @@ export default {
       this.loading_code = true
       //   console.log({email: this.registerForm.email})
       sendCode({ email: this.registerForm.email }).then(res => {
-          this.$notify({
-                title: '提示',
-                message: res.msg,
-                type: 'success',
-                duration: 3000
-            });
-          this.loading_code = false
+        this.$notify({
+          title: '提示',
+          message: res.msg,
+          type: 'success',
+          duration: 3000
+        });
+        this.loading_code = false
       }).catch(e => {
         this.$notify.error({
           title: '提示',
@@ -177,15 +171,15 @@ export default {
           register(this.registerForm)
             .then(res => {
               this.loading = false
-                this.$notify({
-                    title: '提示',
-                    message: `${res.msg}1s后为您跳转登录页`,
-                    type: 'success',
-                    duration: 1000
-                });
-                setTimeout(() => {
-                    this.$router.push({ path: '/login' })
-                },1000)
+              this.$notify({
+                title: '提示',
+                message: `${res.msg}1s后为您跳转登录页`,
+                type: 'success',
+                duration: 1000
+              });
+              setTimeout(() => {
+                this.$router.push({ path: '/login' })
+              }, 1000)
             })
             .catch(e => {
               this.$notify.error({
@@ -193,7 +187,7 @@ export default {
                 message: e.msg,
                 duration: 3000
               });
-            //   this.registerForm = {}
+              //   this.registerForm = {}
               this.loading = false
             })
         }
@@ -205,6 +199,7 @@ export default {
     }
   },
   components: {
+    'base-content': BaseContent,
     Footer
   }
 }

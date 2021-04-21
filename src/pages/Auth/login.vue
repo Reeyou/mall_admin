@@ -1,5 +1,5 @@
 <template>
-  <div class="main-container">
+ <base-content>
     <section class="content">
       <div class="header fadeIn">
         <h1>TMall</h1>
@@ -61,20 +61,15 @@
       </div>
       <Footer class="footer sj_font" />
     </section>
-    <section class="sidebar">
-      <div class="sidebar-content">
-        <div class="sidebar-content-item fadeIn"></div>
-        <div class="sidebar-content-item fadeIn"></div>
-        <div class="sidebar-content-item fadeIn"></div>
-      </div>
-    </section>
-  </div>
+ </base-content>
 </template>
 
 <script>
 import { register, login } from '@/api/user'
 // import { mapMutations } from 'vuex'
+import BaseContent from './baseContent'
 import Footer from '@/components/Footer'
+import { setToken } from '@/utils/auth'
 export default {
   name: 'login',
   data () {
@@ -94,15 +89,19 @@ export default {
   methods: {
 
     login () {
+        setToken('bear sdjfjdf');
+        this.$router.push({ path: '/' });
+        return;
       this.$refs['loginForm'].validate((valid) => {
 
         if (valid) {
           this.loading = true
+          // this.$store.dispatch('user/login', this.loginForm)
           login(this.loginForm)
-            .then(res => {
+            .then(() => {
               this.loading = false
-              localStorage.setItem('userinfo', JSON.stringify(res.data.userinfo))
-              sessionStorage.setItem('token', `Bearer ${res.data.userinfo.token}`)
+              // localStorage.setItem('userinfo', JSON.stringify(res.data.userinfo))
+              // sessionStorage.setItem('token', `Bearer ${res.data.userinfo.token}`)
               this.$router.push({ path: '/' })
             })
             .catch(e => {
@@ -115,13 +114,13 @@ export default {
             })
         }
       })
-
     },
     validateFields () {
 
     }
   },
   components: {
+    'base-content': BaseContent,
     Footer
   }
 }
